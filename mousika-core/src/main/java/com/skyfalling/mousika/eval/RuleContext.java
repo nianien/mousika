@@ -1,7 +1,6 @@
 package com.skyfalling.mousika.eval;
 
 
-
 import java.util.List;
 
 /**
@@ -27,8 +26,9 @@ public interface RuleContext {
 
 
     /**
-     * 获取导致评估失败的规则<br/>
+     * 获取导致评估结果对应的规则<br/>
      *
+     * @param matched
      * @return
      */
     List<NodeResult> getEvalResults();

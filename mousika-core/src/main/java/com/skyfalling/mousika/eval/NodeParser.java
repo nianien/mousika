@@ -1,6 +1,8 @@
-package com.skyfalling.mousika.eval.node;
+package com.skyfalling.mousika.eval;
 
 
+import com.skyfalling.mousika.eval.node.ExprNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -25,8 +27,8 @@ public class NodeParser {
      * @param wrapper
      * @return
      */
-    public static RuleNode parse(String expression, Function<RuleNode, RuleNode> wrapper) {
-        return parse(tokenize(expression), expr -> wrapper.apply(new ExprNode(expr)));
+    public static RuleNode parse(String expression, Function<String, RuleNode> generator) {
+        return parse(tokenize(expression), generator);
     }
 
 
@@ -35,7 +37,7 @@ public class NodeParser {
      * @return
      */
     public static RuleNode parse(String expression) {
-        return parse(tokenize(expression), expr -> new ExprNode(expr));
+        return parse(expression, expr -> new NodeWrapper(new ExprNode(expr)));
     }
 
     /**
@@ -99,7 +101,7 @@ public class NodeParser {
                 } else {
                     String lastOp = null;
                     while (isOpChar(c) && !Character.isWhitespace(c) && c != '(' && c != ')' && pos < input.length()) {
-                        if (Op.of(tok + input.charAt(pos)) != null) {
+                        if (Operator.of(tok + input.charAt(pos)) != null) {
                             tok = tok + input.charAt(pos);
                             lastOp = tok;
                         } else if (lastOp == null) {
@@ -137,29 +139,29 @@ public class NodeParser {
         // 变量栈
         Stack<RuleNode> es = new Stack<>();
         // 操作符栈
-        Stack<Op> os = new Stack<>();
+        Stack<Operator> os = new Stack<>();
         // 扫描结果
         for (String token : tokens) {
-            Op right = Op.of(token);
+            Operator right = Operator.of(token);
             if (right != null) {
-                Op left = os.isEmpty() ? null : os.peek();
+                Operator left = os.isEmpty() ? null : os.peek();
                 //ordinal越小优先级越高
-                while (left != null && Op.isPrecede(right, left) < 0) {
+                while (left != null && Operator.isPrecede(right, left) < 0) {
                     es.push(doOperate(left, es));
                     os.pop();
                     left = os.isEmpty() ? null : os.peek();
                 }
                 //没有匹配的括号
-                if (left == null && right == Op.PAREN_CLOSE) {
+                if (left == null && right == Operator.PAREN_CLOSE) {
                     throw new IllegalArgumentException("Unmatched parenthesis");
                 }
                 //匹配括号
-                if (left != null && Op.isPrecede(right, left) == 0) {
+                if (left != null && Operator.isPrecede(right, left) == 0) {
                     os.pop();
                     continue;
                 }
                 //其他情况，操作符入栈
-                if (left == null || Op.isPrecede(right, left) > 0) {
+                if (left == null || Operator.isPrecede(right, left) > 0) {
                     os.push(right);
                 } else {
                     os.pop();
@@ -169,8 +171,8 @@ public class NodeParser {
             }
         }
         while (!os.isEmpty()) {
-            Op op = os.pop();
-            if (op == Op.PAREN_OPEN || op == Op.PAREN_CLOSE) {
+            Operator op = os.pop();
+            if (op == Operator.PAREN_OPEN || op == Operator.PAREN_CLOSE) {
                 return null; // Bad paren
             }
             RuleNode e = doOperate(op, es);
@@ -193,7 +195,7 @@ public class NodeParser {
      * @param stack
      * @return
      */
-    private static RuleNode doOperate(Op op, Stack<RuleNode> stack) {
+    private static RuleNode doOperate(Operator op, Stack<RuleNode> stack) {
         try {
             RuleNode b = stack.pop();
             RuleNode a = null;

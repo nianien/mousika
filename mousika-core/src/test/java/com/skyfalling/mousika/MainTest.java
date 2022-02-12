@@ -1,13 +1,12 @@
 package com.skyfalling.mousika;
 
-import com.skyfalling.mousika.eval.action.RuleAction;
 import com.skyfalling.mousika.engine.RuleDefinition;
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.engine.UdfDefinition;
+import com.skyfalling.mousika.eval.ActionResult;
 import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.suite.RuleScenario;
 import com.skyfalling.mousika.suite.RuleSuite;
-import com.skyfalling.mousika.eval.ActionResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -16,6 +15,8 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.skyfalling.mousika.eval.action.RuleAction.action;
 
 public class MainTest {
 
@@ -60,12 +61,12 @@ public class MainTest {
                 Arrays.asList(c1, c2, f1, f2, f3, f4, fTrue, fFalse),
                 Arrays.asList(udf1, udf2),
                 Arrays.asList(new RuleScenario("jinniu", Arrays.asList(
-                                new RuleAction("c1",
-                                        new RuleAction("!101&&!102", new RuleAction("ft"), new RuleAction("ff"))/*,
+                                action("c1",
+                                        action("!101&&!102", action("ft"), action("ff"))/*,
                                         new RuleAction("ft")*/
                                 ),
-                                new RuleAction("c2",
-                                        new RuleAction("!103&&!104", new RuleAction("ft"), new RuleAction("ff")
+                                action("c2",
+                                        action("!103&&!104", action("ft"), action("ff")
                                         )
                                 ))
                         )
@@ -94,7 +95,8 @@ public class MainTest {
         ruleEngine.register(f5);
         ruleEngine.register(f6);
         RuleChecker ruleChecker = new RuleChecker(ruleEngine);
-        String statement = "(!1||2)&&(3||!(4||(5&&6)))";
+//        String statement = "(!1||2)&&(3||!(4||(5&&6)))";
+        String statement = "!3";
         RootObject context = new RootObject("jack", 19);
         ActionResult check = ruleChecker.check(statement, context);
         System.out.println(check);

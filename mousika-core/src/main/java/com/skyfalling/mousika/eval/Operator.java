@@ -1,10 +1,10 @@
-package com.skyfalling.mousika.eval.node;
+package com.skyfalling.mousika.eval;
 
 /**
  * 运算符枚举定义
  * @author liyifei <liyifei@kuaishou.com>
  */
-public enum Op {
+public enum Operator {
     PAREN_OPEN("("),
     UNARY_MINUS("-", 1, false),
     UNARY_LOGICAL_NOT("!", 1, false),
@@ -43,11 +43,11 @@ public enum Op {
     private final int argNums;
     private final boolean leftAssoc;
 
-    Op(String expr) {
+    Operator(String expr) {
         this(expr, 2, true);
     }
 
-    Op(String expr, int argNums, boolean leftAssoc) {
+    Operator(String expr, int argNums, boolean leftAssoc) {
         this.expr = expr;
         this.argNums = argNums;
         this.leftAssoc = leftAssoc;
@@ -66,7 +66,7 @@ public enum Op {
      * @param left
      * @return
      */
-    public static int isPrecede(Op right, Op left) {
+    public static int isPrecede(Operator right, Operator left) {
         //左右括号匹配时，优先级相等，仅此一例
         if (left == PAREN_OPEN && right == PAREN_CLOSE) {
             return 0;
@@ -86,8 +86,8 @@ public enum Op {
         return right.ordinal() < left.ordinal() ? 1 : -1;
     }
 
-    public static Op of(String expr) {
-        for (Op op : values()) {
+    public static Operator of(String expr) {
+        for (Operator op : values()) {
             if (op.expr.equals(expr)) {
                 return op;
             }

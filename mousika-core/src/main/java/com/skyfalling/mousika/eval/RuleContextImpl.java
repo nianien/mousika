@@ -1,6 +1,9 @@
 package com.skyfalling.mousika.eval;
 
 import com.skyfalling.mousika.engine.RuleEngine;
+import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.expr.DefaultNodeVisitor;
+import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +16,7 @@ import java.util.*;
  */
 @Slf4j
 @Getter
-public class RuleContextImpl extends HashMap<String, Object> implements RuleContext {
+public class RuleContextImpl extends HashMap<String, Object> implements RuleContext, NodeVisitor {
 
     /**
      * 执行引擎
@@ -23,6 +26,10 @@ public class RuleContextImpl extends HashMap<String, Object> implements RuleCont
      * 待匹配对象
      */
     private Object data;
+    /**
+     * 用于规则结果分析
+     */
+    private DefaultNodeVisitor visitor = new DefaultNodeVisitor(this);
     /**
      * 缓存评估结果
      */
@@ -69,9 +76,9 @@ public class RuleContextImpl extends HashMap<String, Object> implements RuleCont
     @Override
     public List<NodeResult> getEvalResults() {
         List<NodeResult> results = new ArrayList<>();
-        for (Entry<String, EvalResult> e : evalCache.entrySet()) {
-            String ruleDesc = ruleEngine.evalDesc(e.getKey(), data, this);
-            results.add(new NodeResult(e.getKey(), e.getValue(), ruleDesc));
+        for (String rule : visitor.getEffectiveRules()) {
+            String ruleDesc = ruleEngine.evalDesc(rule, data, this);
+            results.add(new NodeResult(rule, evalCache.get(rule), ruleDesc));
         }
         return results;
     }
@@ -84,6 +91,17 @@ public class RuleContextImpl extends HashMap<String, Object> implements RuleCont
     @Override
     public void setProperty(String name, Object value) {
         super.put(name, value);
+    }
+
+
+    @Override
+    public boolean visit(RuleNode node) {
+        return visitor.visit(node);
+    }
+
+    @Override
+    public void reset(int flag) {
+        this.visitor.reset(flag);
     }
 
 

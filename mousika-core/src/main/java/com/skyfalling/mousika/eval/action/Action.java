@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.eval.action;
 
-import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.ActionResult;
+import com.skyfalling.mousika.eval.RuleContext;
 
 /**
  * 定义规则执行动作

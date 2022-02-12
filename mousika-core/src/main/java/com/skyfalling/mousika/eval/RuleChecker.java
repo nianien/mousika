@@ -1,9 +1,9 @@
 package com.skyfalling.mousika.eval;
 
-import com.skyfalling.mousika.eval.action.RuleAction;
 import com.skyfalling.mousika.engine.RuleEngine;
-import com.skyfalling.mousika.eval.node.NodeParser;
+import com.skyfalling.mousika.eval.action.RuleAction;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class RuleChecker {
     /**
      * 缓存规则集解析结果
      */
-    private Map<String, RuleNode> nodeCache = new ConcurrentHashMap<>();
+    private static Map<String, RuleNode> nodeCache = new ConcurrentHashMap<>();
 
 
     /**
@@ -78,8 +78,13 @@ public class RuleChecker {
      * @param ruleContext 待校验对象
      */
     private ActionResult check(String ruleExpr, RuleContext ruleContext) {
-        RuleNode node = nodeCache.computeIfAbsent(ruleExpr, this::parse);
-        return new ActionResult(node.matches(ruleContext), ruleContext.getEvalResults());
+        //将规则表达式解析成节点树,非叶结点为逻辑运算符,叶子节点为脚本表达式
+        RuleNode node = parse(ruleExpr);
+        boolean matched = node.matches(ruleContext);
+        if (ruleContext instanceof NodeVisitor) {
+            ((NodeVisitor) ruleContext).reset(0);
+        }
+        return new ActionResult(matched, ruleContext.getEvalResults());
     }
 
     /**
@@ -87,9 +92,8 @@ public class RuleChecker {
      *
      * @param ruleExpr 规则集表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
      */
-    private RuleNode parse(String ruleExpr) {
-        log.info("==>parse rule expr: {}", ruleExpr);
-        return NodeParser.parse(ruleExpr, NodeWrapper::new);
+    public static RuleNode parse(String ruleExpr) {
+        return nodeCache.computeIfAbsent(ruleExpr, NodeParser::parse);
     }
 
 
