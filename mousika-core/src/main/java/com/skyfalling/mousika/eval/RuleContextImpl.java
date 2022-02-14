@@ -76,7 +76,7 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     public List<RuleResult> getEvalResults() {
         List<RuleResult> results = new ArrayList<>();
         for (String rule : visitor.getEffectiveRules()) {
-            String ruleDesc = ruleEngine.evalRuleDesc(rule, data, properties);
+            String ruleDesc = ruleEngine.evalRuleDesc(rule, data, this);
             results.add(new RuleResult(rule, evalCache.get(rule), ruleDesc));
         }
         return results;

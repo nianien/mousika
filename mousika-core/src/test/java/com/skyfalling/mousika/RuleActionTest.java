@@ -67,7 +67,7 @@ public class RuleActionTest {
         RuleDefinition f3 = new RuleDefinition("102", "$.name!='' && $.age>18", "{$.name}的年龄小于18");
         RuleDefinition f2 = new RuleDefinition("103", "isAdmin($.name,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】");
         RuleDefinition f4 = new RuleDefinition("104",
-                "var udf= Java.type('com.skyfalling.mousika.udf.AdultValidateUdf'); new udf(18).apply($.name,$.age,$$)", "{$.name}的年龄不满{$$.minAge}岁");
+                "var udf= Java.type('com.skyfalling.mousika.udf.AdultValidateUdf'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁");
 
         RuleDefinition trueAction = new RuleDefinition("trueAction", "true", "开户通过");
         RuleDefinition falseAction = new RuleDefinition("falseAction", "false", "开户拒绝");
@@ -84,7 +84,7 @@ public class RuleActionTest {
                                         action("!101&&!102", action("trueAction"), action("falseAction"))
                                 ),
                                 action("c2",
-                                        action("!103&&104", action("trueAction"), action("falseAction")
+                                        action("!103&&!104", action("trueAction"), action("falseAction")
                                         )
                                 ))
                         )
