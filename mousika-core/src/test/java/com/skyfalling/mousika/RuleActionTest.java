@@ -24,7 +24,7 @@ public class RuleActionTest {
     @SneakyThrows
     @Test
     public void testRuleAction() {
-        RuleDefinition c1 = new RuleDefinition("c1", "true", "业务分支1");
+        RuleDefinition c1 = new RuleDefinition("c1", "false", "业务分支1");
         RuleDefinition c2 = new RuleDefinition("c2", "true", "业务分支2");
 
         RuleDefinition f1 = new RuleDefinition("101", "isAdult($.name,$.age,$$);", "{$.name}的年龄({$.age})小于{$$.minAge}岁");
@@ -48,7 +48,7 @@ public class RuleActionTest {
                                         action("!101&&!102", action("trueAction"), action("falseAction"))
                                 ),
                                 action("c2",
-                                        action("!103&&!104", action("trueAction"), action("falseAction")
+                                        action("!103&&104", action("trueAction"), action("falseAction")
                                         )
                                 ))
                         )
