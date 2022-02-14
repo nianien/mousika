@@ -15,7 +15,7 @@ import java.util.*;
  */
 @Slf4j
 @Getter
-public class RuleContextImpl implements RuleContext {
+public class RuleContextImpl extends LinkedHashMap<String, Object> implements RuleContext {
 
     /**
      * 执行引擎
@@ -84,12 +84,12 @@ public class RuleContextImpl implements RuleContext {
 
     @Override
     public Object getProperty(Object name) {
-        return properties.get(name);
+        return super.get(name);
     }
 
     @Override
     public void setProperty(String name, Object value) {
-        properties.put(name, value);
+        super.put(name, value);
     }
 
 

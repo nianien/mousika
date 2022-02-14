@@ -11,9 +11,7 @@ import com.skyfalling.mousika.eval.RuleContextImpl;
 import com.skyfalling.mousika.eval.action.RuleAction;
 import com.skyfalling.mousika.suite.RuleScenario;
 import com.skyfalling.mousika.suite.RuleSuite;
-import com.skyfalling.mousika.udf.ActionUdf;
-import com.skyfalling.mousika.udf.AdultValidateUdf;
-import com.skyfalling.mousika.udf.SystemAdminUdf;
+import com.skyfalling.mousika.udf.*;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
@@ -31,24 +29,30 @@ public class RuleActionTest {
         List<RuleDefinition> ruleDefinitions = Arrays.asList(
                 new RuleDefinition("1", "1==1", "规则1"),
                 new RuleDefinition("2", "2!=2", "规则2"),
-                new RuleDefinition("3", "3!=3", "规则3"),
-                new RuleDefinition("4", "4!=4", "规则4"),
-                new RuleDefinition("actionA", "act('a')", "业务操作A"),
-                new RuleDefinition("actionBC", "act('b');act('c')", "业务操作B和C"),
-                new RuleDefinition("actionD", "'d'", "业务操作D")
+                new RuleDefinition("3", "findAgentType($.name,$$)==21", "规则3"),
+                new RuleDefinition("4", "true", "规则4"),
+                new RuleDefinition("actionA", "dist($.name,$$.owner)", "业务操作A"),
+                new RuleDefinition("actionB", "dist($.name,$$.owner);sayHello($.name);", "业务操作B"),
+                new RuleDefinition("actionC", "'c'", "业务操作C")
         );
         for (RuleDefinition ruleDefinition : ruleDefinitions) {
             ruleEngine.register(ruleDefinition);
         }
-        UdfDefinition act = new UdfDefinition("act", new ActionUdf());
-        ruleEngine.register(act);
+        List<UdfDefinition> udfDefinitions = Arrays.asList(
+                new UdfDefinition("dist", new DistributeUdf()),
+                new UdfDefinition("sayHello", new SayHelloUdf()),
+                new UdfDefinition("findAgentType", new FindAgentTypeUdf())
+        );
+        for (UdfDefinition udfDefinition : udfDefinitions) {
+            ruleEngine.register(udfDefinition);
+        }
         User root = new User("jack", 19);
-
         RuleContext context = new RuleContextImpl(ruleEngine, root);
         RuleAction ruleAction = action("1&&2",
-                action("5&&6"),
-                action("!3&&4", action("actionBC"), action("actionD"))
+                action("actionA"),
+                action("!3&&4", action("actionB"), action("actionC"))
         );
+
         System.out.println(ruleAction.execute(context));
     }
 
