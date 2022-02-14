@@ -22,7 +22,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
 
     private RuleContext ruleContext;
     /**
-     * flag为true表示保留执行失败的规则,否则保留执行成功的规则
+     * 访问标记,表示当前节点是否为真,最终结果是否为真
      */
     private boolean visitFlag = true;
     /**
@@ -58,33 +58,38 @@ public class DefaultNodeVisitor implements NodeVisitor {
      */
     @Override
     public EvalResult visit(RuleNode node) {
-        //标记节点
-        boolean flag = mark(node);
-        int falseSize = falseRules.size();
         if (node instanceof NodeWrapper) {
-            node = ((NodeWrapper) node).unwrap();
+            visit(((NodeWrapper) node).unwrap());
         }
+        //标记节点
+        boolean flag = visitFlag(node);
+        int falseSize = falseRules.size();
+        boolean isExprNode = node instanceof ExprNode;
         EvalResult result;
-        if (node instanceof ExprNode) {
+        if (isExprNode) {
             result = ruleContext.eval(((ExprNode) node).getExpression());
         } else {
             result = new EvalResult(node.matches(ruleContext));
         }
+        //当前节点匹配是否成功
         boolean matched = result.isMatched();
-        if (node instanceof ExprNode) {
-            if (matched && flag || !matched && !flag) {
+        //整体匹配是否成功
+        boolean succeed = matched && flag || !matched && !flag;
+        if (isExprNode) {//记录影响最终结果的叶子节点
+            if (succeed) {
+                //记录使整体匹配成功的叶节点
                 trueRules.add(((ExprNode) node).getExpression());
             } else {
+                //记录使整体匹配失败的叶节点
                 falseRules.add(((ExprNode) node).getExpression());
             }
-        } else if (node instanceof OrNode) {
-            //对于or节点,如果匹配结果为真,则移除fail的节点
-            if (matched && flag || !matched && !flag) {
-                falseRules = falseRules.subList(0, falseSize);
-            }
         }
-        //还原标记
-        mark(node);
+        if (node instanceof OrNode && succeed) {
+            //对于or节点,如果匹配成功,则移除fail的叶节点
+            falseRules = falseRules.subList(0, falseSize);
+        }
+        //两次执行,还原访问标记
+        this.visitFlag(node);
         return result;
     }
 
@@ -102,16 +107,17 @@ public class DefaultNodeVisitor implements NodeVisitor {
 
 
     /**
-     * 检验是否选择成功节点
+     * 设置当前节点访问标记
      *
      * @param node
      * @return
      */
-    private boolean mark(RuleNode node) {
+    private boolean visitFlag(RuleNode node) {
+        boolean flag = visitFlag;
         if (node instanceof NotNode) {
             visitFlag = !visitFlag;
         }
-        return visitFlag;
+        return flag;
     }
 
 
