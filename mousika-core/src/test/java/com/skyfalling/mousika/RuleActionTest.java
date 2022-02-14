@@ -84,7 +84,7 @@ public class RuleActionTest {
                                         action("!101&&!102", action("trueAction"), action("falseAction"))
                                 ),
                                 action("c2",
-                                        action("!103&&!104", action("trueAction"), action("falseAction")
+                                        action("!103&&104", action("trueAction"), action("falseAction")
                                         )
                                 ))
                         )
