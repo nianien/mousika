@@ -17,7 +17,7 @@ public class ActionResult {
     /**
      * 匹配详情
      */
-    private List<NodeResult> details;
+    private List<RuleResult> details;
     /**
      * 是否有结果
      */
@@ -25,7 +25,7 @@ public class ActionResult {
 
     public static ActionResult NO_RESULT = new ActionResult(false);
 
-    public ActionResult(Object result, List<NodeResult> details) {
+    public ActionResult(Object result, List<RuleResult> details) {
         this(result, details, true);
     }
 

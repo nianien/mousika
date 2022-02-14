@@ -1,10 +1,10 @@
 package com.skyfalling.mousika.eval.action;
 
 import com.skyfalling.mousika.eval.ActionResult;
+import com.skyfalling.mousika.eval.EvalResult;
 import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.node.RuleNode;
-import com.skyfalling.mousika.expr.NodeVisitor;
 
 /**
  * 根据条件匹配执行相应业务逻辑
@@ -56,14 +56,14 @@ public class RuleAction implements Action {
 
     @Override
     public ActionResult execute(RuleContext context) {
-        boolean matched;
-        matched = context.visit(ruleNode);
+        EvalResult evalResult = context.visit(ruleNode);
+        boolean matched = evalResult.isMatched();
         //判断下一步action, 如果trueAction&falseAction都为空,则默认action为返回评估结果
         int flag = (matched && trueAction == null && falseAction != null || !matched && falseAction == null && trueAction != null) ? -1 : matched ? 1 : 0;
         context.reset(flag);
         //如果trueAction&falseAction都为空,则默认action为评估结果
         if (trueAction == null && falseAction == null) {
-            return new ActionResult(matched, context.getEvalResults());
+            return new ActionResult(evalResult.getResult(), context.getEvalResults());
         }
         //规则通过时的trueAction
         if (matched && trueAction != null) {

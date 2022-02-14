@@ -37,7 +37,7 @@ public class NodeWrapper implements RuleNode {
 
     @Override
     public boolean matches(RuleContext ruleContext) {
-        return ruleContext.visit(originNode);
+        return ruleContext.visit(originNode).isMatched();
     }
 
 
@@ -49,6 +49,16 @@ public class NodeWrapper implements RuleNode {
             return (NodeWrapper) node;
         }
         return new NodeWrapper(node);
+    }
+
+
+    /**
+     * 原生节点
+     *
+     * @return
+     */
+    public RuleNode unwrap() {
+        return this.originNode;
     }
 
 

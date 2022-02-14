@@ -26,10 +26,6 @@ public class RuleContextImpl implements RuleContext {
      */
     private Object data;
     /**
-     * 用于规则结果分析
-     */
-    private DefaultNodeVisitor visitor = new DefaultNodeVisitor(this);
-    /**
      * 缓存评估结果
      */
     private Map<String, EvalResult> evalCache = new LinkedHashMap<>();
@@ -38,6 +34,10 @@ public class RuleContextImpl implements RuleContext {
      */
     private Map<String, Object> properties = new HashMap<>();
 
+    /**
+     * 用于规则分析
+     */
+    private DefaultNodeVisitor visitor = new DefaultNodeVisitor(this);
 
     /**
      * 指定执行引擎和规则对象
@@ -73,11 +73,11 @@ public class RuleContextImpl implements RuleContext {
 
 
     @Override
-    public List<NodeResult> getEvalResults() {
-        List<NodeResult> results = new ArrayList<>();
+    public List<RuleResult> getEvalResults() {
+        List<RuleResult> results = new ArrayList<>();
         for (String rule : visitor.getEffectiveRules()) {
             String ruleDesc = ruleEngine.evalRuleDesc(rule, data, properties);
-            results.add(new NodeResult(rule, evalCache.get(rule), ruleDesc));
+            results.add(new RuleResult(rule, evalCache.get(rule), ruleDesc));
         }
         return results;
     }
@@ -94,16 +94,14 @@ public class RuleContextImpl implements RuleContext {
 
 
     @Override
-    public boolean visit(RuleNode node) {
+    public EvalResult visit(RuleNode node) {
         return visitor.visit(node);
     }
 
     @Override
     public void reset(int flag) {
-        this.visitor.reset(flag);
+        visitor.reset(flag);
     }
-
-
 }
 
 

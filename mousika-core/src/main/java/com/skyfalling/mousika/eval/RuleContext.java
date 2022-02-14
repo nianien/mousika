@@ -32,7 +32,7 @@ public interface RuleContext extends NodeVisitor {
      *
      * @return
      */
-    List<NodeResult> getEvalResults();
+    List<RuleResult> getEvalResults();
 
     /**
      * 获取上下文属性

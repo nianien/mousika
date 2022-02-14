@@ -1,8 +1,11 @@
 package com.skyfalling.mousika.expr;
 
+import com.skyfalling.mousika.eval.EvalResult;
+import com.skyfalling.mousika.eval.NodeWrapper;
 import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.node.ExprNode;
 import com.skyfalling.mousika.eval.node.NotNode;
+import com.skyfalling.mousika.eval.node.OrNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import lombok.Getter;
 
@@ -17,7 +20,7 @@ import java.util.List;
  */
 public class DefaultNodeVisitor implements NodeVisitor {
 
-    private RuleContext context;
+    private RuleContext ruleContext;
     /**
      * flag为true表示保留执行失败的规则,否则保留执行成功的规则
      */
@@ -39,12 +42,13 @@ public class DefaultNodeVisitor implements NodeVisitor {
 
 
     /**
-     * @param context
+     * 指定规则上下文
+     *
+     * @param ruleContext
      */
-    public DefaultNodeVisitor(RuleContext context) {
-        this.context = context;
+    public DefaultNodeVisitor(RuleContext ruleContext) {
+        this.ruleContext = ruleContext;
     }
-
 
     /**
      * 访问规则节点
@@ -52,20 +56,36 @@ public class DefaultNodeVisitor implements NodeVisitor {
      * @param node
      * @return
      */
-    public boolean visit(RuleNode node) {
+    @Override
+    public EvalResult visit(RuleNode node) {
         //标记节点
         boolean flag = mark(node);
-        boolean matched = node.matches(context);
+        int falseSize = falseRules.size();
+        if (node instanceof NodeWrapper) {
+            node = ((NodeWrapper) node).unwrap();
+        }
+        EvalResult result;
+        if (node instanceof ExprNode) {
+            result = ruleContext.eval(((ExprNode) node).getExpression());
+        } else {
+            result = new EvalResult(node.matches(ruleContext));
+        }
+        boolean matched = result.isMatched();
         if (node instanceof ExprNode) {
             if (matched && flag || !matched && !flag) {
                 trueRules.add(((ExprNode) node).getExpression());
             } else {
                 falseRules.add(((ExprNode) node).getExpression());
             }
+        } else if (node instanceof OrNode) {
+            //对于or节点,如果匹配结果为真,则移除fail的节点
+            if (matched && flag || !matched && !flag) {
+                falseRules = falseRules.subList(0, falseSize);
+            }
         }
         //还原标记
         mark(node);
-        return matched;
+        return result;
     }
 
     @Override

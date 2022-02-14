@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NodeResult {
+public class RuleResult {
     /**
      * 规则ID
      */
@@ -20,4 +20,13 @@ public class NodeResult {
      * 规则描述
      */
     private String desc;
+
+    @Override
+    public String toString() {
+        return "RuleResult(" +
+                "ruleId=" + ruleId +
+                ", matched=" + result.isMatched() +
+                ", desc='" + desc + '\'' +
+                ')';
+    }
 }

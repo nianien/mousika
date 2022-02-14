@@ -1,5 +1,6 @@
 package com.skyfalling.mousika.expr;
 
+import com.skyfalling.mousika.eval.EvalResult;
 import com.skyfalling.mousika.eval.node.RuleNode;
 
 /**
@@ -16,11 +17,11 @@ public interface NodeVisitor {
      * @param node
      * @return
      */
-    boolean visit(RuleNode node);
+    EvalResult visit(RuleNode node);
 
 
     /**
-     * 重置访问节点
+     * 重置访问节点,用于多次节点访问的场景
      *
      * @param flag 0保留失败节点, 1保留成功节点, -1不保留节点
      */

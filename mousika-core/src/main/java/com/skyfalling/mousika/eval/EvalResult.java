@@ -15,13 +15,6 @@ public class EvalResult {
         this.matched = parseBoolean(result);
     }
 
-    @Override
-    public String toString() {
-        return "EvalResult{" +
-                "result=" + result +
-                ", matched=" + matched +
-                '}';
-    }
 
     /**
      * boolean值解析

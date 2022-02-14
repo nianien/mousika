@@ -82,7 +82,7 @@ public class RuleChecker {
         RuleNode node = parse(ruleExpr);
         boolean matched = node.matches(ruleContext);
         if (ruleContext instanceof NodeVisitor) {
-            ((NodeVisitor) ruleContext).reset(0);
+            ruleContext.reset(matched ? 1 : 0);
         }
         return new ActionResult(matched, ruleContext.getEvalResults());
     }
