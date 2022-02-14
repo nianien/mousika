@@ -29,12 +29,12 @@ public class MainTest {
         String ruleStr = "[5,6].indexOf($.q)!=-1";
         Map<String, Integer> map = new HashMap<>();
         map.put("q", 5);
-        System.out.println(ruleEngine.eval(ruleStr, map, null));
+        System.out.println(ruleEngine.evalExpr(ruleStr, map, null));
 
         String ruleStr2 = "$.q != true";
         Map<String, Boolean> map2 = new HashMap<>();
         map2.put("q", true);
-        System.out.println(ruleEngine.eval(ruleStr2, map2, null));
+        System.out.println(ruleEngine.evalExpr(ruleStr2, map2, null));
     }
 
 

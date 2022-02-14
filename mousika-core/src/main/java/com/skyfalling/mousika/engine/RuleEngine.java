@@ -91,37 +91,38 @@ public class RuleEngine {
         if (sourceScript == null) {
             throw new IllegalArgumentException("unregistered rule:" + ruleId);
         }
-        CompiledScript compiledScript = this.compile0(sourceScript, true);
-        return eval0(compiledScript, root, context);
-    }
-
-    /**
-     * 执行表达式
-     */
-    public Object eval(String expression, Object root, Object context) {
-        CompiledScript compiledScript = compile0(expression, false);
-        return eval0(compiledScript, root, context);
+        CompiledScript compiledScript = this.compile(sourceScript, true);
+        return doEval(compiledScript, root, context);
     }
 
     /**
      * 解析规则描述
      */
-    public String evalDesc(String ruleId, Object root, Object context) {
+    public String evalRuleDesc(String ruleId, Object root, Object context) {
         String originDesc = this.descriptions.get(ruleId);
         if (originDesc == null || originDesc.isEmpty()) {
             return "";
         }
         // "代理商【{$.agentId}】不允许【{$.customerId}】跨开{不需要转义}" ==> "代理商【"+$.agentId+"】不允许【"+$.customerId+"】跨开{不需要转义}"
         originDesc = "\"" + originDesc.replaceAll("\\{(\\$+\\..+?)\\}", "\\\"+$1+\\\"") + "\"";
-        return (String) eval(originDesc, root, context);
+        return (String) evalExpr(originDesc, root, context);
     }
+
+    /**
+     * 执行表达式
+     */
+    public Object evalExpr(String expression, Object root, Object context) {
+        CompiledScript compiledScript = compile(expression, false);
+        return doEval(compiledScript, root, context);
+    }
+
 
 
     /**
      * 执行注册脚本
      */
     @SneakyThrows
-    private Object eval0(CompiledScript script, Object root, Object context) {
+    private Object doEval(CompiledScript script, Object root, Object context) {
         Bindings bindings = engine.createBindings();
         bindings.putAll(udfs);
         bindings.put("$", root);
@@ -130,7 +131,7 @@ public class RuleEngine {
     }
 
     @SneakyThrows
-    private CompiledScript compile0(String expression, boolean cache) {
+    private CompiledScript compile(String expression, boolean cache) {
         CompiledScript compiledScript = compiledScripts.get(expression);
         if (compiledScript == null) {
             compiledScript = ((Compilable) engine).compile(expression);

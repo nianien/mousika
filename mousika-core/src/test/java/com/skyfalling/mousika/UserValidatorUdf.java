@@ -12,11 +12,9 @@ public class UserValidatorUdf implements Function3<String, Integer, RuleContext,
 
     @Override
     public Boolean apply(String name, Integer age, RuleContext context) {
-        context.setProperty("agentId", "代理商A");
-        context.setProperty("customerId", "客户B");
-        boolean success = name != null && age > 18;
-        System.out.println("==>UserValidatorUdf:" + success);
-        return success;
+        context.setProperty("name", name);
+        context.setProperty("age", age);
+        return name != null && age > 18;
     }
 
 

@@ -23,6 +23,6 @@ public class RuleEngineTest {
         Map<String, String> map = new HashMap<>();
         map.put("agentId", "a");
         map.put("customerId", "b");
-        System.out.println(ruleEngine.eval(desc, map,null));
+        System.out.println(ruleEngine.evalExpr(desc, map,null));
     }
 }

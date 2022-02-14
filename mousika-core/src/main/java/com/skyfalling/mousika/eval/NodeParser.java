@@ -24,11 +24,11 @@ public class NodeParser {
 
     /**
      * @param expression 规则集表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
-     * @param wrapper
+     * @param generator
      * @return
      */
     public static RuleNode parse(String expression, Function<String, RuleNode> generator) {
-        return parse(tokenize(expression), generator);
+        return doParse(tokenize(expression), generator);
     }
 
 
@@ -135,7 +135,7 @@ public class NodeParser {
      * @param generator 节点生成器
      * @return
      */
-    private static RuleNode parse(List<String> tokens, Function<String, RuleNode> generator) {
+    private static RuleNode doParse(List<String> tokens, Function<String, RuleNode> generator) {
         // 变量栈
         Stack<RuleNode> es = new Stack<>();
         // 操作符栈

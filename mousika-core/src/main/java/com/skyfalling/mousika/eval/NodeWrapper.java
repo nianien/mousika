@@ -4,7 +4,6 @@ import com.skyfalling.mousika.eval.node.AndNode;
 import com.skyfalling.mousika.eval.node.NotNode;
 import com.skyfalling.mousika.eval.node.OrNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
-import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.Getter;
 
 /**
@@ -38,10 +37,7 @@ public class NodeWrapper implements RuleNode {
 
     @Override
     public boolean matches(RuleContext ruleContext) {
-        if (ruleContext instanceof NodeVisitor) {
-            return ((NodeVisitor) ruleContext).visit(originNode);
-        }
-        return originNode.matches(ruleContext);
+        return ruleContext.visit(originNode);
     }
 
 

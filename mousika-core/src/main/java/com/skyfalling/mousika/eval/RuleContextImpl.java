@@ -3,7 +3,6 @@ package com.skyfalling.mousika.eval;
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.expr.DefaultNodeVisitor;
-import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +15,7 @@ import java.util.*;
  */
 @Slf4j
 @Getter
-public class RuleContextImpl extends HashMap<String, Object> implements RuleContext, NodeVisitor {
+public class RuleContextImpl implements RuleContext {
 
     /**
      * 执行引擎
@@ -59,16 +58,16 @@ public class RuleContextImpl extends HashMap<String, Object> implements RuleCont
      */
     @Override
     public EvalResult eval(String ruleId) {
-        return evalCache.computeIfAbsent(ruleId, this::eval0);
+        return evalCache.computeIfAbsent(ruleId, this::doEval);
     }
 
 
     /**
-     * 规则评估
+     * 执行规则评估
      *
      * @param ruleId 规则ID
      */
-    private EvalResult eval0(String ruleId) {
+    private EvalResult doEval(String ruleId) {
         return new EvalResult(ruleEngine.evalRule(ruleId, data, this));
     }
 
@@ -77,7 +76,7 @@ public class RuleContextImpl extends HashMap<String, Object> implements RuleCont
     public List<NodeResult> getEvalResults() {
         List<NodeResult> results = new ArrayList<>();
         for (String rule : visitor.getEffectiveRules()) {
-            String ruleDesc = ruleEngine.evalDesc(rule, data, this);
+            String ruleDesc = ruleEngine.evalRuleDesc(rule, data, properties);
             results.add(new NodeResult(rule, evalCache.get(rule), ruleDesc));
         }
         return results;
@@ -85,12 +84,12 @@ public class RuleContextImpl extends HashMap<String, Object> implements RuleCont
 
     @Override
     public Object getProperty(Object name) {
-        return super.get(name);
+        return properties.get(name);
     }
 
     @Override
     public void setProperty(String name, Object value) {
-        super.put(name, value);
+        properties.put(name, value);
     }
 
 

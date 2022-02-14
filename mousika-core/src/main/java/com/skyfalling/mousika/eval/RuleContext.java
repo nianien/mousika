@@ -1,6 +1,8 @@
 package com.skyfalling.mousika.eval;
 
 
+import com.skyfalling.mousika.expr.NodeVisitor;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,7 @@ import java.util.List;
  *
  * @author liyifei <liyifei@kuaishou.com>
  */
-public interface RuleContext {
+public interface RuleContext extends NodeVisitor {
 
     /**
      * 规则评估对象
@@ -28,7 +30,6 @@ public interface RuleContext {
     /**
      * 获取导致评估结果对应的规则<br/>
      *
-     * @param matched
      * @return
      */
     List<NodeResult> getEvalResults();

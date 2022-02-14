@@ -57,24 +57,19 @@ public class RuleAction implements Action {
     @Override
     public ActionResult execute(RuleContext context) {
         boolean matched;
-        if (context instanceof NodeVisitor) {
-            matched = ((NodeVisitor) context).visit(ruleNode);
-            //判断是否存在下一步action
-            //注意: 如果trueAction&falseAction都为空,则默认action为返回评估结果
-            int flag = (matched && trueAction == null && falseAction != null || !matched && falseAction == null && trueAction != null) ? -1 : matched ? 1 : 0;
-            ((NodeVisitor) context).reset(flag);
-        } else {
-            matched = ruleNode.matches(context);
-        }
+        matched = context.visit(ruleNode);
+        //判断下一步action, 如果trueAction&falseAction都为空,则默认action为返回评估结果
+        int flag = (matched && trueAction == null && falseAction != null || !matched && falseAction == null && trueAction != null) ? -1 : matched ? 1 : 0;
+        context.reset(flag);
         //如果trueAction&falseAction都为空,则默认action为评估结果
         if (trueAction == null && falseAction == null) {
             return new ActionResult(matched, context.getEvalResults());
         }
-        //规则通过时没有对应的trueAction
+        //规则通过时的trueAction
         if (matched && trueAction != null) {
             return trueAction.execute(context);
         }
-        //规则未通过时没有对应的falseAction
+        //规则未通过时的falseAction
         if (!matched && falseAction != null) {
             return falseAction.execute(context);
         }

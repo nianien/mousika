@@ -77,6 +77,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
         }
         this.trueRules.clear();
         this.falseRules.clear();
+        this.visitFlag = true;
     }
 
 
@@ -87,7 +88,9 @@ public class DefaultNodeVisitor implements NodeVisitor {
      * @return
      */
     private boolean mark(RuleNode node) {
-        visitFlag = visitFlag && !(node instanceof NotNode);
+        if (node instanceof NotNode) {
+            visitFlag = !visitFlag;
+        }
         return visitFlag;
     }
 
