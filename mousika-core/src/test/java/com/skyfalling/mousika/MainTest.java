@@ -1,6 +1,10 @@
 package com.skyfalling.mousika;
 
+import com.google.gson.Gson;
 import com.skyfalling.mousika.engine.RuleEngine;
+import com.skyfalling.mousika.eval.RuleChecker;
+import com.skyfalling.mousika.eval.json.JsonUtils;
+import com.skyfalling.mousika.eval.node.RuleNode;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
@@ -8,6 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainTest {
+
+    @SneakyThrows
+    public static void main(String[] args) {
+        RuleNode ruleNode = RuleChecker.parse("!101&&!102");
+        System.out.println(ruleNode);
+        System.out.println(new Gson().toJson(ruleNode));
+        System.out.println(JsonUtils.toJson(ruleNode));
+
+
+    }
 
 
     @SneakyThrows
@@ -31,7 +45,6 @@ public class MainTest {
     }
 
 
-
     @Test
     public void testDesc() {
         RuleEngine ruleEngine = new RuleEngine();
@@ -41,7 +54,7 @@ public class MainTest {
         Map<String, String> map = new HashMap<>();
         map.put("agentId", "a");
         map.put("customerId", "b");
-        System.out.println(ruleEngine.evalExpr(desc, map,null));
+        System.out.println(ruleEngine.evalExpr(desc, map, null));
     }
 
 }

@@ -2,6 +2,9 @@ package com.skyfalling.mousika.eval;
 
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.eval.action.RuleAction;
+import com.skyfalling.mousika.eval.listener.ListenerProvider;
+import com.skyfalling.mousika.eval.listener.RuleEvent;
+import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,8 +96,20 @@ public class RuleChecker {
      * @param ruleExpr 规则集表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
      */
     public static RuleNode parse(String ruleExpr) {
-        return nodeCache.computeIfAbsent(ruleExpr, NodeParser::parse);
+        RuleNode ruleNode = nodeCache.computeIfAbsent(ruleExpr, RuleChecker::doParse);
+        return ruleNode;
     }
 
+    /**
+     * 节点解析
+     *
+     * @param ruleExpr
+     * @return
+     */
+    private static RuleNode doParse(String ruleExpr) {
+        RuleNode ruleNode = NodeParser.parse(ruleExpr);
+        ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.EVAL, ruleExpr, ruleNode));
+        return ruleNode;
+    }
 
 }

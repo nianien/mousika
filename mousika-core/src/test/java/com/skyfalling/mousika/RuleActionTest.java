@@ -9,10 +9,14 @@ import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.RuleContextImpl;
 import com.skyfalling.mousika.eval.action.RuleAction;
+import com.skyfalling.mousika.eval.listener.ListenerProvider;
+import com.skyfalling.mousika.eval.listener.RuleEvent;
+import com.skyfalling.mousika.eval.listener.RuleListener;
 import com.skyfalling.mousika.suite.RuleScenario;
 import com.skyfalling.mousika.suite.RuleSuite;
 import com.skyfalling.mousika.udf.*;
 import lombok.SneakyThrows;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -22,6 +26,21 @@ import static com.skyfalling.mousika.eval.action.RuleAction.action;
 
 public class RuleActionTest {
 
+    @BeforeClass
+    public static void setUp() {
+
+        ListenerProvider.DEFAULT.register(new RuleListener() {
+            @Override
+            public void onParse(RuleEvent event) {
+                System.out.println(event);
+            }
+
+            @Override
+            public void onEval(RuleEvent event) {
+                System.out.println(event);
+            }
+        });
+    }
 
     @Test
     public void testRuleAction() {

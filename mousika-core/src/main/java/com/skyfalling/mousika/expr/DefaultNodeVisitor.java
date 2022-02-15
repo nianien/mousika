@@ -59,32 +59,21 @@ public class DefaultNodeVisitor implements NodeVisitor {
     @Override
     public EvalResult visit(RuleNode node) {
         if (node instanceof NodeWrapper) {
-            visit(((NodeWrapper) node).unwrap());
+            node = ((NodeWrapper) node).unwrap();
         }
         //标记节点
         boolean flag = visitFlag(node);
         int falseSize = falseRules.size();
         boolean isExprNode = node instanceof ExprNode;
-        EvalResult result;
-        if (isExprNode) {
-            result = ruleContext.eval(((ExprNode) node).getExpression());
-        } else {
-            result = new EvalResult(node.matches(ruleContext));
-        }
+        EvalResult result = isExprNode ? ruleContext.eval(((ExprNode) node).getExpression()) : new EvalResult(node.matches(ruleContext));
         //当前节点匹配是否成功
         boolean matched = result.isMatched();
         //整体匹配是否成功
         boolean succeed = matched && flag || !matched && !flag;
-        if (isExprNode) {//记录影响最终结果的叶子节点
-            if (succeed) {
-                //记录使整体匹配成功的叶节点
-                trueRules.add(((ExprNode) node).getExpression());
-            } else {
-                //记录使整体匹配失败的叶节点
-                falseRules.add(((ExprNode) node).getExpression());
-            }
-        }
-        if (node instanceof OrNode && succeed) {
+        if (isExprNode) {
+            //记录影响最终结果的叶子节点
+            (succeed ? trueRules : falseRules).add(((ExprNode) node).getExpression());
+        } else if (node instanceof OrNode && succeed) {
             //对于or节点,如果匹配成功,则移除fail的叶节点
             falseRules = falseRules.subList(0, falseSize);
         }

@@ -1,6 +1,9 @@
 package com.skyfalling.mousika.eval;
 
 import com.skyfalling.mousika.engine.RuleEngine;
+import com.skyfalling.mousika.eval.listener.ListenerProvider;
+import com.skyfalling.mousika.eval.listener.RuleEvent;
+import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.expr.DefaultNodeVisitor;
 import lombok.Getter;
@@ -68,7 +71,9 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
      * @param ruleId 规则ID
      */
     private EvalResult doEval(String ruleId) {
-        return new EvalResult(ruleEngine.evalRule(ruleId, data, this));
+        EvalResult result = new EvalResult(ruleEngine.evalRule(ruleId, data, this));
+        ListenerProvider.DEFAULT.onEval(new RuleEvent(EventType.PARSE, ruleId, result));
+        return result;
     }
 
 
