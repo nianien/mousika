@@ -94,13 +94,7 @@ public class RuleNodeSerializer extends BeanSerializerBase {
     @Override
     protected void serializeFields(Object bean, JsonGenerator gen, SerializerProvider provider) throws IOException {
         if (bean instanceof RuleNode) {
-            String type = classAsType.computeIfAbsent(bean.getClass(), clazz -> {
-                String name = clazz.getSimpleName();
-                if (name.endsWith("Node")) {
-                    name = name.substring(0, name.length() - 4);
-                }
-                return name.toUpperCase();
-            });
+            String type = classAsType.computeIfAbsent(bean.getClass(), clazz ->clazz.getSimpleName().toUpperCase().replaceAll("NODE", ""));
             gen.writeStringField("type", type);
         }
         super.serializeFields(bean, gen, provider);

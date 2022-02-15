@@ -6,6 +6,7 @@ import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.parser.NodeParser;
 import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.extern.slf4j.Slf4j;
 
