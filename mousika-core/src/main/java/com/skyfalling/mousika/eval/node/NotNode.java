@@ -11,6 +11,11 @@ public class NotNode implements RuleNode {
 
     private RuleNode node;
 
+    /**
+     * 对node取反
+     *
+     * @param node
+     */
     public NotNode(RuleNode node) {
         this.node = node;
     }
@@ -25,6 +30,7 @@ public class NotNode implements RuleNode {
         return new OrNode(this, o1);
     }
 
+    @Override
     public RuleNode not() {
         return node;
     }

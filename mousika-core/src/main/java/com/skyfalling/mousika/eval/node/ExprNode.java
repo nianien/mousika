@@ -2,7 +2,6 @@ package com.skyfalling.mousika.eval.node;
 
 import com.skyfalling.mousika.eval.RuleContext;
 import lombok.Getter;
-import com.skyfalling.mousika.eval.node.RuleNode;
 
 /**
  * 表达式规则
@@ -18,7 +17,7 @@ public class ExprNode implements RuleNode {
     private String expression;
 
     /**
-     * 规则叶子节点
+     * 表达式节点
      *
      * @param expression 规则表达式
      */
@@ -36,6 +35,7 @@ public class ExprNode implements RuleNode {
         return new OrNode(this, node);
     }
 
+    @Override
     public RuleNode not() {
         return new NotNode(this);
     }
