@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 规则集校验器<br/>
  * 给定一个规则集合以及校验对象,返回规则集合的校验结果
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 @Slf4j
 public class RuleChecker {

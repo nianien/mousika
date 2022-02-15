@@ -9,7 +9,7 @@ import lombok.Getter;
 /**
  * 节点包装类,用于业务逻辑扩展
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 @Getter
 public class NodeWrapper implements RuleNode {

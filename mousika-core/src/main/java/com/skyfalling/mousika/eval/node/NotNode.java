@@ -5,7 +5,7 @@ import com.skyfalling.mousika.eval.RuleContext;
 /**
  * 条件取反
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 public class NotNode implements RuleNode {
 

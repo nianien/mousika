@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.define;
 
 /**
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  * Created on 2021-11-05
  */
 

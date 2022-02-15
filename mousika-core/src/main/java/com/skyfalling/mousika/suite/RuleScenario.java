@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 规则场景
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 @Data
 @AllArgsConstructor

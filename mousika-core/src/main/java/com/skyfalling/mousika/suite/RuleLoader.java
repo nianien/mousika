@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 /**
  * 规则加载接口定义
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 public interface RuleLoader extends Supplier<RuleSuite> {
 

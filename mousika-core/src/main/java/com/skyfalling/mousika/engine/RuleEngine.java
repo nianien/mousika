@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 规则引擎
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 @Slf4j
 public class RuleEngine {

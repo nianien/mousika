@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * 规则上下文默认实现
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 @Slf4j
 @Getter

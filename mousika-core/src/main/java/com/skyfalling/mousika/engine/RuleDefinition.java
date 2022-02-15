@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 规则定义
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 @Data
 @AllArgsConstructor

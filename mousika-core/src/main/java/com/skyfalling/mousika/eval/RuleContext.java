@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 规则上下文接口定义
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 public interface RuleContext extends NodeVisitor {
 

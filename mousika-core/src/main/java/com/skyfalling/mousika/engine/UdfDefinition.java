@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * UDF定义
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 @Data
 @AllArgsConstructor

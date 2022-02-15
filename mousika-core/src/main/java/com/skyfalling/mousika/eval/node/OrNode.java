@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 条件或
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author liyifei 
  */
 public class OrNode implements RuleNode {
 
