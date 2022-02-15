@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.SneakyThrows;
 
 /**
@@ -36,7 +35,6 @@ public class JsonUtils {
         objectMapper.setSerializerFactory(
                 objectMapper.getSerializerFactory().withSerializerModifier(new RuleNodeSerializerModifier())
         );
-//        objectMapper.registerModule(new SimpleModule().addSerializer(new NodeWrapperSerializer()));
     }
 
     @SneakyThrows
