@@ -34,6 +34,9 @@ public class RuleEvent {
      * 枚举类型
      */
     public enum EventType {
-        PARSE, EVAL
+        PARSE_SUCCEED,
+        PARSE_FAIL,
+        EVAL_SUCCEED,
+        EVAL_FAIL,
     }
 }

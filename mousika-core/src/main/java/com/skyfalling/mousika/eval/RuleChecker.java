@@ -7,6 +7,7 @@ import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeParser;
+import com.skyfalling.mousika.exception.RuleParseException;
 import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 规则集校验器<br/>
  * 给定一个规则集合以及校验对象,返回规则集合的校验结果
  *
- * @author liyifei 
+ * @author liyifei
  */
 @Slf4j
 public class RuleChecker {
@@ -108,9 +109,15 @@ public class RuleChecker {
      * @return
      */
     private static RuleNode doParse(String ruleExpr) {
-        RuleNode ruleNode = NodeParser.parse(ruleExpr);
-        ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.EVAL, ruleExpr, ruleNode));
-        return ruleNode;
+        try {
+            RuleNode ruleNode = NodeParser.parse(ruleExpr);
+            ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_SUCCEED, ruleExpr, ruleNode));
+            return ruleNode;
+        } catch (Exception e) {
+            ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_FAIL, ruleExpr, e));
+            throw new RuleParseException(ruleExpr, "rule parse failed:" + ruleExpr, e);
+        }
+
     }
 
 }

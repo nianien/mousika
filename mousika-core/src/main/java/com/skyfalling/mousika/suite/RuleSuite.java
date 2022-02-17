@@ -1,7 +1,8 @@
 package com.skyfalling.mousika.suite;
 
-import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.eval.ActionResult;
+import com.skyfalling.mousika.eval.RuleChecker;
+import com.skyfalling.mousika.exception.RuleEvalException;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -43,11 +44,18 @@ public class RuleSuite {
             throw new RuleEvalException(scenarioId, "scenario not found:" + scenarioId);
         }
         RuleScenario scenario = scenarios.get(scenarioId);
-        ActionResult actionResult = this.ruleChecker.check(scenario.getRuleActions(), data);
-        if(!actionResult.isHasResult()){
-            //no suitable rule-set
-            throw new RuleEvalException(scenario.getId(), "not matched rules for scenario:" + scenario.getId());
+        if (scenario == null) {
+            throw new RuleEvalException(scenarioId, "no scenario defined:" + scenarioId);
         }
-        return actionResult;
+        try {
+            ActionResult actionResult = this.ruleChecker.check(scenario.getRuleActions(), data);
+            if (!actionResult.isHasResult()) {
+                //no suitable rule-set
+                throw new RuleEvalException(scenarioId, "not suitable rules for scenario:" + scenario.getId());
+            }
+            return actionResult;
+        } catch (RuleEvalException e) {
+            throw new RuleEvalException(scenarioId, "scenario: " + scenarioId + " check failed, caused by rule: " + e.getRuleId() + " eval error!", e);
+        }
     }
 }
