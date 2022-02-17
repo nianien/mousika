@@ -4,11 +4,14 @@ import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.eval.json.JsonUtils;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.skyfalling.mousika.eval.action.RuleAction.action;
 
 public class MainTest {
 
@@ -17,6 +20,15 @@ public class MainTest {
         RuleNode ruleNode = RuleChecker.parse("!101&&!102");
         System.out.println(ruleNode);
         System.out.println(JsonUtils.toJson(ruleNode));
+
+        ExprPair pair = new ExprPair("101&&102", "103&&104");
+        action(pair.expr1, action(pair.exp2, action("true")));
+    }
+
+
+    @AllArgsConstructor
+    static class ExprPair {
+        String expr1, exp2;
     }
 
 

@@ -15,6 +15,9 @@ import com.skyfalling.mousika.eval.node.RuleNode;
 
 public class RuleAction implements Action {
 
+    public static final RuleAction TRUE_ACTION = action("true");
+    public static final RuleAction FALSE_ACTION = action("false");
+
     /**
      * 待匹配的规则
      */

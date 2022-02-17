@@ -88,22 +88,19 @@ public class RuleActionTest {
         RuleDefinition f4 = new RuleDefinition("104",
                 "var udf= Java.type('com.skyfalling.mousika.udf.AdultValidateUdf'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁");
 
-        RuleDefinition trueAction = new RuleDefinition("trueAction", "true", "开户通过");
-        RuleDefinition falseAction = new RuleDefinition("falseAction", "false", "开户拒绝");
-
         UdfDefinition udf2 = new UdfDefinition("isAdult", new AdultValidateUdf(18));
         UdfDefinition udf1 = new UdfDefinition("isAdmin", new SystemAdminUdf("system"));
         User root = new User("jack", 17);
 
         SimpleRuleLoader simpleRuleLoader = new SimpleRuleLoader(
-                Arrays.asList(c1, c2, f1, f2, f3, f4, trueAction, falseAction),
+                Arrays.asList(c1, c2, f1, f2, f3, f4),
                 Arrays.asList(udf1, udf2),
                 Arrays.asList(new RuleScenario("demo", Arrays.asList(
                                 action("c1",
-                                        action("!101&&!102", action("trueAction"), action("falseAction"))
+                                        action("!101&&!102", action("true"), action("false"))
                                 ),
                                 action("c2",
-                                        action("!103&&104", action("trueAction"), action("falseAction")
+                                        action("!103&&104", action("true"), action("false")
                                         )
                                 ))
                         )

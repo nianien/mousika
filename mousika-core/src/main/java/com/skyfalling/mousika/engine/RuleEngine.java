@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 规则引擎
  *
- * @author liyifei 
+ * @author liyifei
  */
 @Slf4j
 public class RuleEngine {
@@ -36,6 +36,12 @@ public class RuleEngine {
      */
     private Map<String, Object> udfs = new ConcurrentHashMap<>();
 
+
+    {
+        //添加默认规则定义
+        this.register(new RuleDefinition("true", "true", "通过"));
+        this.register(new RuleDefinition("false", "false", "拒绝"));
+    }
 
     /**
      * 注册规则
@@ -115,7 +121,6 @@ public class RuleEngine {
         CompiledScript compiledScript = compile(expression, false);
         return doEval(compiledScript, root, context);
     }
-
 
 
     /**
