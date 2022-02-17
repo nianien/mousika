@@ -2,6 +2,7 @@ package com.skyfalling.mousika.eval.parser;
 
 
 import com.skyfalling.mousika.eval.NodeWrapper;
+import com.skyfalling.mousika.eval.node.ActionNode;
 import com.skyfalling.mousika.eval.node.ExprNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
 
@@ -14,7 +15,7 @@ import java.util.function.Function;
 /**
  * 规则解析器，用于生成规则节点树
  *
- * @author liyifei 
+ * @author liyifei
  */
 public class NodeParser {
     private static final int TOK_WORD = 2;
@@ -38,7 +39,7 @@ public class NodeParser {
      * @return
      */
     public static RuleNode parse(String expression) {
-        return parse(expression, expr -> new NodeWrapper(new ExprNode(expr)));
+        return parse(expression, expr -> expr.equals("null") ? null : new NodeWrapper(new ExprNode(expr)));
     }
 
     /**
@@ -48,7 +49,7 @@ public class NodeParser {
      * @return
      */
     private static boolean isOpChar(char c) {
-        return "+-*/%<>=!^&|,(){}[]".indexOf(c) != -1;
+        return "+-*/%<>=!^&|,(){}[]?:".indexOf(c) != -1;
     }
 
     /**
@@ -148,7 +149,7 @@ public class NodeParser {
                 Operator left = os.isEmpty() ? null : os.peek();
                 //ordinal越小优先级越高
                 while (left != null && Operator.isPrecede(right, left) < 0) {
-                    es.push(doOperate(left, es));
+                    es.push(doOperate(left, es, os));
                     os.pop();
                     left = os.isEmpty() ? null : os.peek();
                 }
@@ -176,7 +177,7 @@ public class NodeParser {
             if (op == Operator.PAREN_OPEN || op == Operator.PAREN_CLOSE) {
                 return null; // Bad paren
             }
-            RuleNode e = doOperate(op, es);
+            RuleNode e = doOperate(op, es, os);
             if (e == null) {
                 return null;
             }
@@ -193,23 +194,31 @@ public class NodeParser {
      * 节点运算
      *
      * @param op
-     * @param stack
+     * @param es
+     * @param os
      * @return
      */
-    private static RuleNode doOperate(Operator op, Stack<RuleNode> stack) {
+    private static RuleNode doOperate(Operator op, Stack<RuleNode> es, Stack<Operator> os) {
         try {
-            RuleNode b = stack.pop();
-            RuleNode a = null;
-            if (!op.isUnary()) {
-                a = stack.pop();
+            RuleNode b = es.pop();
+            RuleNode a2 = null;
+            RuleNode a1 = null;
+            if (op.getArgNums() > 1) {
+                a2 = es.pop();
+            }
+            if (op.getArgNums() > 2) {
+                a1 = es.pop();
             }
             switch (op) {
                 case LOGICAL_AND:
-                    return a.and(b);
+                    return a2.and(b);
                 case LOGICAL_OR:
-                    return a.or(b);
+                    return a2.or(b);
                 case UNARY_LOGICAL_NOT:
                     return b.not();
+                case COLON:
+                    os.pop();
+                    return new ActionNode(a1, a2, b);
                 default:
                     //Unsupported Operator
                     throw new UnsupportedOperationException("Unsupported operator:" + op);

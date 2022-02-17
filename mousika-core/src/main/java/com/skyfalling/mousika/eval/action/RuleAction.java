@@ -5,6 +5,7 @@ import com.skyfalling.mousika.eval.EvalResult;
 import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.expr.NodeVisitor.OpFlag;
 
 /**
  * 根据条件匹配执行相应业务逻辑
@@ -14,9 +15,6 @@ import com.skyfalling.mousika.eval.node.RuleNode;
  */
 
 public class RuleAction implements Action {
-
-    public static final RuleAction TRUE_ACTION = action("true");
-    public static final RuleAction FALSE_ACTION = action("false");
 
     /**
      * 待匹配的规则
@@ -33,6 +31,14 @@ public class RuleAction implements Action {
 
 
     /**
+     * @param ruleNode 规则节点
+     */
+    public RuleAction(RuleNode ruleNode) {
+        this(ruleNode, null, null);
+    }
+
+
+    /**
      * @param ruleNode    规则节点
      * @param trueAction  规则匹配时动作
      * @param falseAction 规则不匹配时动作
@@ -42,7 +48,6 @@ public class RuleAction implements Action {
         this.trueAction = trueAction;
         this.falseAction = falseAction;
     }
-
 
     public static RuleAction action(String ruleExpr) {
         return action(ruleExpr, null, null);
@@ -62,7 +67,7 @@ public class RuleAction implements Action {
         EvalResult evalResult = context.visit(ruleNode);
         boolean matched = evalResult.isMatched();
         //判断下一步action, 如果trueAction&falseAction都为空,则默认action为返回评估结果
-        int flag = (matched && trueAction == null && falseAction != null || !matched && falseAction == null && trueAction != null) ? -1 : matched ? 1 : 0;
+        OpFlag flag = (matched && trueAction == null && falseAction != null || !matched && falseAction == null && trueAction != null) ? OpFlag.DEFAULT : matched ? OpFlag.SUCCEED : OpFlag.FAIL;
         context.reset(flag);
         //如果trueAction&falseAction都为空,则默认action为评估结果
         if (trueAction == null && falseAction == null) {

@@ -23,9 +23,15 @@ public interface NodeVisitor {
     /**
      * 重置访问节点,用于多次节点访问的场景
      *
-     * @param flag 0保留失败节点, 1保留成功节点, -1不保留节点
+     * @param flag
      */
-    void reset(int flag);
+    void reset(OpFlag flag);
 
 
+    /**
+     * 重置操作标记
+     */
+    enum OpFlag {
+        DEFAULT, SUCCEED, FAIL, FINISH
+    }
 }

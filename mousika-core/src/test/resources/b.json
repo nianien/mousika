@@ -1,0 +1,39 @@
+{
+  "ruleNode": {
+    "type": "EXPR",
+    "expression": "c1"
+  },
+  "trueAction": {
+    "ruleNode": {
+      "type": "AND",
+      "nodes": [
+        {
+          "type": "NOT",
+          "node": {
+            "type": "EXPR",
+            "expression": "101"
+          }
+        },
+        {
+          "type": "NOT",
+          "node": {
+            "type": "EXPR",
+            "expression": "102"
+          }
+        }
+      ]
+    },
+    "trueAction": {
+      "ruleNode": {
+        "type": "EXPR",
+        "expression": "true"
+      }
+    },
+    "falseAction": {
+      "ruleNode": {
+        "type": "EXPR",
+        "expression": "false"
+      }
+    }
+  }
+}

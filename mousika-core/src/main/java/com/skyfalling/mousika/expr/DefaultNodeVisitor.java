@@ -83,11 +83,17 @@ public class DefaultNodeVisitor implements NodeVisitor {
     }
 
     @Override
-    public void reset(int flag) {
-        if (flag == 1) {
-            this.effectiveRules.addAll(trueRules);
-        } else if (flag == 0) {
-            this.effectiveRules.addAll(falseRules);
+    public void reset(OpFlag flag) {
+        switch (flag){
+            case SUCCEED:
+                this.effectiveRules.addAll(trueRules);
+                break;
+            case FAIL:
+                this.effectiveRules.addAll(falseRules);
+                break;
+            case FINISH:
+                this.effectiveRules.clear();
+                break;
         }
         this.trueRules.clear();
         this.falseRules.clear();

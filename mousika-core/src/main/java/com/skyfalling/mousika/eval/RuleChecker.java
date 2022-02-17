@@ -9,6 +9,7 @@ import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeParser;
 import com.skyfalling.mousika.exception.RuleParseException;
 import com.skyfalling.mousika.expr.NodeVisitor;
+import com.skyfalling.mousika.expr.NodeVisitor.OpFlag;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -56,6 +57,7 @@ public class RuleChecker {
         RuleContext ruleContext = new RuleContextImpl(ruleEngine, data);
         for (RuleAction ruleAction : actions) {
             ActionResult actionResult = ruleAction.execute(ruleContext);
+            ruleContext.reset(OpFlag.DEFAULT);
             if (actionResult.isHasResult()) {
                 return actionResult;
             }
@@ -87,7 +89,7 @@ public class RuleChecker {
         RuleNode node = parse(ruleExpr);
         boolean matched = node.matches(ruleContext);
         if (ruleContext instanceof NodeVisitor) {
-            ruleContext.reset(matched ? 1 : 0);
+            ruleContext.reset(matched ? OpFlag.SUCCEED : OpFlag.FAIL);
         }
         return new ActionResult(matched, ruleContext.getEvalResults());
     }

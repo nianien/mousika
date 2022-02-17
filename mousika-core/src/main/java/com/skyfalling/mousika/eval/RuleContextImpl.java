@@ -111,7 +111,7 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     }
 
     @Override
-    public void reset(int flag) {
+    public void reset(OpFlag flag) {
         visitor.reset(flag);
     }
 }

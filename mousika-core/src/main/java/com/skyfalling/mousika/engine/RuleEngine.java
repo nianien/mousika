@@ -41,6 +41,7 @@ public class RuleEngine {
         //添加默认规则定义
         this.register(new RuleDefinition("true", "true", "通过"));
         this.register(new RuleDefinition("false", "false", "拒绝"));
+        this.register(new RuleDefinition("null", "null", "NOP"));
     }
 
     /**

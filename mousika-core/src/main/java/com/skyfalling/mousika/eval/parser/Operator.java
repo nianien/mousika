@@ -2,7 +2,8 @@ package com.skyfalling.mousika.eval.parser;
 
 /**
  * 运算符枚举定义
- * @author liyifei 
+ *
+ * @author liyifei
  */
 public enum Operator {
     PAREN_OPEN("("),
@@ -34,7 +35,8 @@ public enum Operator {
 
     LOGICAL_AND("&&"),
     LOGICAL_OR("||"),
-
+    COLON(":", 3, true),
+    QUESTION_MARK("?", 0, false),
     ASSIGN("=", 2, false),
     COMMA(",", 2, false),
     PAREN_CLOSE(")");
@@ -54,10 +56,9 @@ public enum Operator {
     }
 
 
-    public boolean isUnary() {
-        return argNums == 1;
+    public int getArgNums() {
+        return argNums;
     }
-
 
     /**
      * 比较运算符优先级
@@ -77,6 +78,15 @@ public enum Operator {
         }
         //右括号")"优先级最低
         if (right == PAREN_CLOSE) {
+            return -1;
+        }
+        //三元运算符优先级比较
+        if (left == Operator.QUESTION_MARK && right == QUESTION_MARK ||
+                left == Operator.QUESTION_MARK && right == COLON ||
+                left == Operator.COLON && right == QUESTION_MARK) {
+            return 1;
+        }
+        if (left == Operator.COLON && right == COLON) {
             return -1;
         }
         //优先级相等判断计算方向
