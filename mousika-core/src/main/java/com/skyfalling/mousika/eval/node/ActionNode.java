@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
+ * 规则操作节点, 不支持逻辑运算符
  * Created on 2022/2/17
  *
  * @author liyifei
