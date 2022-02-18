@@ -42,9 +42,6 @@ public class RuleSuite {
      * @param scenarioId 场景名称
      */
     public ActionResult checkScenario(String scenarioId, Object data) {
-        if (!scenarios.containsKey(scenarioId)) {
-            throw new RuleEvalException(scenarioId, "scenario not found:" + scenarioId);
-        }
         RuleScenario scenario = scenarios.get(scenarioId);
         if (scenario == null) {
             throw new RuleEvalException(scenarioId, "no scenario defined:" + scenarioId);
