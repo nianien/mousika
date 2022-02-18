@@ -39,7 +39,7 @@ public interface NodeVisitor {
         /**
          * 标记失败
          */
-        FAIL,
+        FAILED,
         /**
          * 标记无效
          */

@@ -67,7 +67,7 @@ public class ActionNode implements Node<ActionResult> {
                 return (ActionResult) evalResult.getResult();
             }
             //保留评估成功或失败节点
-            context.mark(matched ? OpFlag.SUCCESS : OpFlag.FAIL);
+            context.mark(matched ? OpFlag.SUCCESS : OpFlag.FAILED);
             return new ActionResult(evalResult.getResult(), context.getEvalResults());
         }
         //规则通过,执行trueAction
@@ -79,7 +79,7 @@ public class ActionNode implements Node<ActionResult> {
         //规则未通过,执行falseAction
         if (!matched && falseAction != null) {
             //保留评估失败节点
-            context.mark(OpFlag.FAIL);
+            context.mark(OpFlag.FAILED);
             return falseAction.doEval(context);
         }
         //没有对应的action,评估节点无效

@@ -88,7 +88,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
             case SUCCESS:
                 this.effectiveRules.addAll(trueRules);
                 break;
-            case FAIL:
+            case FAILED:
                 this.effectiveRules.addAll(falseRules);
                 break;
             case FINISH:
