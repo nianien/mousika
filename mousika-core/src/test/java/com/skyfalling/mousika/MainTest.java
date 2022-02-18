@@ -31,10 +31,10 @@ public class MainTest {
 //        boolean res = b1 ? b2 : b3 ? b4 ? b5 : b6 : b7;
 //        System.out.println(JsonUtils.toJson(NodeParser.parse("1?2?3:4:5")));
 
-        RuleNode ruleNode = build("c1?101?true:false:null");
-        System.out.println(JsonUtils.toJson(ruleNode));
-        System.out.println(JsonUtils.toJson(build("1?2:3?4?5:6:7")));
-        System.out.println(JsonUtils.toJson(build("1&&2")));
+        RuleNode ruleNode = build("c1?101?true:false:nop");
+        System.out.println(ruleNode);
+        System.out.println(build("1?2:3?4?5:6:7"));
+        System.out.println(build("1&&2"));
     }
 
 

@@ -11,6 +11,7 @@ import java.util.Stack;
 import java.util.function.Function;
 
 import static com.skyfalling.mousika.eval.ActionBuilder.build;
+import static com.skyfalling.mousika.eval.parser.Operator.*;
 
 /**
  * 规则解析器，用于生成规则节点树
@@ -34,15 +35,6 @@ public class NodeParser {
     }
 
 
-    /**
-     * 运算符字符
-     *
-     * @param c
-     * @return
-     */
-    private static boolean isOpChar(char c) {
-        return "+-*/%<>=!^&|,(){}[]?:".indexOf(c) != -1;
-    }
 
     /**
      * 解析表达式
@@ -95,7 +87,7 @@ public class NodeParser {
                 } else {
                     String lastOp = null;
                     while (isOpChar(c) && !Character.isWhitespace(c) && c != '(' && c != ')' && pos < input.length()) {
-                        if (Operator.of(tok + input.charAt(pos)) != null) {
+                        if (of(tok + input.charAt(pos)) != null) {
                             tok = tok + input.charAt(pos);
                             lastOp = tok;
                         } else if (lastOp == null) {
@@ -136,11 +128,11 @@ public class NodeParser {
         Stack<Operator> os = new Stack<>();
         // 扫描结果
         for (String token : tokens) {
-            Operator right = Operator.of(token);
+            Operator right = of(token);
             if (right != null) {
                 Operator left = os.isEmpty() ? null : os.peek();
                 //ordinal越小优先级越高
-                while (left != null && Operator.isPrecede(right, left) < 0) {
+                while (left != null && isPrecede(right, left) < 0) {
                     es.push(doOperate(left, es, os));
                     os.pop();
                     left = os.isEmpty() ? null : os.peek();
@@ -150,12 +142,12 @@ public class NodeParser {
                     throw new IllegalArgumentException("Unmatched parenthesis");
                 }
                 //匹配括号
-                if (left != null && Operator.isPrecede(right, left) == 0) {
+                if (left != null && isPrecede(right, left) == 0) {
                     os.pop();
                     continue;
                 }
                 //其他情况，操作符入栈
-                if (left == null || Operator.isPrecede(right, left) > 0) {
+                if (left == null || isPrecede(right, left) > 0) {
                     os.push(right);
                 } else {
                     os.pop();

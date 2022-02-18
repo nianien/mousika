@@ -13,6 +13,11 @@ public enum NopNode implements RuleNode {
 
     @Override
     public Object eval(RuleContext context) {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        return "nop";
     }
 }

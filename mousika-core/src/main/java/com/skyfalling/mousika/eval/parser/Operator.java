@@ -96,6 +96,12 @@ public enum Operator {
         return right.ordinal() < left.ordinal() ? 1 : -1;
     }
 
+    /**
+     * 获取操作符
+     *
+     * @param expr
+     * @return
+     */
     public static Operator of(String expr) {
         for (Operator op : values()) {
             if (op.expr.equals(expr)) {
@@ -105,5 +111,15 @@ public enum Operator {
         return null;
     }
 
+
+    /**
+     * 运算符字符
+     *
+     * @param c
+     * @return
+     */
+    public static boolean isOpChar(char c) {
+        return "+-*/%<>=!^&|,(){}[]?:".indexOf(c) != -1;
+    }
 
 }

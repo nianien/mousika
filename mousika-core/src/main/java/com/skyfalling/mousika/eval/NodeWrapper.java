@@ -1,15 +1,15 @@
 package com.skyfalling.mousika.eval;
 
 import com.skyfalling.mousika.eval.node.AndNode;
+import com.skyfalling.mousika.eval.node.BoolNode;
 import com.skyfalling.mousika.eval.node.NotNode;
 import com.skyfalling.mousika.eval.node.OrNode;
-import com.skyfalling.mousika.eval.node.BoolNode;
 import lombok.Getter;
 
 /**
  * 节点包装类,用于业务逻辑扩展
  *
- * @author liyifei 
+ * @author liyifei
  */
 @Getter
 public class NodeWrapper implements BoolNode {
@@ -62,4 +62,8 @@ public class NodeWrapper implements BoolNode {
     }
 
 
+    @Override
+    public String toString() {
+        return originNode.toString();
+    }
 }

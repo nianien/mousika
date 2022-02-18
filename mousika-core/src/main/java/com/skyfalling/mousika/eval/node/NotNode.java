@@ -5,7 +5,7 @@ import com.skyfalling.mousika.eval.RuleContext;
 /**
  * 条件取反
  *
- * @author liyifei 
+ * @author liyifei
  */
 public class NotNode implements BoolNode {
 
@@ -39,5 +39,14 @@ public class NotNode implements BoolNode {
     @Override
     public boolean matches(RuleContext ruleContext) {
         return !node.matches(ruleContext);
+    }
+
+    @Override
+    public String toString() {
+        String s = node.toString();
+        if (s.startsWith("(") && s.endsWith(")")) {
+            return "!" + s;
+        }
+        return "!" + "(" + s + ")";
     }
 }

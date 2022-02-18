@@ -5,11 +5,13 @@ import com.skyfalling.mousika.eval.RuleContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 条件与
  *
- * @author liyifei 
+ * @author liyifei
  */
 public class AndNode implements BoolNode {
 
@@ -48,5 +50,18 @@ public class AndNode implements BoolNode {
             }
         }
         return true;
+    }
+
+
+    @Override
+    public String toString() {
+        return String.join("&&", nodes.stream()
+                .map(Objects::toString)
+                .map(s -> {
+                    if (s.startsWith("(") && s.endsWith(")")) {
+                        return s;
+                    }
+                    return "(" + s + ")";
+                }).collect(Collectors.toList()));
     }
 }

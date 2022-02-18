@@ -85,4 +85,13 @@ public class ActionNode implements RuleNode<ActionResult> {
     }
 
 
+    @Override
+    public String toString() {
+        if (trueAction == null && falseAction == null) {
+            return condition.toString();
+        }
+        return condition.toString()
+                + " ? " + (trueAction == null ? "null" : trueAction.toString())
+                + " : " + (falseAction == null ? "null" : falseAction.toString());
+    }
 }

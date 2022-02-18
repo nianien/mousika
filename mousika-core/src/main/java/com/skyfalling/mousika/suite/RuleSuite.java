@@ -4,6 +4,7 @@ import com.skyfalling.mousika.eval.ActionResult;
 import com.skyfalling.mousika.eval.NaResult;
 import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.exception.RuleEvalException;
+import com.skyfalling.mousika.exception.RuleScenarioException;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class RuleSuite {
             }
             return actionResult;
         } catch (RuleEvalException e) {
-            throw new RuleEvalException(scenarioId, "scenario: " + scenarioId + " check failed, caused by rule: " + e.getRuleId() + " eval error!", e);
+            throw new RuleScenarioException(scenarioId, "scenario: " + scenarioId + " check failed, caused by rule: " + e.getRuleId() + " eval error!", e);
         }
     }
 }

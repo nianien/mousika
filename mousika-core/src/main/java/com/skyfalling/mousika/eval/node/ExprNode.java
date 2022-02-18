@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 表达式规则
  *
- * @author liyifei 
+ * @author liyifei
  */
 @Getter
 public class ExprNode implements BoolNode {
@@ -43,5 +43,10 @@ public class ExprNode implements BoolNode {
     @Override
     public boolean matches(RuleContext context) {
         return context.eval(expression).isMatched();
+    }
+
+    @Override
+    public String toString() {
+        return expression;
     }
 }
