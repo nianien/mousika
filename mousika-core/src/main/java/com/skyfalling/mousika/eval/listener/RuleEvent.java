@@ -1,6 +1,5 @@
 package com.skyfalling.mousika.eval.listener;
 
-import com.skyfalling.mousika.eval.json.JsonUtils;
 import lombok.*;
 
 /**
@@ -21,13 +20,6 @@ public class RuleEvent {
     private String ruleExpr;
 
     private Object data;
-
-
-    @SneakyThrows
-    @Override
-    public String toString() {
-        return JsonUtils.toJson(this);
-    }
 
 
     /**
