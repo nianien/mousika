@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.expr;
 
 import com.skyfalling.mousika.eval.EvalResult;
-import com.skyfalling.mousika.eval.node.BoolNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
 
 /**
  * 规则节点访问接口
@@ -17,7 +17,7 @@ public interface NodeVisitor {
      * @param node
      * @return
      */
-    EvalResult visit(BoolNode node);
+    EvalResult visit(RuleNode node);
 
 
     /**

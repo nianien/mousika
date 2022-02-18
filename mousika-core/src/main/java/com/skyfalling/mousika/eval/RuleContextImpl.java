@@ -4,7 +4,7 @@ import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
-import com.skyfalling.mousika.eval.node.BoolNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.exception.RuleEvalException;
 import com.skyfalling.mousika.expr.DefaultNodeVisitor;
 import lombok.Getter;
@@ -106,7 +106,7 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
 
 
     @Override
-    public EvalResult visit(BoolNode node) {
+    public EvalResult visit(RuleNode node) {
         return visitor.visit(node);
     }
 

@@ -3,17 +3,46 @@ package com.skyfalling.mousika.eval.node;
 import com.skyfalling.mousika.eval.RuleContext;
 
 /**
- * 条件节点定义
+ * 规则节点定义
  *
  * @author liyifei
  */
-public interface RuleNode<T> {
-
+public interface RuleNode extends Node {
 
     /**
-     * 规则计算
+     * 条件与
+     *
+     * @param node
+     * @return
+     */
+    RuleNode and(RuleNode node);
+
+    /**
+     * 条件或
+     *
+     * @param node
+     * @return
+     */
+    RuleNode or(RuleNode node);
+
+    /**
+     * 条件非
      *
      * @return
      */
-    T eval(RuleContext context);
+    RuleNode not();
+
+    /**
+     * 评估规则是否匹配
+     *
+     * @return
+     */
+    boolean matches(RuleContext context);
+
+
+    @Override
+    default Object eval(RuleContext context) {
+        return matches(context);
+    }
+
 }

@@ -1,7 +1,6 @@
 package com.skyfalling.mousika;
 
 import com.skyfalling.mousika.engine.RuleEngine;
-import com.skyfalling.mousika.eval.node.RuleNode;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.Test;

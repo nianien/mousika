@@ -7,31 +7,31 @@ import com.skyfalling.mousika.eval.RuleContext;
  *
  * @author liyifei
  */
-public class NotNode implements BoolNode {
+public class NotNode implements RuleNode {
 
-    private BoolNode node;
+    private RuleNode node;
 
     /**
      * 对node取反
      *
      * @param node
      */
-    public NotNode(BoolNode node) {
+    public NotNode(RuleNode node) {
         this.node = node;
     }
 
     @Override
-    public BoolNode and(BoolNode o1) {
+    public RuleNode and(RuleNode o1) {
         return new AndNode(this, o1);
     }
 
     @Override
-    public BoolNode or(BoolNode o1) {
+    public RuleNode or(RuleNode o1) {
         return new OrNode(this, o1);
     }
 
     @Override
-    public BoolNode not() {
+    public RuleNode not() {
         return node;
     }
 

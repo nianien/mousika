@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.eval;
 
 import com.skyfalling.mousika.eval.node.AndNode;
-import com.skyfalling.mousika.eval.node.BoolNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.node.NotNode;
 import com.skyfalling.mousika.eval.node.OrNode;
 import lombok.Getter;
@@ -12,25 +12,25 @@ import lombok.Getter;
  * @author liyifei
  */
 @Getter
-public class NodeWrapper implements BoolNode {
-    private BoolNode originNode;
+public class NodeWrapper implements RuleNode {
+    private RuleNode originNode;
 
-    public NodeWrapper(BoolNode originNode) {
+    public NodeWrapper(RuleNode originNode) {
         this.originNode = originNode;
     }
 
     @Override
-    public BoolNode and(BoolNode node) {
+    public RuleNode and(RuleNode node) {
         return wrap(new AndNode(this, node));
     }
 
     @Override
-    public BoolNode or(BoolNode node) {
+    public RuleNode or(RuleNode node) {
         return wrap(new OrNode(this, node));
     }
 
     @Override
-    public BoolNode not() {
+    public RuleNode not() {
         return wrap(new NotNode(this));
     }
 
@@ -44,7 +44,7 @@ public class NodeWrapper implements BoolNode {
     /**
      * 包装节点
      */
-    private NodeWrapper wrap(BoolNode node) {
+    private NodeWrapper wrap(RuleNode node) {
         if (node instanceof NodeWrapper) {
             return (NodeWrapper) node;
         }
@@ -57,7 +57,7 @@ public class NodeWrapper implements BoolNode {
      *
      * @return
      */
-    public BoolNode unwrap() {
+    public RuleNode unwrap() {
         return this.originNode;
     }
 

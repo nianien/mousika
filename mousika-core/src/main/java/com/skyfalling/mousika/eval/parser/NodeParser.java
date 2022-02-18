@@ -1,8 +1,8 @@
 package com.skyfalling.mousika.eval.parser;
 
 
-import com.skyfalling.mousika.eval.node.BoolNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.node.Node;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -30,7 +30,7 @@ public class NodeParser {
      * @param generator
      * @return
      */
-    public static RuleNode parse(String expression, Function<String, RuleNode> generator) {
+    public static Node parse(String expression, Function<String, Node> generator) {
         return doParse(tokenize(expression), generator);
     }
 
@@ -121,9 +121,9 @@ public class NodeParser {
      * @param generator 节点生成器
      * @return
      */
-    private static RuleNode doParse(List<String> tokens, Function<String, RuleNode> generator) {
+    private static Node doParse(List<String> tokens, Function<String, Node> generator) {
         // 变量栈
-        Stack<RuleNode> es = new Stack<>();
+        Stack<Node> es = new Stack<>();
         // 操作符栈
         Stack<Operator> os = new Stack<>();
         // 扫描结果
@@ -161,7 +161,7 @@ public class NodeParser {
             if (op == Operator.PAREN_OPEN || op == Operator.PAREN_CLOSE) {
                 return null; // Bad paren
             }
-            RuleNode e = doOperate(op, es, os);
+            Node e = doOperate(op, es, os);
             if (e == null) {
                 return null;
             }
@@ -182,11 +182,11 @@ public class NodeParser {
      * @param os
      * @return
      */
-    private static RuleNode doOperate(Operator op, Stack<RuleNode> es, Stack<Operator> os) {
+    private static Node doOperate(Operator op, Stack<Node> es, Stack<Operator> os) {
         try {
-            RuleNode b = es.pop();
-            RuleNode a2 = null;
-            RuleNode a1 = null;
+            Node b = es.pop();
+            Node a2 = null;
+            Node a1 = null;
             if (op.getArgNums() > 1) {
                 a2 = es.pop();
             }
@@ -195,11 +195,11 @@ public class NodeParser {
             }
             switch (op) {
                 case LOGICAL_AND:
-                    return ((BoolNode) a2).and((BoolNode) b);
+                    return ((RuleNode) a2).and((RuleNode) b);
                 case LOGICAL_OR:
-                    return ((BoolNode) a2).or((BoolNode) b);
+                    return ((RuleNode) a2).or((RuleNode) b);
                 case UNARY_LOGICAL_NOT:
-                    return ((BoolNode) b).not();
+                    return ((RuleNode) b).not();
                 case COLON:
                     os.pop();
                     return build(a1, a2, b);

@@ -13,38 +13,38 @@ import java.util.stream.Collectors;
  *
  * @author liyifei
  */
-public class OrNode implements BoolNode {
+public class OrNode implements RuleNode {
 
-    private List<BoolNode> nodes = new ArrayList<>();
+    private List<RuleNode> nodes = new ArrayList<>();
 
     /**
      * 多个节点条件取或
      *
      * @param nodes
      */
-    public OrNode(BoolNode... nodes) {
+    public OrNode(RuleNode... nodes) {
         this.nodes.addAll(Arrays.asList(nodes));
     }
 
     @Override
-    public BoolNode or(BoolNode node) {
+    public RuleNode or(RuleNode node) {
         this.nodes.add(node);
         return this;
     }
 
     @Override
-    public BoolNode and(BoolNode node) {
+    public RuleNode and(RuleNode node) {
         return new AndNode(this, node);
     }
 
     @Override
-    public BoolNode not() {
+    public RuleNode not() {
         return new NotNode(this);
     }
 
     @Override
     public boolean matches(RuleContext context) {
-        for (BoolNode node : nodes) {
+        for (RuleNode node : nodes) {
             if (node.matches(context)) {
                 return true;
             }

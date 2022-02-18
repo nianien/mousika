@@ -9,7 +9,7 @@ import lombok.Getter;
  * @author liyifei
  */
 @Getter
-public class ExprNode implements BoolNode {
+public class ExprNode implements RuleNode {
 
     /**
      * 规则表达式
@@ -26,17 +26,17 @@ public class ExprNode implements BoolNode {
     }
 
     @Override
-    public BoolNode and(BoolNode node) {
+    public RuleNode and(RuleNode node) {
         return new AndNode(this, node);
     }
 
     @Override
-    public BoolNode or(BoolNode node) {
+    public RuleNode or(RuleNode node) {
         return new OrNode(this, node);
     }
 
     @Override
-    public BoolNode not() {
+    public RuleNode not() {
         return new NotNode(this);
     }
 

@@ -6,7 +6,7 @@ import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.node.ExprNode;
 import com.skyfalling.mousika.eval.node.NotNode;
 import com.skyfalling.mousika.eval.node.OrNode;
-import com.skyfalling.mousika.eval.node.BoolNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
      * @return
      */
     @Override
-    public EvalResult visit(BoolNode node) {
+    public EvalResult visit(RuleNode node) {
         if (node instanceof NodeWrapper) {
             node = ((NodeWrapper) node).unwrap();
         }
@@ -107,7 +107,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
      * @param node
      * @return
      */
-    private boolean visitFlag(BoolNode node) {
+    private boolean visitFlag(RuleNode node) {
         boolean flag = visitFlag;
         if (node instanceof NotNode) {
             visitFlag = !visitFlag;

@@ -8,15 +8,15 @@ import com.skyfalling.mousika.expr.NodeVisitor.OpFlag;
 import lombok.Data;
 
 /**
- * 规则操作节点, 不支持逻辑运算符
+ * 动作节点定义
  * Created on 2022/2/17
  *
  * @author liyifei
  */
 @Data
-public class ActionNode implements RuleNode<ActionResult> {
+public class ActionNode implements Node<ActionResult> {
 
-    private BoolNode condition;
+    private RuleNode condition;
     private ActionNode trueAction;
     private ActionNode falseAction;
 
@@ -26,7 +26,7 @@ public class ActionNode implements RuleNode<ActionResult> {
      *
      * @param condition
      */
-    public ActionNode(BoolNode condition) {
+    public ActionNode(RuleNode condition) {
         this(condition, null, null);
     }
 
@@ -37,7 +37,7 @@ public class ActionNode implements RuleNode<ActionResult> {
      * @param trueAction
      * @param falseAction
      */
-    public ActionNode(BoolNode condition, ActionNode trueAction, ActionNode falseAction) {
+    public ActionNode(RuleNode condition, ActionNode trueAction, ActionNode falseAction) {
         this.condition = condition;
         this.trueAction = trueAction;
         this.falseAction = falseAction;

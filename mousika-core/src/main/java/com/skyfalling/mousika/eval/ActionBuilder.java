@@ -4,9 +4,9 @@ import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
 import com.skyfalling.mousika.eval.node.ActionNode;
-import com.skyfalling.mousika.eval.node.BoolNode;
-import com.skyfalling.mousika.eval.node.ExprNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.node.ExprNode;
+import com.skyfalling.mousika.eval.node.Node;
 import com.skyfalling.mousika.eval.parser.NodeParser;
 import com.skyfalling.mousika.exception.RuleParseException;
 
@@ -25,9 +25,9 @@ public class ActionBuilder {
     /**
      * 缓存规则集解析结果
      */
-    private static Map<String, RuleNode> nodeCache = new ConcurrentHashMap<>();
+    private static Map<String, Node> nodeCache = new ConcurrentHashMap<>();
 
-    private static Function<String, RuleNode> defaultGenerator = expr -> new NodeWrapper(new ExprNode(expr));
+    private static Function<String, Node> defaultGenerator = expr -> new NodeWrapper(new ExprNode(expr));
 
 
     /**
@@ -53,7 +53,7 @@ public class ActionBuilder {
      * @param lhs  trueAction节点
      * @return
      */
-    public static ActionNode build(String expr, RuleNode lhs) {
+    public static ActionNode build(String expr, Node lhs) {
         return build(parse(expr), lhs, null);
 
     }
@@ -76,7 +76,7 @@ public class ActionBuilder {
      * @param rhs  falseAction节点
      * @return
      */
-    public static ActionNode build(String expr, String lhs, RuleNode rhs) {
+    public static ActionNode build(String expr, String lhs, Node rhs) {
         return build(parse(expr), parse(lhs), rhs);
     }
 
@@ -86,7 +86,7 @@ public class ActionBuilder {
      * @param rhs  falseAction节点
      * @return
      */
-    public static ActionNode build(String expr, RuleNode lhs, String rhs) {
+    public static ActionNode build(String expr, Node lhs, String rhs) {
         return build(parse(expr), lhs, parse(rhs));
     }
 
@@ -96,7 +96,7 @@ public class ActionBuilder {
      * @param rhs  falseAction节点
      * @return
      */
-    public static ActionNode build(String expr, RuleNode lhs, RuleNode rhs) {
+    public static ActionNode build(String expr, Node lhs, Node rhs) {
         return build(parse(expr), lhs, rhs);
     }
 
@@ -106,7 +106,7 @@ public class ActionBuilder {
      * @param lhs  trueAction节点
      * @return
      */
-    public static ActionNode build(RuleNode expr, RuleNode lhs) {
+    public static ActionNode build(Node expr, Node lhs) {
         return build(expr, lhs, null);
     }
 
@@ -117,9 +117,9 @@ public class ActionBuilder {
      * @param rhs  falseAction节点
      * @return
      */
-    public static ActionNode build(RuleNode expr, RuleNode lhs, RuleNode rhs) {
-        if (expr instanceof BoolNode) {
-            return new ActionNode((BoolNode) expr, cast(lhs), cast(rhs));
+    public static ActionNode build(Node expr, Node lhs, Node rhs) {
+        if (expr instanceof RuleNode) {
+            return new ActionNode((RuleNode) expr, cast(lhs), cast(rhs));
         }
         throw new UnsupportedOperationException("condition node must be a BoolNode: " + expr);
     }
@@ -131,12 +131,12 @@ public class ActionBuilder {
      * @param expr
      * @return
      */
-    private static RuleNode parse(String expr) {
+    private static Node parse(String expr) {
         return nodeCache.computeIfAbsent(expr, ruleExpr -> {
             try {
-                RuleNode ruleNode = NodeParser.parse(ruleExpr, defaultGenerator);
-                ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_SUCCEED, ruleExpr, ruleNode));
-                return ruleNode;
+                Node node = NodeParser.parse(ruleExpr, defaultGenerator);
+                ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_SUCCEED, ruleExpr, node));
+                return node;
             } catch (Exception e) {
                 ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_FAIL, ruleExpr, e));
                 throw new RuleParseException(ruleExpr, "rule parse failed:" + ruleExpr, e);
@@ -150,15 +150,15 @@ public class ActionBuilder {
      * @param node
      * @return
      */
-    private static ActionNode cast(RuleNode node) {
+    private static ActionNode cast(Node node) {
         if (node == null) {
             return null;
         }
         if (node instanceof ActionNode) {
             return (ActionNode) node;
         }
-        if (node instanceof BoolNode) {
-            return new ActionNode((BoolNode) node);
+        if (node instanceof RuleNode) {
+            return new ActionNode((RuleNode) node);
         }
         throw new UnsupportedOperationException("node must be a ActionNode or BoolNode: " + node);
     }
