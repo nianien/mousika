@@ -1,6 +1,7 @@
 package com.skyfalling.mousika.suite;
 
 import com.skyfalling.mousika.eval.ActionResult;
+import com.skyfalling.mousika.eval.NaResult;
 import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.exception.RuleEvalException;
 import lombok.AllArgsConstructor;
@@ -49,7 +50,7 @@ public class RuleSuite {
         }
         try {
             ActionResult actionResult = this.ruleChecker.check(scenario.getRuleActions(), data);
-            if (!actionResult.isHasResult()) {
+            if (actionResult instanceof NaResult) {
                 //no suitable rule-set
                 throw new RuleEvalException(scenarioId, "not suitable rules for scenario:" + scenario.getId());
             }

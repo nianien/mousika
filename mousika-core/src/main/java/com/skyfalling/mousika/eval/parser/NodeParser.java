@@ -1,9 +1,7 @@
 package com.skyfalling.mousika.eval.parser;
 
 
-import com.skyfalling.mousika.eval.NodeWrapper;
-import com.skyfalling.mousika.eval.node.ActionNode;
-import com.skyfalling.mousika.eval.node.ExprNode;
+import com.skyfalling.mousika.eval.node.BoolNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
 
 import java.util.ArrayList;
@@ -11,6 +9,8 @@ import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
+
+import static com.skyfalling.mousika.eval.ActionBuilder.build;
 
 /**
  * 规则解析器，用于生成规则节点树
@@ -33,14 +33,6 @@ public class NodeParser {
         return doParse(tokenize(expression), generator);
     }
 
-
-    /**
-     * @param expression 规则集表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
-     * @return
-     */
-    public static RuleNode parse(String expression) {
-        return parse(expression, expr -> expr.equals("null") ? null : new NodeWrapper(new ExprNode(expr)));
-    }
 
     /**
      * 运算符字符
@@ -211,14 +203,14 @@ public class NodeParser {
             }
             switch (op) {
                 case LOGICAL_AND:
-                    return a2.and(b);
+                    return ((BoolNode) a2).and((BoolNode) b);
                 case LOGICAL_OR:
-                    return a2.or(b);
+                    return ((BoolNode) a2).or((BoolNode) b);
                 case UNARY_LOGICAL_NOT:
-                    return b.not();
+                    return ((BoolNode) b).not();
                 case COLON:
                     os.pop();
-                    return new ActionNode(a1, a2, b);
+                    return build(a1, a2, b);
                 default:
                     //Unsupported Operator
                     throw new UnsupportedOperationException("Unsupported operator:" + op);

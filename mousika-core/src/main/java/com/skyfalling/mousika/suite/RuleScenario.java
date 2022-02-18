@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.suite;
 
-import com.skyfalling.mousika.eval.action.RuleAction;
+import com.skyfalling.mousika.eval.node.ActionNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -22,7 +22,7 @@ public class RuleScenario {
     /**
      * 规则对列表
      */
-    private List<RuleAction> ruleActions;
+    private List<ActionNode> ruleActions;
 
 
 }

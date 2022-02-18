@@ -8,14 +8,11 @@ import com.skyfalling.mousika.eval.ActionResult;
 import com.skyfalling.mousika.eval.RuleChecker;
 import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.RuleContextImpl;
-import com.skyfalling.mousika.eval.action.RuleAction;
-import com.skyfalling.mousika.eval.json.JsonUtils;
 import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleListener;
 import com.skyfalling.mousika.eval.node.ActionNode;
-import com.skyfalling.mousika.eval.parser.NodeParser;
-import com.skyfalling.mousika.expr.NodeVisitor.OpFlag;
+import com.skyfalling.mousika.eval.ActionBuilder;
 import com.skyfalling.mousika.suite.RuleScenario;
 import com.skyfalling.mousika.suite.RuleSuite;
 import com.skyfalling.mousika.udf.*;
@@ -27,7 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.skyfalling.mousika.eval.action.RuleAction.action;
+import static com.skyfalling.mousika.eval.ActionBuilder.build;
+
 
 public class RuleActionTest {
 
@@ -72,19 +70,15 @@ public class RuleActionTest {
         }
         User root = new User("jack", 19);
         RuleContext context = new RuleContextImpl(ruleEngine, root);
-        RuleAction ruleAction = action("1&&2",
-                action("actionA"),
-                action("!3&&4", action("actionB"), action("actionC"))
-        );
+        ActionNode actionNode = build("1&&2?actionA:!3&&4?actionB:actionC");
+        ActionResult result = actionNode.eval(context);
+        System.out.println(result);
 
-        ActionNode actionNode = (ActionNode) NodeParser.parse("1&&2?actionA:!3&&4?actionB:actionC");
-        ActionResult result1 = ruleAction.execute(context);
-        System.out.println(result1);
-        context.reset(OpFlag.FINISH);
-        RuleAction ruleAction2 = actionNode.toAction();
-        ActionResult result2 = ruleAction2.execute(context);
+        ActionNode ruleAction = build("1&&2", "actionA",
+                build("!3&&4", "actionB", "actionC")
+        );
+        ActionResult result2 = actionNode.eval(context);
         System.out.println(result2);
-        assert result1.toString().equals(result2.toString());
     }
 
 
@@ -109,26 +103,18 @@ public class RuleActionTest {
                 Arrays.asList(udf1, udf2),
                 Arrays.asList(
                         new RuleScenario("sc1", Arrays.asList(
-                                action("c1",
-                                        action("!101&&!102", action("true"), action("false"))
+                                build("c1",
+                                        build("!101&&!102", "true", "false")
                                 ),
-                                action("c2",
-                                        action("!103&&104", action("true"), action("false")
-                                        )
+                                build("c2",
+                                        build("!103&&104", "true", "false")
                                 ))
                         ),
                         new RuleScenario("sc2", Arrays.asList("c1?!101&&!102?true:false:null", "c2?!103&&104?true:false:null").stream()
-                                .map(s -> NodeParser.parse(s))
-                                .map(a -> ((ActionNode) a).toAction())
+                                .map(ActionBuilder::build)
                                 .collect(Collectors.toList())
                         )
                 ));
-//        RuleAction ruleAction = ActionNode.class.cast(NodeParser.parse("c1?!101&&!102?true:false:null")).toAction();
-//        RuleAction ruleAction1= action("c1",
-//                action("!101&&!102", action("true"), action("false"))
-//        );
-//        System.out.println(JsonUtils.toJson(ruleAction));
-//        System.out.println(JsonUtils.toJson(ruleAction1));
         RuleSuite suite = simpleRuleLoader.get();
         System.out.println(suite.checkScenario("sc1", root));
         System.out.println(suite.checkScenario("sc2", root));
@@ -168,16 +154,12 @@ public class RuleActionTest {
         RuleDefinition f4 = new RuleDefinition("4", "false", "规则4");
         RuleDefinition f5 = new RuleDefinition("5", "true", "规则5");
         RuleDefinition f6 = new RuleDefinition("6", "true", "规则6");
-        RuleDefinition a1 = new RuleDefinition("trueAction", "true", "通过");
-        RuleDefinition a2 = new RuleDefinition("falseAction", "false", "未通过");
 
         SimpleRuleLoader simpleRuleLoader = new SimpleRuleLoader(
-                Arrays.asList(c1, f1, f2, f3, f4, f5, f6, a1, a2),
+                Arrays.asList(c1, f1, f2, f3, f4, f5, f6),
                 Arrays.asList(),
                 Arrays.asList(new RuleScenario("demo", Arrays.asList(
-                                action("c1",
-                                        action("(1||2)&&(3||!(4||(5&&6)))", action("trueAction"), action("falseAction"))
-                                ))
+                                build("c1?(1||2)&&(3||!(4||(5&&6)))?true:false:null"))
                         )
                 ));
         RuleSuite suite = simpleRuleLoader.get();

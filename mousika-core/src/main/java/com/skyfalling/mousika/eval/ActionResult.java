@@ -15,24 +15,10 @@ public class ActionResult {
      */
     private Object result;
     /**
-     * 匹配详情
+     * 影响评估
      */
     private List<RuleResult> details;
-    /**
-     * 是否有结果
-     */
-    private boolean hasResult = true;
 
-    public static ActionResult NO_RESULT = new ActionResult(false);
-
-    public ActionResult(Object result, List<RuleResult> details) {
-        this(result, details, true);
-    }
-
-
-    public ActionResult(boolean hasResult) {
-        this(null, null, hasResult);
-    }
 
     @Override
     public String toString() {

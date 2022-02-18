@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.expr;
 
 import com.skyfalling.mousika.eval.EvalResult;
-import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.node.BoolNode;
 
 /**
  * 规则节点访问接口
@@ -17,21 +17,36 @@ public interface NodeVisitor {
      * @param node
      * @return
      */
-    EvalResult visit(RuleNode node);
+    EvalResult visit(BoolNode node);
 
 
     /**
-     * 重置访问节点,用于多次节点访问的场景
+     * 执行标记,用于多次节点访问的场景
      *
      * @param flag
      */
-    void reset(OpFlag flag);
+    void mark(OpFlag flag);
 
 
     /**
      * 重置操作标记
      */
     enum OpFlag {
-        DEFAULT, SUCCEED, FAIL, FINISH
+        /**
+         * 标记成功
+         */
+        SUCCESS,
+        /**
+         * 标记失败
+         */
+        FAIL,
+        /**
+         * 标记无效
+         */
+        INVALID,
+        /**
+         * 标记结束
+         */
+        FINISH
     }
 }

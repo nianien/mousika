@@ -11,38 +11,38 @@ import java.util.List;
  *
  * @author liyifei 
  */
-public class AndNode implements RuleNode {
+public class AndNode implements BoolNode {
 
-    private List<RuleNode> nodes = new ArrayList<>();
+    private List<BoolNode> nodes = new ArrayList<>();
 
     /**
      * 多个节点条件取且
      *
      * @param nodes
      */
-    public AndNode(RuleNode... nodes) {
+    public AndNode(BoolNode... nodes) {
         this.nodes.addAll(Arrays.asList(nodes));
     }
 
     @Override
-    public RuleNode and(RuleNode node) {
+    public BoolNode and(BoolNode node) {
         this.nodes.add(node);
         return this;
     }
 
     @Override
-    public RuleNode or(RuleNode node) {
+    public BoolNode or(BoolNode node) {
         return new OrNode(this, node);
     }
 
     @Override
-    public RuleNode not() {
+    public BoolNode not() {
         return new NotNode(this);
     }
 
     @Override
     public boolean matches(RuleContext ruleContext) {
-        for (RuleNode node : nodes) {
+        for (BoolNode node : nodes) {
             if (!node.matches(ruleContext)) {
                 return false;
             }

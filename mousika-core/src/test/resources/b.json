@@ -1,36 +1,21 @@
 {
-  "ruleNode": {
+  "condition": {
     "type": "EXPR",
     "expression": "c1"
   },
   "trueAction": {
-    "ruleNode": {
-      "type": "AND",
-      "nodes": [
-        {
-          "type": "NOT",
-          "node": {
-            "type": "EXPR",
-            "expression": "101"
-          }
-        },
-        {
-          "type": "NOT",
-          "node": {
-            "type": "EXPR",
-            "expression": "102"
-          }
-        }
-      ]
+    "condition": {
+      "type": "EXPR",
+      "expression": "101"
     },
     "trueAction": {
-      "ruleNode": {
+      "condition": {
         "type": "EXPR",
         "expression": "true"
       }
     },
     "falseAction": {
-      "ruleNode": {
+      "condition": {
         "type": "EXPR",
         "expression": "false"
       }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.impl.BeanAsArraySerializer;
 import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
 import com.skyfalling.mousika.eval.NodeWrapper;
+import com.skyfalling.mousika.eval.node.BoolNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
 
 import java.io.IOException;

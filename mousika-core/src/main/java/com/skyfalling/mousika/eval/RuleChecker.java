@@ -1,20 +1,12 @@
 package com.skyfalling.mousika.eval;
 
 import com.skyfalling.mousika.engine.RuleEngine;
-import com.skyfalling.mousika.eval.action.RuleAction;
-import com.skyfalling.mousika.eval.listener.ListenerProvider;
-import com.skyfalling.mousika.eval.listener.RuleEvent;
-import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
-import com.skyfalling.mousika.eval.node.RuleNode;
-import com.skyfalling.mousika.eval.parser.NodeParser;
-import com.skyfalling.mousika.exception.RuleParseException;
-import com.skyfalling.mousika.expr.NodeVisitor;
-import com.skyfalling.mousika.expr.NodeVisitor.OpFlag;
+import com.skyfalling.mousika.eval.node.ActionNode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
+import static com.skyfalling.mousika.eval.ActionBuilder.build;
 
 
 /**
@@ -33,12 +25,6 @@ public class RuleChecker {
 
 
     /**
-     * 缓存规则集解析结果
-     */
-    private static Map<String, RuleNode> nodeCache = new ConcurrentHashMap<>();
-
-
-    /**
      * @param ruleEngine 规则执行引擎
      */
     public RuleChecker(RuleEngine ruleEngine) {
@@ -53,73 +39,28 @@ public class RuleChecker {
      * @param data
      * @return
      */
-    public ActionResult check(List<RuleAction> actions, Object data) {
+    public ActionResult check(List<ActionNode> actions, Object data) {
         RuleContext ruleContext = new RuleContextImpl(ruleEngine, data);
-        for (RuleAction ruleAction : actions) {
-            ActionResult actionResult = ruleAction.execute(ruleContext);
-            ruleContext.reset(OpFlag.DEFAULT);
-            if (actionResult.isHasResult()) {
+        for (ActionNode ruleAction : actions) {
+            ActionResult actionResult = ruleAction.eval(ruleContext);
+            if (!(actionResult instanceof NaResult)) {
                 return actionResult;
             }
         }
-        return ActionResult.NO_RESULT;
+        return NaResult.DEFAULT;
 
     }
 
     /**
      * 校验规则表达式
      *
-     * @param ruleExpr 规则表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
+     * @param ruleExpr 规则ID表达式,如(1||2)&&(3||!4)
      * @param data
      * @return
      */
     public ActionResult check(String ruleExpr, Object data) {
-        return check(ruleExpr, new RuleContextImpl(ruleEngine, data));
+        return build(ruleExpr).eval(new RuleContextImpl(ruleEngine, data));
     }
 
-
-    /**
-     * 对指定对象进行规则集的校验
-     *
-     * @param ruleExpr    规则表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
-     * @param ruleContext 待校验对象
-     */
-    private ActionResult check(String ruleExpr, RuleContext ruleContext) {
-        //将规则表达式解析成节点树,非叶结点为逻辑运算符,叶子节点为脚本表达式
-        RuleNode node = parse(ruleExpr);
-        boolean matched = node.matches(ruleContext);
-        if (ruleContext instanceof NodeVisitor) {
-            ruleContext.reset(matched ? OpFlag.SUCCEED : OpFlag.FAIL);
-        }
-        return new ActionResult(matched, ruleContext.getEvalResults());
-    }
-
-    /**
-     * 将规则表达式解析成节点树,非叶结点为逻辑运算符,叶子节点为脚本表达式
-     *
-     * @param ruleExpr 规则集表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
-     */
-    public static RuleNode parse(String ruleExpr) {
-        RuleNode ruleNode = nodeCache.computeIfAbsent(ruleExpr, RuleChecker::doParse);
-        return ruleNode;
-    }
-
-    /**
-     * 节点解析
-     *
-     * @param ruleExpr
-     * @return
-     */
-    private static RuleNode doParse(String ruleExpr) {
-        try {
-            RuleNode ruleNode = NodeParser.parse(ruleExpr);
-            ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_SUCCEED, ruleExpr, ruleNode));
-            return ruleNode;
-        } catch (Exception e) {
-            ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_FAIL, ruleExpr, e));
-            throw new RuleParseException(ruleExpr, "rule parse failed:" + ruleExpr, e);
-        }
-
-    }
 
 }

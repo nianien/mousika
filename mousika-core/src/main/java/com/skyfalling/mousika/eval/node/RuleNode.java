@@ -5,37 +5,15 @@ import com.skyfalling.mousika.eval.RuleContext;
 /**
  * 条件节点定义
  *
- * @author liyifei 
+ * @author liyifei
  */
-public interface RuleNode {
+public interface RuleNode<T> {
+
 
     /**
-     * 条件与
-     *
-     * @param node
-     * @return
-     */
-    RuleNode and(RuleNode node);
-
-    /**
-     * 条件或
-     *
-     * @param node
-     * @return
-     */
-    RuleNode or(RuleNode node);
-
-    /**
-     * 条件非
+     * 规则计算
      *
      * @return
      */
-    RuleNode not();
-
-    /**
-     * 评估规则是否匹配
-     *
-     * @return
-     */
-    boolean matches(RuleContext context);
+    T eval(RuleContext context);
 }
