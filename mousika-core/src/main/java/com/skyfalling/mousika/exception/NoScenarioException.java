@@ -1,12 +1,15 @@
 package com.skyfalling.mousika.exception;
 
+import lombok.Data;
+
 /**
- * 规则场景异常
+ * 没有匹配的规则场景
  *
  * @author liyifei
  * Created on 2021-11-19
  */
-public class RuleScenarioException extends RuntimeException {
+@Data
+public class NoScenarioException extends RuntimeException {
     private String scenarioId;
 
     /**
@@ -14,12 +17,12 @@ public class RuleScenarioException extends RuntimeException {
      * @param message
      * @param e
      */
-    public RuleScenarioException(String scenarioId, String message, Throwable e) {
+    public NoScenarioException(String scenarioId, String message, Throwable e) {
         super(message, e);
         this.scenarioId = scenarioId;
     }
 
-    public RuleScenarioException(String scenarioId, String message) {
+    public NoScenarioException(String scenarioId, String message) {
         super(message);
         this.scenarioId = scenarioId;
     }

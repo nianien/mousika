@@ -3,8 +3,8 @@ package com.skyfalling.mousika.suite;
 import com.skyfalling.mousika.eval.ActionResult;
 import com.skyfalling.mousika.eval.NaResult;
 import com.skyfalling.mousika.eval.RuleChecker;
-import com.skyfalling.mousika.exception.RuleEvalException;
-import com.skyfalling.mousika.exception.RuleScenarioException;
+import com.skyfalling.mousika.exception.NoScenarioException;
+import com.skyfalling.mousika.exception.RuleMatchException;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -44,17 +44,13 @@ public class RuleSuite {
     public ActionResult checkScenario(String scenarioId, Object data) {
         RuleScenario scenario = scenarios.get(scenarioId);
         if (scenario == null) {
-            throw new RuleEvalException(scenarioId, "no scenario defined:" + scenarioId);
+            throw new NoScenarioException(scenarioId, "no scenario defined:" + scenarioId);
         }
-        try {
-            ActionResult actionResult = this.ruleChecker.check(scenario.getRuleActions(), data);
-            if (actionResult instanceof NaResult) {
-                //no suitable rule-set
-                throw new RuleEvalException(scenarioId, "not suitable rules for scenario:" + scenario.getId());
-            }
-            return actionResult;
-        } catch (RuleEvalException e) {
-            throw new RuleScenarioException(scenarioId, "scenario: " + scenarioId + " check failed, caused by rule: " + e.getRuleId() + " eval error!", e);
+        ActionResult actionResult = this.ruleChecker.check(scenario.getRuleActions(), data);
+        if (actionResult instanceof NaResult) {
+            //no suitable rule-set
+            throw new RuleMatchException(scenarioId, "not suitable rules for scenario:" + scenario.getId());
         }
+        return actionResult;
     }
 }
