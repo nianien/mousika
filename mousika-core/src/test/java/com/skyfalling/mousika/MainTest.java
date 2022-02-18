@@ -17,19 +17,6 @@ public class MainTest {
     @SneakyThrows
     public static void main(String[] args) {
 
-
-//        BoolNode ruleNode = RuleChecker.parse("!101&&!102");
-//        System.out.println(ruleNode);
-//        System.out.println(JsonUtils.toJson(ruleNode));
-//
-//        ExprPair pair = new ExprPair("101&&102", "103&&104");
-//        action(pair.expr1, action(pair.exp2, action("true")));
-//
-
-//        boolean b1 = false, b2 = false, b3 = true, b4 = false, b5 = false, b6 = false, b7 = false;
-//        boolean res = b1 ? b2 : b3 ? b4 ? b5 : b6 : b7;
-//        System.out.println(JsonUtils.toJson(NodeParser.parse("1?2?3:4:5")));
-
         RuleNode ruleNode = build("c1?101?true:false:nop");
         System.out.println(ruleNode);
         System.out.println(build("1?2:3?4?5:6:7"));

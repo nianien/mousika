@@ -4,15 +4,11 @@ import com.skyfalling.mousika.bean.User;
 import com.skyfalling.mousika.engine.RuleDefinition;
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.engine.UdfDefinition;
-import com.skyfalling.mousika.eval.ActionResult;
-import com.skyfalling.mousika.eval.RuleChecker;
-import com.skyfalling.mousika.eval.RuleContext;
-import com.skyfalling.mousika.eval.RuleContextImpl;
+import com.skyfalling.mousika.eval.*;
 import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleListener;
 import com.skyfalling.mousika.eval.node.ActionNode;
-import com.skyfalling.mousika.eval.ActionBuilder;
 import com.skyfalling.mousika.suite.RuleScenario;
 import com.skyfalling.mousika.suite.RuleSuite;
 import com.skyfalling.mousika.udf.*;
@@ -70,14 +66,17 @@ public class RuleActionTest {
         }
         User root = new User("jack", 19);
         RuleContext context = new RuleContextImpl(ruleEngine, root);
-        ActionNode actionNode = build("1&&2?actionA:!3&&4?actionB:actionC");
-        ActionResult result = actionNode.eval(context);
+        ActionNode action1 = build("1&&2?actionA:!3&&4?actionB:actionC");
+
+        System.out.println(action1);
+        ActionResult result = action1.eval(context);
         System.out.println(result);
 
-        ActionNode ruleAction = build("1&&2", "actionA",
+        ActionNode action2 = build("1&&2", "actionA",
                 build("!3&&4", "actionB", "actionC")
         );
-        ActionResult result2 = actionNode.eval(context);
+        System.out.println(action2);
+        ActionResult result2 = action2.eval(context);
         System.out.println(result2);
     }
 
