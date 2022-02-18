@@ -17,8 +17,8 @@ public class MainTest {
     @SneakyThrows
     public static void main(String[] args) {
 
-        RuleNode ruleNode = build("c1?101?true:false:nop");
-        System.out.println(ruleNode);
+        System.out.println(build("c1?101?true:false:null"));
+        System.out.println(build("c1?!101&&!102?true:false:null"));
         System.out.println(build("1?2:3?4?5:6:7"));
         System.out.println(build("1&&2"));
     }

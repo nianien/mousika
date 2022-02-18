@@ -91,7 +91,7 @@ public class ActionNode implements RuleNode<ActionResult> {
             return condition.toString();
         }
         return condition.toString()
-                + " ? " + (trueAction == null ? "null" : trueAction.toString())
-                + " : " + (falseAction == null ? "null" : falseAction.toString());
+                + " ? " + (trueAction == null ? null : trueAction.toString())
+                + " : " + (falseAction == null ? null : falseAction.toString());
     }
 }
