@@ -121,7 +121,7 @@ public class ActionBuilder {
         if (expr instanceof RuleNode) {
             return new ActionNode((RuleNode) expr, cast(lhs), cast(rhs));
         }
-        throw new UnsupportedOperationException("condition node must be a BoolNode: " + expr);
+        throw new UnsupportedOperationException("condition node must be a RuleNode: " + expr);
     }
 
 
@@ -160,6 +160,6 @@ public class ActionBuilder {
         if (node instanceof RuleNode) {
             return new ActionNode((RuleNode) node);
         }
-        throw new UnsupportedOperationException("node must be a ActionNode or BoolNode: " + node);
+        throw new UnsupportedOperationException("node must be a ActionNode or RuleNode: " + node);
     }
 }
