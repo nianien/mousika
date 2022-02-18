@@ -114,6 +114,8 @@ public class RuleActionTest {
                                 .collect(Collectors.toList())
                         )
                 ));
+
+        System.out.println(build("c1?!101&&!102?true:false:null"));
         RuleSuite suite = simpleRuleLoader.get();
         System.out.println(suite.checkScenario("sc1", root));
         System.out.println(suite.checkScenario("sc2", root));
