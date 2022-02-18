@@ -41,7 +41,7 @@ public class RuleEngine {
         //添加默认规则定义
         this.register(new RuleDefinition("true", "true", "SUCCESS"));
         this.register(new RuleDefinition("false", "false", "FAILED"));
-        this.register(new RuleDefinition("null", "null", "NOP"));
+        this.register(new RuleDefinition("null", "Java.type('com.skyfalling.mousika.eval.NaResult').DEFAULT", "NOP"));
     }
 
     /**

@@ -3,7 +3,10 @@ package com.skyfalling.mousika.eval;
 import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
-import com.skyfalling.mousika.eval.node.*;
+import com.skyfalling.mousika.eval.node.ActionNode;
+import com.skyfalling.mousika.eval.node.BoolNode;
+import com.skyfalling.mousika.eval.node.ExprNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeParser;
 import com.skyfalling.mousika.exception.RuleParseException;
 
@@ -24,7 +27,7 @@ public class ActionBuilder {
      */
     private static Map<String, RuleNode> nodeCache = new ConcurrentHashMap<>();
 
-    private static Function<String, RuleNode> defaultGenerator = expr -> expr.equals("null") ? NopNode.SINGLETON : new NodeWrapper(new ExprNode(expr));
+    private static Function<String, RuleNode> defaultGenerator = expr -> new NodeWrapper(new ExprNode(expr));
 
 
     /**
@@ -148,7 +151,7 @@ public class ActionBuilder {
      * @return
      */
     private static ActionNode cast(RuleNode node) {
-        if (node == null || node instanceof NopNode) {
+        if (node == null) {
             return null;
         }
         if (node instanceof ActionNode) {

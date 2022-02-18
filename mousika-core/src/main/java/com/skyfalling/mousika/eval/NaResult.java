@@ -9,4 +9,9 @@ public class NaResult extends ActionResult {
 
     private NaResult() {
     }
+
+    @Override
+    public String toString() {
+        return "NaResult";
+    }
 }

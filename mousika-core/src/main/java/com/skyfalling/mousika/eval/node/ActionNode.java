@@ -63,6 +63,9 @@ public class ActionNode implements RuleNode<ActionResult> {
         boolean matched = evalResult.isMatched();
         //如果trueAction&falseAction都为空,则默认condition为评估结果
         if (trueAction == null && falseAction == null) {
+            if (evalResult.getResult() instanceof ActionResult) {
+                return (ActionResult) evalResult.getResult();
+            }
             //保留评估成功或失败节点
             context.mark(matched ? OpFlag.SUCCESS : OpFlag.FAIL);
             return new ActionResult(evalResult.getResult(), context.getEvalResults());
@@ -83,7 +86,6 @@ public class ActionNode implements RuleNode<ActionResult> {
         context.mark(OpFlag.INVALID);
         return NaResult.DEFAULT;
     }
-
 
     @Override
     public String toString() {
