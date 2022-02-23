@@ -7,6 +7,17 @@ package com.skyfalling.mousika.define;
  * @author liyifei
  */
 public interface Functions {
+
+    @FunctionalInterface
+    interface Function1<P1, R> {
+        R apply(P1 p1);
+    }
+
+    @FunctionalInterface
+    interface Function2<P1, P2, R> {
+        R apply(P1 p1, P2 p2);
+    }
+
     @FunctionalInterface
     interface Function3<P1, P2, P3, R> {
         R apply(P1 p1, P2 p2, P3 p3);
