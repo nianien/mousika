@@ -9,8 +9,8 @@ package com.skyfalling.mousika.define;
 public interface Functions {
 
     @FunctionalInterface
-    interface Function1<P1, R> {
-        R apply(P1 p1);
+    interface Function<P, R> {
+        R apply(P p1);
     }
 
     @FunctionalInterface
