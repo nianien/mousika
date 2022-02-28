@@ -48,7 +48,7 @@ public class ActionNode implements Node<ActionResult> {
     public ActionResult eval(RuleContext context) {
         ActionResult result = doEval(context);
         //标记评估结束
-        context.mark(OpFlag.FINISH);
+        context.mark(OpFlag.FINISH, this);
         return result;
     }
 
@@ -67,23 +67,23 @@ public class ActionNode implements Node<ActionResult> {
                 return (ActionResult) evalResult.getResult();
             }
             //保留评估成功或失败节点
-            context.mark(matched ? OpFlag.SUCCESS : OpFlag.FAILED);
+            context.mark(matched ? OpFlag.SUCCESS : OpFlag.FAILED, this);
             return new ActionResult(evalResult.getResult(), context.getEvalResults());
         }
         //规则通过,执行trueAction
         if (matched && trueAction != null) {
             //保留评估成功节点
-            context.mark(OpFlag.SUCCESS);
+            context.mark(OpFlag.SUCCESS, this);
             return trueAction.doEval(context);
         }
         //规则未通过,执行falseAction
         if (!matched && falseAction != null) {
             //保留评估失败节点
-            context.mark(OpFlag.FAILED);
+            context.mark(OpFlag.FAILED, this);
             return falseAction.doEval(context);
         }
         //没有对应的action,评估节点无效
-        context.mark(OpFlag.INVALID);
+        context.mark(OpFlag.INVALID, this);
         return NaResult.DEFAULT;
     }
 

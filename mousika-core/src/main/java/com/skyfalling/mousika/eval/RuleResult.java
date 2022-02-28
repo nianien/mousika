@@ -4,10 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 单个规则执行结果
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class RuleResult {
+    /**
+     * 规则表达式
+     */
+    private String expr;
     /**
      * 规则ID
      */
@@ -24,7 +31,8 @@ public class RuleResult {
     @Override
     public String toString() {
         return "RuleResult(" +
-                "ruleId=" + ruleId +
+                "expr=\"" + expr +
+                "\",ruleId=" + ruleId +
                 ", matched=" + result.isMatched() +
                 ", desc='" + desc + '\'' +
                 ')';

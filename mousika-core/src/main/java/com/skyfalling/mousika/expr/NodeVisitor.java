@@ -1,6 +1,7 @@
 package com.skyfalling.mousika.expr;
 
 import com.skyfalling.mousika.eval.EvalResult;
+import com.skyfalling.mousika.eval.node.ActionNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
 
 /**
@@ -24,8 +25,9 @@ public interface NodeVisitor {
      * 执行标记,用于多次节点访问的场景
      *
      * @param flag
+     * @param node
      */
-    void mark(OpFlag flag);
+    void mark(OpFlag flag, ActionNode node);
 
 
     /**

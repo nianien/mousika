@@ -17,7 +17,7 @@ public class ActionResult {
     /**
      * 影响评估
      */
-    private List<RuleResult> details;
+    private List<List<RuleResult>> details;
 
 
     @Override

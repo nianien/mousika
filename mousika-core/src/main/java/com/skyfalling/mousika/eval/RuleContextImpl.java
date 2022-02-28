@@ -4,6 +4,7 @@ import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
+import com.skyfalling.mousika.eval.node.ActionNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.exception.RuleEvalException;
 import com.skyfalling.mousika.expr.DefaultNodeVisitor;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 规则上下文默认实现
@@ -85,13 +87,17 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
 
 
     @Override
-    public List<RuleResult> getEvalResults() {
-        List<RuleResult> results = new ArrayList<>();
-        for (String rule : visitor.getEffectiveRules()) {
-            String ruleDesc = ruleEngine.evalRuleDesc(rule, data, this);
-            results.add(new RuleResult(rule, evalCache.get(rule), ruleDesc));
+    public List<List<RuleResult>> getEvalResults() {
+        List<List<RuleResult>> groups = new ArrayList<>();
+        for (Entry<String, List<String>> rules : visitor.getEffectiveRules().entrySet()) {
+            List<RuleResult> res = new ArrayList<>();
+            for (String rule : rules.getValue()) {
+                String ruleDesc = ruleEngine.evalRuleDesc(rule, data, this);
+                res.add(new RuleResult(rules.getKey(), rule, evalCache.get(rule), ruleDesc));
+            }
+            groups.add(res);
         }
-        return results;
+        return groups;
     }
 
     @Override
@@ -111,8 +117,8 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     }
 
     @Override
-    public void mark(OpFlag flag) {
-        visitor.mark(flag);
+    public void mark(OpFlag flag, ActionNode node) {
+        visitor.mark(flag, node);
     }
 }
 

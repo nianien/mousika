@@ -36,7 +36,7 @@ public class RuleActionTest {
 
             @Override
             public void onEval(RuleEvent event) {
-//                System.out.println(event);
+                System.out.println(event);
             }
         });
     }
@@ -102,12 +102,8 @@ public class RuleActionTest {
                 Arrays.asList(udf1, udf2),
                 Arrays.asList(
                         new RuleScenario("sc1", Arrays.asList(
-                                build("c1",
-                                        build("!101&&!102", "true", "false")
-                                ),
-                                build("c2",
-                                        build("!103&&104", "true", "false")
-                                ))
+                                build("c1", "!101&&!102"),
+                                build("c2", "!103&&104"))
                         ),
                         new RuleScenario("sc2", Arrays.asList("c1?!101&&!102?true:false:null", "c2?!103&&104?true:false:null").stream()
                                 .map(ActionBuilder::build)

@@ -3,14 +3,10 @@ package com.skyfalling.mousika.expr;
 import com.skyfalling.mousika.eval.EvalResult;
 import com.skyfalling.mousika.eval.NodeWrapper;
 import com.skyfalling.mousika.eval.RuleContext;
-import com.skyfalling.mousika.eval.node.ExprNode;
-import com.skyfalling.mousika.eval.node.NotNode;
-import com.skyfalling.mousika.eval.node.OrNode;
-import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.node.*;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 记录规则节点执行记录
@@ -38,7 +34,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
      * 影响结果的规则集合
      */
     @Getter
-    private List<String> effectiveRules = new ArrayList<>();
+    private Map<String, List<String>> effectiveRules = new LinkedHashMap<>();
 
 
     /**
@@ -83,13 +79,13 @@ public class DefaultNodeVisitor implements NodeVisitor {
     }
 
     @Override
-    public void mark(OpFlag flag) {
-        switch (flag){
+    public void mark(OpFlag flag, ActionNode node) {
+        switch (flag) {
             case SUCCESS:
-                this.effectiveRules.addAll(trueRules);
+                this.effectiveRules.put(node.getCondition().toString(), new ArrayList<>(trueRules));
                 break;
             case FAILED:
-                this.effectiveRules.addAll(falseRules);
+                this.effectiveRules.put(node.getCondition().toString(), new ArrayList<>(falseRules));
                 break;
             case FINISH:
                 this.effectiveRules.clear();

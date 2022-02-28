@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 规则上下文接口定义
  *
- * @author liyifei 
+ * @author liyifei
  */
 public interface RuleContext extends NodeVisitor {
 
@@ -32,7 +32,7 @@ public interface RuleContext extends NodeVisitor {
      *
      * @return
      */
-    List<RuleResult> getEvalResults();
+    List<List<RuleResult>> getEvalResults();
 
     /**
      * 获取上下文属性
