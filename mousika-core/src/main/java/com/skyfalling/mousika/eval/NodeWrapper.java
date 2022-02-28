@@ -1,9 +1,9 @@
 package com.skyfalling.mousika.eval;
 
 import com.skyfalling.mousika.eval.node.AndNode;
-import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.node.NotNode;
 import com.skyfalling.mousika.eval.node.OrNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
 import lombok.Getter;
 
 /**
@@ -13,10 +13,18 @@ import lombok.Getter;
  */
 @Getter
 public class NodeWrapper implements RuleNode {
+    /**
+     * 原始规则节点
+     */
     private RuleNode originNode;
+    /**
+     * 节点表达式,这里声明字段是为了避免每次计算
+     */
+    private String expr;
 
     public NodeWrapper(RuleNode originNode) {
         this.originNode = originNode;
+        this.expr = originNode.toString();
     }
 
     @Override
@@ -64,6 +72,6 @@ public class NodeWrapper implements RuleNode {
 
     @Override
     public String toString() {
-        return originNode.toString();
+        return expr;
     }
 }

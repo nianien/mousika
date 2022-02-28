@@ -63,6 +63,7 @@ public class ActionNode implements Node<ActionResult> {
         boolean matched = evalResult.isMatched();
         //如果trueAction&falseAction都为空,则默认condition为评估结果
         if (trueAction == null && falseAction == null) {
+            // NaResult from expr("null")
             if (evalResult.getResult() instanceof ActionResult) {
                 return (ActionResult) evalResult.getResult();
             }

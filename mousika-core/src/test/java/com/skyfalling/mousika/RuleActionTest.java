@@ -105,7 +105,7 @@ public class RuleActionTest {
                                 build("c1", "!101&&!102"),
                                 build("c2", "!103&&104"))
                         ),
-                        new RuleScenario("sc2", Arrays.asList("c1?!101&&!102:null", "c2?!103&&104:null").stream()
+                        new RuleScenario("sc2", Arrays.asList("c1?!101&&!102?true:false:null", "c2?!103&&104:null").stream()
                                 .map(ActionBuilder::build)
                                 .collect(Collectors.toList())
                         )
