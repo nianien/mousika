@@ -36,7 +36,7 @@ public class RuleActionTest {
 
             @Override
             public void onEval(RuleEvent event) {
-                System.out.println(event);
+//                System.out.println(event);
             }
         });
     }
