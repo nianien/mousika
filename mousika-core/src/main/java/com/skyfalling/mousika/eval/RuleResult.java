@@ -31,8 +31,8 @@ public class RuleResult {
     @Override
     public String toString() {
         return "RuleResult(" +
-                "expr=\"" + expr +
-                "\",ruleId=" + ruleId +
+                "expr=\"" + expr + "\"" +
+                ",ruleId=" + ruleId +
                 ", matched=" + result.isMatched() +
                 ", desc='" + desc + '\'' +
                 ')';
