@@ -3,11 +3,17 @@ package com.skyfalling.mousika.eval;
 import lombok.Data;
 
 /**
- * 规则评估结果
+ * 单规则评估结果
  */
 @Data
 public class EvalResult {
+    /**
+     * 引擎计算返回值
+     */
     private final Object result;
+    /**
+     * 当作为判断条件时,返回值转boolean值
+     */
     private final boolean matched;
 
     public EvalResult(Object result) {

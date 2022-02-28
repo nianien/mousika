@@ -5,14 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 单个规则执行结果
+ * 单规则结果
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class RuleResult {
     /**
-     * 规则表达式
+     * 规则所属表达式
      */
     private String expr;
     /**
