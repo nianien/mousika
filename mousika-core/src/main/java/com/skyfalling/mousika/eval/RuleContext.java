@@ -17,6 +17,12 @@ public interface RuleContext extends NodeVisitor {
      */
     Object getData();
 
+    /**
+     * 获取规则描述
+     *
+     * @return
+     */
+    String evalDesc(String ruleId);
 
     /**
      * 评估规则

@@ -5,9 +5,11 @@ import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
 import com.skyfalling.mousika.eval.node.ActionNode;
+import com.skyfalling.mousika.eval.node.ExprNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.exception.RuleEvalException;
 import com.skyfalling.mousika.expr.DefaultNodeVisitor;
+import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +33,11 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
      * 待匹配对象
      */
     private Object data;
+
+    /**
+     * 当前规则
+     */
+    private String ruleId;
     /**
      * 缓存评估结果
      */
@@ -43,7 +50,8 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     /**
      * 用于规则分析
      */
-    private DefaultNodeVisitor visitor = new DefaultNodeVisitor(this);
+    private NodeVisitor visitor = new DefaultNodeVisitor(this);
+
 
     /**
      * 指定执行引擎和规则对象
@@ -56,6 +64,11 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
         this.data = data;
     }
 
+
+    @Override
+    public String evalDesc(String ruleId) {
+        return ruleEngine.evalRuleDesc(ruleId, data, this);
+    }
 
     /**
      * 评估单个规则
@@ -89,13 +102,15 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     @Override
     public List<List<RuleResult>> getEvalResults() {
         List<List<RuleResult>> groups = new ArrayList<>();
-        for (Entry<String, List<String>> rules : visitor.getEffectiveRules().entrySet()) {
-            List<RuleResult> res = new ArrayList<>();
-            for (String rule : rules.getValue()) {
-                String ruleDesc = ruleEngine.evalRuleDesc(rule, data, this);
-                res.add(new RuleResult(rules.getKey(), rule, evalCache.get(rule), ruleDesc));
+        if (visitor instanceof DefaultNodeVisitor) {
+            Map<String, List<String>> effectiveRules = ((DefaultNodeVisitor) visitor).getEffectiveRules();
+            for (Entry<String, List<String>> rules : effectiveRules.entrySet()) {
+                List<RuleResult> res = new ArrayList<>();
+                for (String rule : rules.getValue()) {
+                    res.add(new RuleResult(rules.getKey(), rule, evalCache.get(rule), evalDesc(rule)));
+                }
+                groups.add(res);
             }
-            groups.add(res);
         }
         return groups;
     }
@@ -113,6 +128,9 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
 
     @Override
     public EvalResult visit(RuleNode node) {
+        if (node instanceof ExprNode) {
+            this.ruleId = ((ExprNode) node).getExpression();
+        }
         return visitor.visit(node);
     }
 
@@ -120,6 +138,8 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     public void mark(OpFlag flag, ActionNode node) {
         visitor.mark(flag, node);
     }
+
+
 }
 
 
