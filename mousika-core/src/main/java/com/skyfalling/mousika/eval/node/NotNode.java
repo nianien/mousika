@@ -41,8 +41,12 @@ public class NotNode implements RuleNode {
         return !node.matches(ruleContext);
     }
 
+    public String expr() {
+        return "!" + node.toString();
+    }
+
     @Override
     public String toString() {
-        return "!" + "(" + node.toString() + ")";
+        return expr();
     }
 }

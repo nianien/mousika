@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.skyfalling.mousika.eval.ActionBuilder.build;
+import static org.junit.Assert.assertEquals;
 
 
 public class MainTest {
@@ -19,7 +20,10 @@ public class MainTest {
         System.out.println(build("c1?101?true:false:null"));
         System.out.println(build("c1?!101&&!102?true:false:null"));
         System.out.println(build("1?2:3?4?5:6:7"));
-        System.out.println(build("1&&2"));
+        String expr = build("!(!(1&&2)||(4&&5))&&((6||7))").getCondition().expr();
+        System.out.println(expr);
+        assertEquals(expr, "!(!(1&&2)||(4&&5))&&(6||7)");
+        System.out.println(build("!!(1&&2)").getCondition().expr());
     }
 
 

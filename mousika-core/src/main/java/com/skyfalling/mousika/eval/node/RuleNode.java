@@ -39,6 +39,12 @@ public interface RuleNode extends Node {
      */
     boolean matches(RuleContext context);
 
+    /**
+     * 规则表达式
+     *
+     * @return
+     */
+    String expr();
 
     @Override
     default Object eval(RuleContext context) {

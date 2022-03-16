@@ -52,11 +52,14 @@ public class OrNode implements RuleNode {
         return false;
     }
 
-    @Override
-    public String toString() {
+    public String expr() {
         return String.join("||", nodes.stream()
                 .map(Objects::toString)
-                .map(s -> "(" + s + ")")
                 .collect(Collectors.toList()));
+    }
+
+    @Override
+    public String toString() {
+        return nodes.size() > 1 ? "(" + expr() + ")" : "" + expr();
     }
 }

@@ -46,6 +46,11 @@ public class ExprNode implements RuleNode {
     }
 
     @Override
+    public String expr() {
+        return expression;
+    }
+
+    @Override
     public String toString() {
         return expression;
     }

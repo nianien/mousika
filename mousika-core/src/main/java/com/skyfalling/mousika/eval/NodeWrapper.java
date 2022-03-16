@@ -17,14 +17,20 @@ public class NodeWrapper implements RuleNode {
      * 原始规则节点
      */
     private RuleNode originNode;
+
     /**
-     * 节点表达式,这里声明字段是为了避免每次计算
+     * 缓存表达式,避免每次计算
      */
     private String expr;
+    /**
+     * 缓存toString,避免每次计算
+     */
+    private String toString;
 
     public NodeWrapper(RuleNode originNode) {
         this.originNode = originNode;
-        this.expr = originNode.toString();
+        this.expr = originNode.expr();
+        this.toString = originNode.toString();
     }
 
     @Override
@@ -48,6 +54,15 @@ public class NodeWrapper implements RuleNode {
         return ruleContext.visit(originNode).isMatched();
     }
 
+    @Override
+    public String expr() {
+        return expr;
+    }
+
+    @Override
+    public String toString() {
+        return toString;
+    }
 
     /**
      * 包装节点
@@ -59,7 +74,6 @@ public class NodeWrapper implements RuleNode {
         return new NodeWrapper(node);
     }
 
-
     /**
      * 原生节点
      *
@@ -70,8 +84,4 @@ public class NodeWrapper implements RuleNode {
     }
 
 
-    @Override
-    public String toString() {
-        return expr;
-    }
 }
