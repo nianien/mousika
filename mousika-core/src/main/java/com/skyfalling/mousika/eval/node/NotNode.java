@@ -43,10 +43,6 @@ public class NotNode implements RuleNode {
 
     @Override
     public String toString() {
-        String s = node.toString();
-        if (s.startsWith("(") && s.endsWith(")")) {
-            return "!" + s;
-        }
-        return "!" + "(" + s + ")";
+        return "!" + "(" + node.toString() + ")";
     }
 }

@@ -57,11 +57,7 @@ public class AndNode implements RuleNode {
     public String toString() {
         return String.join("&&", nodes.stream()
                 .map(Objects::toString)
-                .map(s -> {
-                    if (s.startsWith("(") && s.endsWith(")")) {
-                        return s;
-                    }
-                    return "(" + s + ")";
-                }).collect(Collectors.toList()));
+                .map(s -> "(" + s + ")")
+                .collect(Collectors.toList()));
     }
 }
