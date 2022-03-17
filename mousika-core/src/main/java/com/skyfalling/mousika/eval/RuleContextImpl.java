@@ -133,8 +133,12 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
 
     @Override
     public EvalResult visit(RuleNode node) {
-        if (node instanceof ExprNode) {
-            this.ruleId = ((ExprNode) node).getExpression();
+        RuleNode origin = node;
+        if (node instanceof NodeWrapper) {
+            origin = ((NodeWrapper) node).unwrap();
+        }
+        if (origin instanceof ExprNode) {
+            this.ruleId = ((ExprNode) origin).getExpression();
         }
         return visitor.visit(node);
     }
