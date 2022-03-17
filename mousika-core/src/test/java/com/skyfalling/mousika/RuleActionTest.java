@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.skyfalling.mousika.eval.ActionBuilder.build;
+import static org.junit.Assert.assertEquals;
 
 
 public class RuleActionTest {
@@ -68,16 +69,22 @@ public class RuleActionTest {
         RuleContext context = new RuleContextImpl(ruleEngine, root);
         ActionNode action1 = build("1&&2?actionA:!3&&4?actionB:actionC");
 
+        String expr = "(1&&2) ? actionA : (!3&&4) ? actionB : actionC";
+        String res = "ActionResult{result=null, details=[[RuleResult(expr=\"(1&&2)\",ruleId=2, matched=false, desc='规则2')], [RuleResult(expr=\"(!3&&4)\",ruleId=3, matched=false, desc='规则3'), RuleResult(expr=\"(!3&&4)\",ruleId=4, matched=true, desc='规则4')], [RuleResult(expr=\"actionB\",ruleId=actionB, matched=false, desc='业务操作B')]]}";
         System.out.println(action1);
+        assertEquals(expr, action1.toString());
         ActionResult result = action1.eval(context);
         System.out.println(result);
+        assertEquals(res, result.toString());
 
         ActionNode action2 = build("1&&2", "actionA",
                 build("!3&&4", "actionB", "actionC")
         );
         System.out.println(action2);
+        assertEquals(expr, action2.toString());
         ActionResult result2 = action2.eval(context);
         System.out.println(result2);
+        assertEquals(res, result2.toString());
     }
 
 
@@ -112,8 +119,13 @@ public class RuleActionTest {
                 ));
 
         RuleSuite suite = simpleRuleLoader.get();
+        String expected = "ActionResult{result=false, details=[[RuleResult(expr=\"c2\",ruleId=c2, matched=true, desc='业务分支2')], [RuleResult(expr=\"(!103&&104)\",ruleId=104, matched=false, desc='用户【jack】的年龄不满18岁')]]}";
+        String res1 = suite.checkScenario("sc1", root).toString();
         System.out.println(suite.checkScenario("sc1", root));
-        System.out.println(suite.checkScenario("sc2", root));
+        assertEquals(expected, res1);
+        String res2 = suite.checkScenario("sc2", root).toString();
+        System.out.println(res2);
+        assertEquals(expected, res2);
     }
 
 
@@ -137,7 +149,9 @@ public class RuleActionTest {
         String statement = "(1||2)&&(3||!(4||(5&&6)))";
         User root = new User("jack", 19);
         ActionResult check = ruleChecker.check(statement, root);
+        String res = "ActionResult{result=false, details=[[RuleResult(expr=\"((1||2)&&(3||!(4||(5&&6))))\",ruleId=3, matched=false, desc='规则3'), RuleResult(expr=\"((1||2)&&(3||!(4||(5&&6))))\",ruleId=5, matched=true, desc='规则5'), RuleResult(expr=\"((1||2)&&(3||!(4||(5&&6))))\",ruleId=6, matched=true, desc='规则6')]]}";
         System.out.println(check);
+        assertEquals(res, check.toString());
     }
 
     @SneakyThrows
@@ -161,7 +175,9 @@ public class RuleActionTest {
         RuleSuite suite = simpleRuleLoader.get();
         User context = new User("jack", 19);
         ActionResult check = suite.checkScenario("demo", context);
+        String res = "ActionResult{result=false, details=[[RuleResult(expr=\"c1\",ruleId=c1, matched=true, desc='条件1')], [RuleResult(expr=\"((1||2)&&(3||!(4||(5&&6))))\",ruleId=3, matched=false, desc='规则3'), RuleResult(expr=\"((1||2)&&(3||!(4||(5&&6))))\",ruleId=5, matched=true, desc='规则5'), RuleResult(expr=\"((1||2)&&(3||!(4||(5&&6))))\",ruleId=6, matched=true, desc='规则6')], [RuleResult(expr=\"false\",ruleId=false, matched=false, desc='FAILED')]]}";
         System.out.println(check);
+        assertEquals(res, check.toString());
     }
 
 

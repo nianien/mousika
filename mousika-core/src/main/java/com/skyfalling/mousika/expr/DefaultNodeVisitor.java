@@ -6,7 +6,10 @@ import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.eval.node.*;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 记录规则节点执行记录

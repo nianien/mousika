@@ -89,10 +89,10 @@ public class ActionNode implements Node<ActionResult> {
     }
 
     @Override
-    public String toString() {
+    public String expr() {
         if (trueAction == null && falseAction == null) {
             return condition.expr();
         }
-        return condition + " ? " + trueAction + " : " + falseAction;
+        return condition.expr() + " ? " + trueAction.expr() + " : " + falseAction.expr();
     }
 }

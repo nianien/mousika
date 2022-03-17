@@ -12,18 +12,22 @@ import static com.skyfalling.mousika.eval.ActionBuilder.build;
 import static org.junit.Assert.assertEquals;
 
 
-public class MainTest {
+public class NodeParseTest {
 
-    @SneakyThrows
-    public static void main(String[] args) {
+    @Test
+    public void testParse() {
+        String expr = "!!((a&&b)||(c&&d))";
+        System.out.println(expr = build(expr).expr());
+        assertEquals("(a&&b)||(c&&d)", expr);
+        System.out.println(expr = build("c1?101?true:false:null").expr());
+        assertEquals("c1 ? 101 ? true : false : null", expr);
+        System.out.println(expr = build("c1?!101&&!102?true:false:null").expr());
+        assertEquals("c1 ? !101&&!102 ? true : false : null", expr);
+        System.out.println(expr = build("1?((2||3)&&(4||5)?6:7):(8&&9||10&&11?12:13)").expr());
+        assertEquals("1 ? (2||3)&&(4||5) ? 6 : 7 : (8&&9)||(10&&11) ? 12 : 13", expr);
+        System.out.println(expr = build("(!(!(1&&2)||(4&&5))&&((6||7)))").expr());
+        assertEquals("!(!(1&&2)||(4&&5))&&(6||7)", expr);
 
-        System.out.println(build("c1?101?true:false:null"));
-        System.out.println(build("c1?!101&&!102?true:false:null"));
-        System.out.println(build("1?2:3?4?5:6:7"));
-        String expr = build("!(!(1&&2)||(4&&5))&&((6||7))").getCondition().expr();
-        System.out.println(expr);
-        assertEquals(expr, "!(!(1&&2)||(4&&5))&&(6||7)");
-        System.out.println(build("!!(1&&2)").getCondition().expr());
     }
 
 
@@ -43,14 +47,14 @@ public class MainTest {
             }
         }, null);
         System.out.println(res);
-        assert (Boolean) res;
+        assertEquals(res, true);
         Object res2 = ruleEngine.evalExpr("$.q != true", new HashMap<String, Boolean>() {
             {
                 put("q", true);
             }
         }, null);
         System.out.println(res2);
-        assert !(Boolean) res2;
+        assertEquals(res2, false);
     }
 
 
@@ -64,6 +68,7 @@ public class MainTest {
         map.put("agentId", "a");
         map.put("customerId", "b");
         System.out.println(ruleEngine.evalExpr(desc, map, null));
+        assertEquals("代理商【a】不允许【b】跨开{}", ruleEngine.evalExpr(desc, map, null));
     }
 
 }

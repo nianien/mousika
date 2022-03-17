@@ -16,4 +16,12 @@ public interface Node<T> {
      * @return
      */
     T eval(RuleContext context);
+
+
+    /**
+     * 规则表达式
+     *
+     * @return
+     */
+    String expr();
 }

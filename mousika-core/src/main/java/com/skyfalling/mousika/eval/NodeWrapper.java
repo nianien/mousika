@@ -35,17 +35,17 @@ public class NodeWrapper implements RuleNode {
 
     @Override
     public RuleNode and(RuleNode node) {
-        return wrap(new AndNode(this, node));
+        return wrap(originNode.and(node));
     }
 
     @Override
     public RuleNode or(RuleNode node) {
-        return wrap(new OrNode(this, node));
+        return wrap(originNode.or(node));
     }
 
     @Override
     public RuleNode not() {
-        return wrap(new NotNode(this));
+        return wrap(originNode.not());
     }
 
 
