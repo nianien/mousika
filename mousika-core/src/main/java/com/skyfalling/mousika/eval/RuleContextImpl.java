@@ -70,6 +70,11 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
         return ruleEngine.evalRuleDesc(ruleId, data, this);
     }
 
+    @Override
+    public String getCurrentRule() {
+        return ruleId;
+    }
+
     /**
      * 评估单个规则
      *
@@ -138,8 +143,6 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     public void mark(OpFlag flag, ActionNode node) {
         visitor.mark(flag, node);
     }
-
-
 }
 
 

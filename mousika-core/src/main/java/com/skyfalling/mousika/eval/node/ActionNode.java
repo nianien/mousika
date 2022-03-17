@@ -93,6 +93,14 @@ public class ActionNode implements Node<ActionResult> {
         if (trueAction == null && falseAction == null) {
             return condition.expr();
         }
-        return condition.expr() + " ? " + trueAction.expr() + " : " + falseAction.expr();
+        return this.toString();
+    }
+
+    @Override
+    public String toString() {
+        if (trueAction == null && falseAction == null) {
+            return condition.toString();
+        }
+        return condition + " ? " + trueAction + " : " + falseAction;
     }
 }

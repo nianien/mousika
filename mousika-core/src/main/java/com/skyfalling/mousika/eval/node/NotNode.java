@@ -47,6 +47,6 @@ public class NotNode implements RuleNode {
 
     @Override
     public String toString() {
-        return expr();
+        return this.expr();
     }
 }

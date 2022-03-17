@@ -35,17 +35,26 @@ public class NodeWrapper implements RuleNode {
 
     @Override
     public RuleNode and(RuleNode node) {
-        return wrap(originNode.and(node));
+        if (originNode instanceof AndNode) {
+            return originNode.and(wrap(node));
+        }
+        return wrap(new AndNode(this, node));
     }
 
     @Override
     public RuleNode or(RuleNode node) {
-        return wrap(originNode.or(node));
+        if (originNode instanceof OrNode) {
+            return originNode.or(wrap(node));
+        }
+        return wrap(new OrNode(this, node));
     }
 
     @Override
     public RuleNode not() {
-        return wrap(originNode.not());
+        if (originNode instanceof NotNode) {
+            return wrap(originNode.not());
+        }
+        return wrap(new NotNode(this));
     }
 
 
@@ -80,6 +89,9 @@ public class NodeWrapper implements RuleNode {
      * @return
      */
     public RuleNode unwrap() {
+        if (originNode instanceof NodeWrapper) {
+            return ((NodeWrapper) originNode).unwrap();
+        }
         return this.originNode;
     }
 

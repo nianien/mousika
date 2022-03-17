@@ -1,39 +1,36 @@
 package com.skyfalling.mousika;
 
 import com.skyfalling.mousika.engine.RuleEngine;
-import lombok.AllArgsConstructor;
+import com.skyfalling.mousika.eval.node.ActionNode;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.skyfalling.mousika.eval.ActionBuilder.build;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class NodeParseTest {
 
-    @Test
-    public void testParse() {
-        String expr = "!!((a&&b)||(c&&d))";
-        System.out.println(expr = build(expr).expr());
-        assertEquals("(a&&b)||(c&&d)", expr);
-        System.out.println(expr = build("c1?101?true:false:null").expr());
-        assertEquals("c1 ? 101 ? true : false : null", expr);
-        System.out.println(expr = build("c1?!101&&!102?true:false:null").expr());
-        assertEquals("c1 ? !101&&!102 ? true : false : null", expr);
-        System.out.println(expr = build("1?((2||3)&&(4||5)?6:7):(8&&9||10&&11?12:13)").expr());
-        assertEquals("1 ? (2||3)&&(4||5) ? 6 : 7 : (8&&9)||(10&&11) ? 12 : 13", expr);
-        System.out.println(expr = build("(!(!(1&&2)||(4&&5))&&((6||7)))").expr());
-        assertEquals("!(!(1&&2)||(4&&5))&&(6||7)", expr);
-
-    }
-
-
-    @AllArgsConstructor
-    static class ExprPair {
-        String expr1, exp2;
+    @ParameterizedTest
+    @CsvSource(
+            {
+                    "!!((a&&b&&c)||(c||d||e)),(a&&b&&c)||(c||d||e)",
+                    "c1?101?true:false:null,c1 ? 101 ? true : false : null",
+                    "c1?!101&&!102?true:false:null,c1 ? (!101&&!102) ? true : false : null",
+                    "1?((2||3)&&(4||5)?6:7):(8&&9?10&&11:12),1 ? ((2||3)&&(4||5)) ? 6 : 7 : (8&&9) ? (10&&11) : 12",
+                    "(!(!(1&&2)||(4&&5))&&((6||7))),!(!(1&&2)||(4&&5))&&(6||7)",
+                    "(((1&&2&&3))||((a||b||c))),(1&&2&&3)||(a||b||c)"
+            }
+    )
+    public void testParse(String expr, String expected) {
+        ActionNode node = build(expr);
+        System.out.println(expr = node.expr());
+        assertEquals(expected, expr);
     }
 
 

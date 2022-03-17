@@ -81,9 +81,9 @@ public enum Operator {
             return -1;
         }
         //三元运算符优先级比较
-        if (left == Operator.QUESTION_MARK && right == QUESTION_MARK ||
-                left == Operator.QUESTION_MARK && right == COLON ||
-                left == Operator.COLON && right == QUESTION_MARK) {
+        if (left == Operator.QUESTION_MARK && right == QUESTION_MARK
+                || left == Operator.QUESTION_MARK && right == COLON
+                || left == Operator.COLON && right == QUESTION_MARK) {
             return 1;
         }
         if (left == Operator.COLON && right == COLON) {

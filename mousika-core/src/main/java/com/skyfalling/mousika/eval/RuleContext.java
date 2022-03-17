@@ -32,6 +32,10 @@ public interface RuleContext extends NodeVisitor {
      */
     EvalResult eval(String ruleId);
 
+    /**
+     * 获取当前规则
+     */
+    String getCurrentRule();
 
     /**
      * 获取导致评估结果对应的规则<br/>
@@ -57,11 +61,3 @@ public interface RuleContext extends NodeVisitor {
      */
     void setProperty(String name, Object value);
 }
-
-
-
-
-
-
-
-
