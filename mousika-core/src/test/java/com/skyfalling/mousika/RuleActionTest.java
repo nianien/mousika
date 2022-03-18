@@ -88,7 +88,7 @@ public class RuleActionTest {
                         new RuleDefinition("102", "$.name!='' && $.age>18", "{$.name}的年龄小于18"),
                         new RuleDefinition("103", "isAdmin($.name,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】"),
                         new RuleDefinition("104",
-                                "var udf= Java.type('com.skyfalling.mousika.udf.AdultValidateUdf'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁")
+                                "var udf= Java.type('" + AdultValidateUdf.class.getName() + "'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁")
                 ),
                 Arrays.asList(
                         new UdfDefinition("isAdult", new AdultValidateUdf(18)),
