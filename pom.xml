@@ -4,13 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.skyfalling</groupId>
+    <groupId>com.github.nianien</groupId>
     <artifactId>mousika</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
     <modules>
         <module>mousika-core</module>
-        <module>mousika-test</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,23 +17,14 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <revision>1.0.0</revision>
-        <jackson.version>2.9.7</jackson.version>
-
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.2</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -47,15 +37,12 @@
             <version>3.1.6</version>
             <scope>true</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.8.2</version>
             <optional>true</optional>
         </dependency>
-
-
     </dependencies>
 
     <build>
