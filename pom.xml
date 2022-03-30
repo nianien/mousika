@@ -8,7 +8,7 @@
     <artifactId>mousika</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
-    <name>mousika</name>
+    <name>io.github.nianien:mousika</name>
     <description>business based rule engine</description>
     <url>https://github.com/nianien/mousika</url>
     <modules>
