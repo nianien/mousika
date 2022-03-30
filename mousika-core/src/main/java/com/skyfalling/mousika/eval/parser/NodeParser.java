@@ -1,8 +1,8 @@
 package com.skyfalling.mousika.eval.parser;
 
 
-import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.node.Node;
+import com.skyfalling.mousika.eval.node.RuleNode;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -33,7 +33,6 @@ public class NodeParser {
     public static Node parse(String expression, Function<String, Node> generator) {
         return doParse(tokenize(expression), generator);
     }
-
 
 
     /**
@@ -127,8 +126,19 @@ public class NodeParser {
         // 操作符栈
         Stack<Operator> os = new Stack<>();
         // 扫描结果
-        for (String token : tokens) {
-            Operator right = of(token);
+        for (int i = 0; i < tokens.size(); i++) {
+            String token = tokens.get(i);
+            Operator right = Operator.of(token);
+            //determine op is UNARY_MINUS or MINUS
+            if (right == Operator.UNARY_MINUS) {
+                if (i > 0) {
+                    Operator last = Operator.of(tokens.get(i - 1));
+                    //上一个token是操作数或者右括号
+                    if (last == null || last == Operator.PAREN_CLOSE) {
+                        right = Operator.MINUS;
+                    }
+                }
+            }
             if (right != null) {
                 Operator left = os.isEmpty() ? null : os.peek();
                 //ordinal越小优先级越高
@@ -159,16 +169,12 @@ public class NodeParser {
         while (!os.isEmpty()) {
             Operator op = os.pop();
             if (op == Operator.PAREN_OPEN || op == Operator.PAREN_CLOSE) {
-                return null; // Bad paren
+                throw new IllegalArgumentException("Unmatched parenthesis");
             }
-            Node e = doOperate(op, es, os);
-            if (e == null) {
-                return null;
-            }
-            es.push(e);
+            es.push(doOperate(op, es, os));
         }
         if (es.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Missing final operand");
         } else {
             return es.pop();
         }
@@ -187,10 +193,10 @@ public class NodeParser {
             Node b = es.pop();
             Node a2 = null;
             Node a1 = null;
-            if (op.getArgNums() > 1) {
+            if (op.getArgCount() > 1) {
                 a2 = es.pop();
             }
-            if (op.getArgNums() > 2) {
+            if (op.getArgCount() > 2) {
                 a1 = es.pop();
             }
             switch (op) {

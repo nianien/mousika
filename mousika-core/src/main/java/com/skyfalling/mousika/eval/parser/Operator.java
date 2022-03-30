@@ -17,7 +17,7 @@ public enum Operator {
     REMAINDER("%"),
 
     PLUS("+"),
-    MINUS("+"),
+    MINUS("-"),
 
     SHL("<<"),
     SHR(">>"),
@@ -30,8 +30,8 @@ public enum Operator {
     NE("!="),
 
     BITWISE_AND("&"),
-    BITWISE_OR("^"),
-    BITWISE_XOR("|"),
+    BITWISE_OR("|"),
+    BITWISE_XOR("^"),
 
     LOGICAL_AND("&&"),
     LOGICAL_OR("||"),
@@ -42,7 +42,7 @@ public enum Operator {
     PAREN_CLOSE(")");
 
     private final String expr;
-    private final int argNums;
+    private final int argCount;
     private final boolean leftAssoc;
 
     Operator(String expr) {
@@ -51,13 +51,13 @@ public enum Operator {
 
     Operator(String expr, int argNums, boolean leftAssoc) {
         this.expr = expr;
-        this.argNums = argNums;
+        this.argCount = argNums;
         this.leftAssoc = leftAssoc;
     }
 
 
-    public int getArgNums() {
-        return argNums;
+    public int getArgCount() {
+        return argCount;
     }
 
     /**
@@ -96,6 +96,11 @@ public enum Operator {
         return right.ordinal() < left.ordinal() ? 1 : -1;
     }
 
+    @Override
+    public String toString() {
+        return expr;
+    }
+
     /**
      * 获取操作符
      *
@@ -110,7 +115,6 @@ public enum Operator {
         }
         return null;
     }
-
 
     /**
      * 运算符字符
