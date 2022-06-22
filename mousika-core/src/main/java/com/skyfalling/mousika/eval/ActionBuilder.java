@@ -4,9 +4,8 @@ import com.skyfalling.mousika.eval.listener.ListenerProvider;
 import com.skyfalling.mousika.eval.listener.RuleEvent;
 import com.skyfalling.mousika.eval.listener.RuleEvent.EventType;
 import com.skyfalling.mousika.eval.node.ActionNode;
-import com.skyfalling.mousika.eval.node.RuleNode;
-import com.skyfalling.mousika.eval.node.ExprNode;
 import com.skyfalling.mousika.eval.node.Node;
+import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeParser;
 import com.skyfalling.mousika.exception.RuleParseException;
 
@@ -27,8 +26,22 @@ public class ActionBuilder {
      */
     private static Map<String, Node> nodeCache = new ConcurrentHashMap<>();
 
-    private static Function<String, Node> defaultGenerator = expr -> new NodeWrapper(new ExprNode(expr));
+    /**
+     * 默认节点生成器
+     */
+    private static Function<String, Node> defaultGenerator = GeneratorFactory.create();
 
+
+    /**
+     * 设置节点生成器
+     *
+     * @param generator
+     */
+    public static void setGenerator(Function<String, Node> generator) {
+        if (generator != null) {
+            defaultGenerator = generator;
+        }
+    }
 
     /**
      * @param expr condition表达式
