@@ -138,15 +138,9 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
         if (origin instanceof ExprNode) {
             this.ruleId = ((ExprNode) origin).getExpression();
             //用于表达式引用
-            this.setProperty("$ruleId", ruleId);
+            ((List)this.computeIfAbsent("$rules", k -> new ArrayList<String>())).add(ruleId);
         }
-        EvalResult res = visitor.visit(node);
-        if (origin instanceof ExprNode) {
-            //用于表达式引用
-            this.setProperty("$result", res.getResult());
-            this.setProperty("$matched", res.isMatched());
-        }
-        return res;
+        return visitor.visit(node);
     }
 
     @Override

@@ -74,7 +74,7 @@ public class RuleActionTest {
     @ParameterizedTest
     @CsvSource(
             value = {
-                    "!101&&!102#!103&&104#ActionResult{result=false, details=[[RuleResult(expr=\"c2\",ruleId=c2, matched=true, desc='业务分支2')], [RuleResult(expr=\"(!103&&104)\",ruleId=104, matched=false, desc='<104:false>用户【jack】的年龄不满18岁')]]}"
+                    "!101&&!102#!103&&104#ActionResult{result=false, details=[[RuleResult(expr=\"c2\",ruleId=c2, matched=true, desc='业务分支2')], [RuleResult(expr=\"(!103&&104)\",ruleId=104, matched=false, desc='用户【jack】的年龄不满18岁')]]}"
             }, delimiter = '#'
     )
     public void testRuleScenario(String expr1, String expr2, String expected) {
@@ -88,7 +88,7 @@ public class RuleActionTest {
                         new RuleDefinition("102", "$.name!='' && $.age>18", "{$.name}的年龄小于18"),
                         new RuleDefinition("103", "isAdmin($.name,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】"),
                         new RuleDefinition("104",
-                                "var udf= Java.type('" + AdultValidateUdf.class.getName() + "'); new udf(18).apply($.name,$.age,$$)", "<{$$.$ruleId}:{$$.$result}>用户【{$.name}】的年龄不满{$$.minAge}岁")
+                                "var udf= Java.type('" + AdultValidateUdf.class.getName() + "'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁")
                 ),
                 Arrays.asList(
                         new UdfDefinition("isAdult", new AdultValidateUdf(18)),
@@ -99,7 +99,7 @@ public class RuleActionTest {
                                 build("c1", expr1),
                                 build("c2", expr2))
                         ),
-                        new RuleScenario("sc2", Arrays.asList("c1?" + expr1 + "?true:false:null", "c2?" + expr2 + ":null").stream()
+                        new RuleScenario("sc2", Arrays.asList("c1?(" + expr1 + "?true:false):null", "c2?" + expr2 + ":null").stream()
                                 .map(ActionBuilder::build)
                                 .collect(Collectors.toList())
                         )
@@ -107,8 +107,9 @@ public class RuleActionTest {
 
         RuleSuite suite = simpleRuleLoader.get();
         String res1 = suite.checkScenario("sc1", root).toString();
-        System.out.println(suite.checkScenario("sc1", root));
+        System.out.println(res1);
         assertEquals(expected, res1);
+
         String res2 = suite.checkScenario("sc2", root).toString();
         System.out.println(res2);
         assertEquals(expected, res2);

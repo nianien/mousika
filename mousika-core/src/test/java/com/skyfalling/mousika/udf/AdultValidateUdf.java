@@ -19,6 +19,7 @@ public class AdultValidateUdf implements Function3<String, Integer, RuleContext,
 
     @Override
     public Boolean apply(String name, Integer age, RuleContext context) {
+        System.out.println("@@@@" + context.getProperty("$rules"));
         context.setProperty("minAge", minAge);
         return age > minAge;
     }
