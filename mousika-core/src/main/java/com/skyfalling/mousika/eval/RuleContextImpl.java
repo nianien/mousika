@@ -13,7 +13,10 @@ import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -42,11 +45,6 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
      * 缓存评估结果
      */
     private Map<String, EvalResult> evalCache = new LinkedHashMap<>();
-    /**
-     * 上下文自定义属性
-     */
-    private Map<String, Object> properties = new HashMap<>();
-
     /**
      * 用于规则分析
      */
@@ -139,8 +137,16 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
         }
         if (origin instanceof ExprNode) {
             this.ruleId = ((ExprNode) origin).getExpression();
+            //用于表达式引用
+            this.setProperty("$ruleId", ruleId);
         }
-        return visitor.visit(node);
+        EvalResult res = visitor.visit(node);
+        if (origin instanceof ExprNode) {
+            //用于表达式引用
+            this.setProperty("$result", res.getResult());
+            this.setProperty("$matched", res.isMatched());
+        }
+        return res;
     }
 
     @Override
