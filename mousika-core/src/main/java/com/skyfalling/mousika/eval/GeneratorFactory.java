@@ -29,12 +29,12 @@ public class GeneratorFactory {
 
 
     /**
-     * 支持规则递归解析
+     * 支持复合规则递归解析
      *
-     * @param ruleDefinitions
+     * @param compositeRules 复合规则定义
      * @return
      */
-    public static Function<String, Node> create(Map<String, String> ruleDefinitions) {
+    public static Function<String, Node> create(Map<String, String> compositeRules) {
         return new Function<String, Node>() {
             @Override
             public Node apply(String s) {
@@ -43,12 +43,12 @@ public class GeneratorFactory {
 
             private Node parseRecursively(String expr, List<String> hits) {
                 //expression是一个规则集
-                if (ruleDefinitions.containsKey(expr)) {
+                if (compositeRules.containsKey(expr)) {
                     List<String> newHits = new ArrayList<>(hits);
                     newHits.add(expr);
-                    return parse(ruleDefinitions.get(expr), s -> {
+                    return parse(compositeRules.get(expr), s -> {
                         if (hits.contains(s)) {
-                            throw new IllegalStateException("circular dependency between ruleDefinitions [" + s + "] and [" + expr + "]");
+                            throw new IllegalStateException("circular dependency between compositeRules [" + s + "] and [" + expr + "]");
                         }
                         return parseRecursively(s, newHits);
                     });
