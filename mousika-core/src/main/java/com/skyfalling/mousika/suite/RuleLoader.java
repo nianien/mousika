@@ -1,45 +1,31 @@
 package com.skyfalling.mousika.suite;
 
-
-import com.skyfalling.mousika.engine.RuleDefinition;
-import com.skyfalling.mousika.engine.RuleEngine;
-import com.skyfalling.mousika.engine.UdfDefinition;
-import com.skyfalling.mousika.eval.RuleChecker;
-import com.skyfalling.mousika.suite.RuleScenario;
-import com.skyfalling.mousika.suite.RuleSuite;
-
-import java.util.List;
-import java.util.function.Supplier;
+import java.util.*;
+import com.skyfalling.mousika.engine.*;
+import com.skyfalling.mousika.eval.RuleEvaluator;
+import com.skyfalling.mousika.eval.parser.NodeBuilder;
+import com.skyfalling.mousika.eval.parser.NodeGenerator;
 
 /**
  * 规则加载接口定义
  *
- * @author liyifei 
+ * @author liyifei
  */
-public interface RuleLoader extends Supplier<RuleSuite> {
-
-
+public interface RuleLoader extends SceneLoader {
     /**
      * 加载规则列表
-     *
-     * @return
      */
     List<RuleDefinition> loadRules();
 
     /**
-     * 加载规则场景
-     *
-     * @return
-     */
-    List<RuleScenario> loadScenarios();
-
-
-    /**
-     * 加载UDF定义
-     *
-     * @return
+     * 加载默认UDF定义
      */
     List<UdfDefinition> loadUdfs();
+
+    @Override
+    default List<SceneDefinition> loadScenes() {
+        return Collections.EMPTY_LIST;
+    }
 
 
     /**
@@ -47,19 +33,48 @@ public interface RuleLoader extends Supplier<RuleSuite> {
      *
      * @return
      */
-    @Override
-    default RuleSuite get() {
-        List<RuleDefinition> ruleDefinitions = this.loadRules();
-        List<UdfDefinition> udfDefinitions = this.loadUdfs();
-        List<RuleScenario> scenarioList = this.loadScenarios();
+
+    default RuleSuite loadSuite() {
+        List<RuleDefinition> ruleDefinitions = new ArrayList<>(this.loadRules());
+        List<UdfDefinition> udfDefinitions = new ArrayList<>(this.loadUdfs());
+        return new RuleSuite(create(ruleDefinitions, udfDefinitions), loadScenes());
+    }
+
+
+    /**
+     * 创建规则套件
+     *
+     * @param ruleDefinitions
+     * @param udfDefinitions
+     * @return
+     */
+    default RuleEvaluator create(List<RuleDefinition> ruleDefinitions, List<UdfDefinition> udfDefinitions) {
+        Map<String, String> compositeRules = new HashMap<>();
         RuleEngine ruleEngine = new RuleEngine();
-        for (RuleDefinition ruleDefinition : ruleDefinitions) {
+        Iterator<RuleDefinition> it = ruleDefinitions.iterator();
+        while (it.hasNext()) {
+            RuleDefinition ruleDefinition = it.next();
+            switch (ruleDefinition.getUseType()) {
+                case 1: //决策表
+                    String udf = "udf_rule_table_$" + ruleDefinition.getRuleId();
+                    //动态注册UDF
+                    udfDefinitions
+                            .add(new UdfDefinition(udf, RuleTableUdf.fromJson(ruleDefinition.getExpression())));
+                    //修改规则表达式
+                    ruleDefinition.setExpression(udf + "($)");
+                    break;
+
+                case 2: //复合规则
+                    compositeRules.put(ruleDefinition.getRuleId(), ruleDefinition.getExpression());
+                    break;
+                default:
+            }
             ruleEngine.register(ruleDefinition);
         }
         for (UdfDefinition udfDefinition : udfDefinitions) {
             ruleEngine.register(udfDefinition);
         }
-        return new RuleSuite(new RuleChecker(ruleEngine), scenarioList);
+        NodeBuilder.setGenerator(NodeGenerator.create(compositeRules));
+        return new RuleEvaluator(ruleEngine);
     }
-
 }

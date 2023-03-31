@@ -13,9 +13,7 @@ public class RuleEvalException extends RuntimeException {
     private String ruleId;
 
     /**
-     * @param ruleId
-     * @param message
-     * @param e
+     *
      */
     public RuleEvalException(String ruleId, String message, Throwable e) {
         super(message, e);

@@ -1,15 +1,15 @@
 package com.skyfalling.mousika.expr;
 
-import com.skyfalling.mousika.eval.EvalResult;
-import com.skyfalling.mousika.eval.NodeWrapper;
 import com.skyfalling.mousika.eval.RuleContext;
-import com.skyfalling.mousika.eval.node.*;
-import lombok.Getter;
+import com.skyfalling.mousika.eval.RuleContextImpl;
+import com.skyfalling.mousika.eval.node.CompositeNode;
+import com.skyfalling.mousika.eval.node.ExprNode;
+import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.result.EvalResult;
+import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Vector;
 
 /**
  * 记录规则节点执行记录
@@ -19,25 +19,18 @@ import java.util.Map;
  */
 public class DefaultNodeVisitor implements NodeVisitor {
 
+    /**
+     * 规则上下文
+     */
     private RuleContext ruleContext;
     /**
-     * 访问标记,表示当前节点是否为真,最终结果是否为真
+     * 执行规则根节点
      */
-    private boolean visitFlag = true;
+    private EvalNode rootEval = new EvalNode(null);
     /**
-     * 导致结果通过的规则集合
+     * 当前执行节点
      */
-    private List<String> trueRules = new ArrayList<>();
-    /**
-     * 导致结果未通过的规则集合
-     */
-    private List<String> falseRules = new ArrayList<>();
-
-    /**
-     * 影响结果的规则集合
-     */
-    @Getter
-    private Map<String, List<String>> effectiveRules = new LinkedHashMap<>();
+    private ThreadLocal<EvalNode> currentEval = ThreadLocal.withInitial(() -> rootEval);
 
 
     /**
@@ -51,68 +44,69 @@ public class DefaultNodeVisitor implements NodeVisitor {
 
     /**
      * 访问规则节点
-     *
-     * @param node
-     * @return
      */
     @Override
     public EvalResult visit(RuleNode node) {
-        if (node instanceof NodeWrapper) {
-            node = ((NodeWrapper) node).unwrap();
+        //只记录子节点
+        if (node instanceof ExprNode) {
+            EvalNode evalNode = new EvalNode(node.expr());
+            currentEval.get().children.add(evalNode);
+            if (node instanceof CompositeNode) {
+                //更新当前节点为复合节点
+                currentEval.set(evalNode);
+            }
         }
-        //标记节点
-        boolean flag = visitFlag(node);
-        int falseSize = falseRules.size();
-        boolean isExprNode = node instanceof ExprNode;
-        EvalResult result = isExprNode ? ruleContext.eval(((ExprNode) node).getExpression()) : new EvalResult(node.matches(ruleContext));
-        //当前节点匹配是否成功
-        boolean matched = result.isMatched();
-        //整体匹配是否成功
-        boolean succeed = matched && flag || !matched && !flag;
-        if (isExprNode) {
-            //记录影响最终结果的叶子节点
-            (succeed ? trueRules : falseRules).add(((ExprNode) node).getExpression());
-        } else if (node instanceof OrNode && succeed) {
-            //对于or节点,如果匹配成功,则移除fail的叶节点
-            falseRules = falseRules.subList(0, falseSize);
+        EvalResult result = node.eval(ruleContext);
+        if (node instanceof CompositeNode) {//缓存复合节点的执行结果
+            ((RuleContextImpl) ruleContext).getEvalCache().put(node.expr(), result);
+            //复合节点执行完毕,回溯到父节点
+            currentEval.set(currentEval.get().parent);
         }
-        //两次执行,还原访问标记
-        this.visitFlag(node);
         return result;
     }
 
     @Override
-    public void mark(OpFlag flag, ActionNode node) {
-        switch (flag) {
-            case SUCCESS:
-                this.effectiveRules.put(node.getCondition().toString(), new ArrayList<>(trueRules));
-                break;
-            case FAILED:
-                this.effectiveRules.put(node.getCondition().toString(), new ArrayList<>(falseRules));
-                break;
-            case FINISH:
-                this.effectiveRules.clear();
-                break;
-        }
-        this.trueRules.clear();
-        this.falseRules.clear();
-        this.visitFlag = true;
+    public List<EvalNode> getEvalRules() {
+        return rootEval.children;
+    }
+
+
+    @Override
+    public void finish() {
+        this.rootEval = new EvalNode(null);
     }
 
 
     /**
-     * 设置当前节点访问标记
-     *
-     * @param node
-     * @return
+     * 评估节点信息
      */
-    private boolean visitFlag(RuleNode node) {
-        boolean flag = visitFlag;
-        if (node instanceof NotNode) {
-            visitFlag = !visitFlag;
-        }
-        return flag;
-    }
+    @Data
+    public static class EvalNode {
 
+        /**
+         * 规则表达式
+         */
+        private final String expr;
+
+        /**
+         * 父执行节点
+         */
+        private EvalNode parent;
+
+        /**
+         * 子执行节点<br/>
+         * 引擎支持并行,必须线程安全
+         */
+        private List<EvalNode> children = new Vector<>();
+
+        /**
+         * 执行节点
+         *
+         * @param expr
+         */
+        EvalNode(String expr) {
+            this.expr = expr;
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.udf;
 
-import com.skyfalling.mousika.define.Udf;
+import com.skyfalling.mousika.annotation.Udf;
 import lombok.NoArgsConstructor;
 
 import java.util.function.BiFunction;
@@ -11,7 +11,7 @@ public class DistributeUdf implements BiFunction<String, String, Boolean> {
 
     @Override
     public Boolean apply(String user, String owner) {
-        System.out.println("账号: " + user + "责任人分配给 " + owner + "!");
+        System.out.println("账号[" + user + "]分配角色[" + owner + "]!");
         return true;
     }
 

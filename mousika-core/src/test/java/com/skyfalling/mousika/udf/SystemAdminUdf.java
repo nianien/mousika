@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.udf;
 
-import com.skyfalling.mousika.define.Udf;
+import com.skyfalling.mousika.annotation.Udf;
 import com.skyfalling.mousika.eval.RuleContext;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-@Udf
+
+@Udf(group = "policy")
 @NoArgsConstructor
 @AllArgsConstructor
 public class SystemAdminUdf implements BiFunction<String, RuleContext, Boolean> {

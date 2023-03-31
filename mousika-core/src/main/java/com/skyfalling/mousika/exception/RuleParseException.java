@@ -13,9 +13,7 @@ public class RuleParseException extends RuntimeException {
     private String expr;
 
     /**
-     * @param expr
-     * @param message
-     * @param e
+     *
      */
     public RuleParseException(String expr, String message, Throwable e) {
         super(message, e);

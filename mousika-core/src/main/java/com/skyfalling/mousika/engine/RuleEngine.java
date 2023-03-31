@@ -1,11 +1,17 @@
 package com.skyfalling.mousika.engine;
 
+import com.cudrania.core.utils.StringUtils;
+import com.skyfalling.mousika.udf.Functions;
+import com.skyfalling.mousika.udf.UdfDelegate;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.script.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 规则引擎
@@ -41,7 +47,7 @@ public class RuleEngine {
         //添加默认规则定义
         this.register(new RuleDefinition("true", "true", "SUCCESS"));
         this.register(new RuleDefinition("false", "false", "FAILED"));
-        this.register(new RuleDefinition("null", "Java.type('com.skyfalling.mousika.eval.NaResult').DEFAULT", "NOP"));
+        this.register(new RuleDefinition("null", "Java.type('com.kuaishou.ad.mousika.eval.result.NaResult').DEFAULT", "NOP"));
     }
 
     /**
@@ -63,29 +69,67 @@ public class RuleEngine {
         if (sourceScripts.containsKey(id)) {
             throw new IllegalArgumentException("function: " + id + " is already defined!");
         }
-        sourceScripts.put(id, expression);
-        compiledScripts.put(expression, ((Compilable) engine).compile(expression));
         descriptions.put(id, desc);
+        sourceScripts.put(id, expression);
     }
 
 
     /**
      * 注册自定义函数
+     *
+     * @param udfDefinition
      */
     public void register(UdfDefinition udfDefinition) {
-        register(udfDefinition.getName(), udfDefinition.getUdf());
+        register(udfDefinition.getGroup(), udfDefinition.getName(), udfDefinition.getUdf());
     }
 
     /**
      * 注册自定义函数
+     *
+     * @param group
+     * @param name
+     * @param udf
      */
-    protected void register(String name, Object function) {
-        if (udfs.containsKey(name)) { //先普通udf，再注册service时，存在覆盖情况
-            log.info("udf function:{} is replace!", name);
+    protected void register(String group, String name, Object udf) {
+        Map map = this.udfs;
+        if (StringUtils.isNotEmpty(group)) {
+            String[] tokens = group.replaceAll("\\s", "").split("\\.+");
+            int i = 0;
+            for (; i < tokens.length; i++) {
+                String token = tokens[i];
+                Object o = map.computeIfAbsent(token, k -> new HashMap<>());
+                if (o instanceof Map) {
+                    map = (Map) o;
+                } else {
+                    String conflictName = Arrays.stream(tokens).limit(i + 1).collect(Collectors.joining("."));
+                    throw new IllegalArgumentException("udf: " + conflictName + " is already defined!");
+                }
+            }
         }
-        udfs.put(name, function);
+        if (map.containsKey(name)) {
+            throw new IllegalArgumentException("udf: " + name + " is already defined!");
+        }
+        doRegister(map, name, udf);
     }
 
+    /**
+     * 注册自定义函数
+     *
+     * @param map
+     * @param name
+     * @param udf
+     */
+    protected void doRegister(Map map, String name, Object udf) {
+        Class<?>[] interfaces = udf.getClass().getInterfaces();
+        for (Class<?> anInterface : interfaces) {
+            //只代理通过Functions定义的udf
+            if (anInterface.getName().indexOf(Functions.class.getName()) != -1) {
+                map.put(name, UdfDelegate.of(udf));
+                return;
+            }
+        }
+        map.put(name, udf);
+    }
 
     /**
      * 执行规则
@@ -110,7 +154,9 @@ public class RuleEngine {
         if (originDesc == null || originDesc.isEmpty()) {
             return "";
         }
-        // "代理商【{$.agentId}】不允许【{$.customerId}】跨开{不需要转义}" ==> "代理商【"+$.agentId+"】不允许【"+$.customerId+"】跨开{不需要转义}"
+        // 正则表达式转换成字符串计算
+        // "代理商【{$.agentId}】不允许【{$.customerId}】跨开{不需要转义}"
+        // ==> "代理商【"+$.agentId+"】不允许【"+$.customerId+"】跨开{不需要转义}"
         originDesc = "\"" + originDesc.replaceAll("\\{(\\$+\\..+?)\\}", "\\\"+$1+\\\"") + "\"";
         return (String) evalExpr(originDesc, root, context);
     }

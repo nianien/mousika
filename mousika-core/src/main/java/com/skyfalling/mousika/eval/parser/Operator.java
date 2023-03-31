@@ -6,52 +6,80 @@ package com.skyfalling.mousika.eval.parser;
  * @author liyifei
  */
 public enum Operator {
-    PAREN_OPEN("("),
-    UNARY_MINUS("-", 1, false),
-    UNARY_LOGICAL_NOT("!", 1, false),
-    UNARY_BITWISE_NOT("~", 1, false),
+    PAREN_OPEN("(", 0),
+    UNARY_MINUS("-", 1, 1, false),
+    UNARY_LOGICAL_NOT("!", 1, 1, false),
+    UNARY_BITWISE_NOT("~", 1, 1, false),
 
-    POWER("**", 2, false),
-    MULTIPLY("*"),
-    DIVIDE("/"),
-    REMAINDER("%"),
+    POWER("**", 2, 2, false),
+    MULTIPLY("*", 3),
+    DIVIDE("/", 3),
+    REMAINDER("%", 3),
 
-    PLUS("+"),
-    MINUS("-"),
+    PLUS("+", 4),
+    MINUS("-", 4),
 
-    SHL("<<"),
-    SHR(">>"),
+    SHL("<<", 5),
+    SHR(">>", 5),
 
-    LT("<"),
-    LE("<="),
-    GT(">"),
-    GE(">="),
-    EQ("=="),
-    NE("!="),
+    LT("<", 6),
+    LE("<=", 6),
+    GT(">", 6),
+    GE(">=", 6),
+    EQ("==", 6),
+    NE("!=", 6),
 
-    BITWISE_AND("&"),
-    BITWISE_OR("|"),
-    BITWISE_XOR("^"),
+    BITWISE_AND("&", 7),
+    BITWISE_OR("|", 7),
+    BITWISE_XOR("^", 7),
 
-    LOGICAL_AND("&&"),
-    LOGICAL_OR("||"),
-    COLON(":", 3, true),
-    QUESTION_MARK("?", 0, false),
-    ASSIGN("=", 2, false),
-    COMMA(",", 2, false),
-    PAREN_CLOSE(")");
+    LOGICAL_AND("&&", 8),
+    LOGICAL_OR("||", 9),
+
+    COLON(":", 10),
+    QUESTION_MARK("?", 11),
+
+    DOUBLE_ARROW("=>", 12),
+    SINGLE_ARROW("->", 13),
+
+    ASSIGN("=", 14, false),
+    COMMA(",", 15, false),
+    SEMICOLON(";", 16, false),
+    PAREN_CLOSE(")", 17);
 
     private final String expr;
+    private final int priority;
     private final int argCount;
     private final boolean leftAssoc;
 
-    Operator(String expr) {
-        this(expr, 2, true);
+    /**
+     * @param expr     运算符号
+     * @param priority 优先级
+     */
+    Operator(String expr, int priority) {
+        this(expr, priority, 2, true);
     }
 
-    Operator(String expr, int argNums, boolean leftAssoc) {
+    /**
+     * @param expr      运算符号
+     * @param priority  优先级
+     * @param leftAssoc 是否从左向右计算
+     */
+    Operator(String expr, int priority, boolean leftAssoc) {
+        this(expr, priority, 2, leftAssoc);
+    }
+
+
+    /**
+     * @param expr      运算符号
+     * @param priority  优先级
+     * @param argCount  参数个数
+     * @param leftAssoc 是否从左向右计算
+     */
+    Operator(String expr, int priority, int argCount, boolean leftAssoc) {
         this.expr = expr;
-        this.argCount = argNums;
+        this.priority = priority;
+        this.argCount = argCount;
         this.leftAssoc = leftAssoc;
     }
 
@@ -62,10 +90,6 @@ public enum Operator {
 
     /**
      * 比较运算符优先级
-     *
-     * @param right
-     * @param left
-     * @return
      */
     public static int isPrecede(Operator right, Operator left) {
         //左右括号匹配时，优先级相等，仅此一例
@@ -90,22 +114,19 @@ public enum Operator {
             return -1;
         }
         //优先级相等判断计算方向
-        if (left == right) {
+        if (left.priority == right.priority) {
             return left.leftAssoc ? -1 : 1;
         }
-        return right.ordinal() < left.ordinal() ? 1 : -1;
+        return right.priority < left.priority ? 1 : -1;
     }
 
     @Override
     public String toString() {
-        return expr;
+        return name() + "(" + expr + ')';
     }
 
     /**
      * 获取操作符
-     *
-     * @param expr
-     * @return
      */
     public static Operator of(String expr) {
         for (Operator op : values()) {
@@ -116,14 +137,12 @@ public enum Operator {
         return null;
     }
 
+
     /**
      * 运算符字符
-     *
-     * @param c
-     * @return
      */
     public static boolean isOpChar(char c) {
-        return "+-*/%<>=!^&|,(){}[]?:".indexOf(c) != -1;
+        return "+-*/%<>=!^&|,(){}[]?:;".indexOf(c) != -1;
     }
 
 }

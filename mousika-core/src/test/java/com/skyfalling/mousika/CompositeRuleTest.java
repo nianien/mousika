@@ -1,12 +1,19 @@
 package com.skyfalling.mousika;
 
-import com.skyfalling.mousika.eval.ActionBuilder;
-import com.skyfalling.mousika.eval.GeneratorFactory;
-import com.skyfalling.mousika.eval.node.Node;
+import com.skyfalling.mousika.engine.RuleDefinition;
+import com.skyfalling.mousika.eval.RuleEvaluator;
+import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.parser.NodeBuilder;
+import com.skyfalling.mousika.eval.parser.NodeGenerator;
+import com.skyfalling.mousika.mock.SimpleRuleLoader;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Created on 2022/6/17
@@ -16,20 +23,62 @@ import java.util.Map;
 public class CompositeRuleTest {
 
 
-    static Map<String, String> compositeRules = new HashMap<>();
+    /**
+     * 测试复合规则解析
+     */
+    @Test
+    public void testParse() {
+        Map<String, String> compositeRules = new HashMap<>();
+        compositeRules.put("a", "1||b&&c");
+        compositeRules.put("b", "2?3:4");
+        compositeRules.put("c", "5?d");
+        compositeRules.put("d", "4||b");
+        NodeBuilder.setGenerator(NodeGenerator.create(compositeRules));
+        RuleNode node = NodeBuilder.build("a");
+        System.out.println(node);
+        assertEquals("a[1||(b[2?3:4]&&c[5?d[4||b[2?3:4]]])]", node.toString());
+
+    }
+
+    /**
+     * 测试复合规则解析
+     */
+    @Test
+    public void testCircleDependency() {
+
+        Map<String, String> compositeRules = new HashMap<>();
+        compositeRules.put("a", "1||b||c");
+        compositeRules.put("b", "2&&c");
+        compositeRules.put("c", "3||d");
+        compositeRules.put("d", "4||b");
+        NodeBuilder.setGenerator(NodeGenerator.create(compositeRules));
+        assertThrows(IllegalStateException.class, () -> {
+            try {
+                NodeBuilder.build("a");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e.getCause();
+            }
+        });
+
+
+    }
 
     @Test
-    public void test() {
+    public void testEval() {
+        SimpleRuleLoader simpleRuleLoader = new SimpleRuleLoader(
+                Arrays.asList(
+                        new RuleDefinition("1001", "true", "1001描述"),
+                        new RuleDefinition("1002", "false", "1002描述"),
+                        new RuleDefinition("1003", "1001?1002->1004", "1003描述", 2),
+                        new RuleDefinition("1004", "false", "1004描述")
+                ),
 
-        compositeRules.put("a", "1||b||c");
-        compositeRules.put("b", "2||d");
-        compositeRules.put("c", "3||5");
-        compositeRules.put("d", "4||c");
-        compositeRules.put("1003", "1001||1002");
+                Arrays.asList());
 
-        ActionBuilder.setGenerator(GeneratorFactory.create(compositeRules));
-        Node node = ActionBuilder.build("1001&&1002&&1003");
-        System.out.println(node.expr());
+        RuleEvaluator ruleEvaluator = simpleRuleLoader.loadSuite().getRuleEvaluator();
+        String res1 = ruleEvaluator.eval("1002->1001&&1003", null).toString();
+        System.out.println(res1);
     }
 
 }

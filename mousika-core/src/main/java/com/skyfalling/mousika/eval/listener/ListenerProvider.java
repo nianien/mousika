@@ -39,8 +39,6 @@ public class ListenerProvider implements RuleListener {
 
     /**
      * 注册监听器
-     *
-     * @param listener
      */
     public void register(RuleListener listener) {
         this.listeners.add(listener);

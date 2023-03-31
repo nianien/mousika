@@ -1,6 +1,7 @@
 package com.skyfalling.mousika.eval.node;
 
 import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.eval.result.EvalResult;
 import lombok.Getter;
 
 /**
@@ -26,23 +27,8 @@ public class ExprNode implements RuleNode {
     }
 
     @Override
-    public RuleNode and(RuleNode node) {
-        return new AndNode(this, node);
-    }
-
-    @Override
-    public RuleNode or(RuleNode node) {
-        return new OrNode(this, node);
-    }
-
-    @Override
-    public RuleNode not() {
-        return new NotNode(this);
-    }
-
-    @Override
-    public boolean matches(RuleContext context) {
-        return context.eval(expression).isMatched();
+    public EvalResult eval(RuleContext context) {
+        return context.eval(expression);
     }
 
     @Override

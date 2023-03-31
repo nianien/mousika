@@ -10,15 +10,11 @@ public interface RuleListener {
 
     /**
      * 规则解析事件
-     *
-     * @param event
      */
     void onParse(RuleEvent event);
 
     /**
      * 规则评估事件
-     *
-     * @param event
      */
     void onEval(RuleEvent event);
 }

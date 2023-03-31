@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.udf;
 
-import com.skyfalling.mousika.define.Functions.Function3;
 import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.udf.Functions.Function3;
 
 /**
  * Created on 2022/2/14

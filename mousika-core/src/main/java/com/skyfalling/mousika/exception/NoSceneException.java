@@ -3,24 +3,24 @@ package com.skyfalling.mousika.exception;
 import lombok.Getter;
 
 /**
- * 没有匹配的规则
+ * 没有匹配的规则场景
  *
  * @author liyifei
  * Created on 2021-11-19
  */
 @Getter
-public class RuleMatchException extends RuntimeException {
+public class NoSceneException extends RuntimeException {
     private String sceneId;
 
     /**
      *
      */
-    public RuleMatchException(String sceneId, String message, Throwable e) {
+    public NoSceneException(String sceneId, String message, Throwable e) {
         super(message, e);
         this.sceneId = sceneId;
     }
 
-    public RuleMatchException(String sceneId, String message) {
+    public NoSceneException(String sceneId, String message) {
         super(message);
         this.sceneId = sceneId;
     }

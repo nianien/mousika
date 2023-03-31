@@ -1,6 +1,8 @@
 package com.skyfalling.mousika.eval.node;
 
 import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.eval.result.EvalResult;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,16 +13,15 @@ import java.util.stream.Collectors;
 /**
  * 条件与
  *
- * @author liyifei
+ * @author liyifei <liyifei@kuaishou.com>
  */
+@Getter
 public class AndNode implements RuleNode {
 
     private List<RuleNode> nodes = new ArrayList<>();
 
     /**
      * 多个节点条件取且
-     *
-     * @param nodes
      */
     public AndNode(RuleNode... nodes) {
         this.nodes.addAll(Arrays.asList(nodes));
@@ -33,23 +34,13 @@ public class AndNode implements RuleNode {
     }
 
     @Override
-    public RuleNode or(RuleNode node) {
-        return new OrNode(this, node);
-    }
-
-    @Override
-    public RuleNode not() {
-        return new NotNode(this);
-    }
-
-    @Override
-    public boolean matches(RuleContext ruleContext) {
+    public EvalResult eval(RuleContext context) {
         for (RuleNode node : nodes) {
-            if (!node.matches(ruleContext)) {
-                return false;
+            if (!context.visit(node).isMatched()) {
+                return new EvalResult(expr(), false);
             }
         }
-        return true;
+        return new EvalResult(expr(), true);
     }
 
 
@@ -62,6 +53,6 @@ public class AndNode implements RuleNode {
 
     @Override
     public String toString() {
-        return nodes.size() > 1 ? "(" + expr() + ")" : "" + expr();
+        return nodes.size() > 1 ? "(" + expr() + ")" : expr();
     }
 }

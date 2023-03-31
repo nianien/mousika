@@ -1,8 +1,10 @@
 package com.skyfalling.mousika.eval.parser;
 
 
-import com.skyfalling.mousika.eval.node.Node;
+import com.skyfalling.mousika.eval.node.CaseNode;
+import com.skyfalling.mousika.eval.node.ParNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.node.SerNode;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -10,13 +12,11 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
 
-import static com.skyfalling.mousika.eval.ActionBuilder.build;
 import static com.skyfalling.mousika.eval.parser.Operator.*;
+
 
 /**
  * 规则解析器，用于生成规则节点树
- *
- * @author liyifei
  */
 public class NodeParser {
     private static final int TOK_WORD = 2;
@@ -27,19 +27,14 @@ public class NodeParser {
 
     /**
      * @param expression 规则集表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
-     * @param generator
-     * @return
      */
-    public static Node parse(String expression, Function<String, Node> generator) {
+    public static RuleNode parse(String expression, NodeGenerator generator) {
         return doParse(tokenize(expression), generator);
     }
 
 
     /**
      * 解析表达式
-     *
-     * @param input
-     * @return
      */
     private static List<String> tokenize(String input) {
         int pos = 0;
@@ -57,7 +52,7 @@ public class NodeParser {
                     throw new IllegalArgumentException("Unexpected identifier: " + (tok + c));
                 }
                 expected = TOK_OP | TOK_OPEN | TOK_CLOSE;
-                while (!isOpChar(c) && pos < input.length()) {
+                while (!isOpChar(c) && !Character.isWhitespace(c) && pos < input.length()) {
                     tok = tok + input.charAt(pos);
                     pos++;
                     if (pos < input.length()) {
@@ -116,13 +111,11 @@ public class NodeParser {
     /**
      * 生成规则树
      *
-     * @param tokens
      * @param generator 节点生成器
-     * @return
      */
-    private static Node doParse(List<String> tokens, Function<String, Node> generator) {
+    private static RuleNode doParse(List<String> tokens, Function<String, RuleNode> generator) {
         // 变量栈
-        Stack<Node> es = new Stack<>();
+        Stack<RuleNode> es = new Stack<>();
         // 操作符栈
         Stack<Operator> os = new Stack<>();
         // 扫描结果
@@ -143,8 +136,7 @@ public class NodeParser {
                 Operator left = os.isEmpty() ? null : os.peek();
                 //ordinal越小优先级越高
                 while (left != null && isPrecede(right, left) < 0) {
-                    es.push(doOperate(left, es, os));
-                    os.pop();
+                    es.push(doOperate(es, os));
                     left = os.isEmpty() ? null : os.peek();
                 }
                 //没有匹配的括号
@@ -167,14 +159,18 @@ public class NodeParser {
             }
         }
         while (!os.isEmpty()) {
-            Operator op = os.pop();
+            Operator op = os.peek();
             if (op == Operator.PAREN_OPEN || op == Operator.PAREN_CLOSE) {
-                throw new IllegalArgumentException("Unmatched parenthesis");
+                return null; // Bad paren
             }
-            es.push(doOperate(op, es, os));
+            RuleNode e = doOperate(es, os);
+            if (e == null) {
+                return null;
+            }
+            es.push(e);
         }
         if (es.isEmpty()) {
-            throw new IllegalArgumentException("Missing final operand");
+            return null;
         } else {
             return es.pop();
         }
@@ -182,33 +178,40 @@ public class NodeParser {
 
     /**
      * 节点运算
-     *
-     * @param op
-     * @param es
-     * @param os
-     * @return
      */
-    private static Node doOperate(Operator op, Stack<Node> es, Stack<Operator> os) {
+    private static RuleNode doOperate(Stack<RuleNode> es, Stack<Operator> os) {
+        Operator op = os.pop();
         try {
-            Node b = es.pop();
-            Node a2 = null;
-            Node a1 = null;
-            if (op.getArgCount() > 1) {
-                a2 = es.pop();
-            }
-            if (op.getArgCount() > 2) {
-                a1 = es.pop();
-            }
+            //右操作数
+            RuleNode b = es.pop();
+            //左操作数
+            RuleNode a = op.getArgCount() > 1 ? es.pop() : null;
             switch (op) {
                 case LOGICAL_AND:
-                    return ((RuleNode) a2).and((RuleNode) b);
+                    return a.and(b);
                 case LOGICAL_OR:
-                    return ((RuleNode) a2).or((RuleNode) b);
+                    return a.or(b);
                 case UNARY_LOGICAL_NOT:
-                    return ((RuleNode) b).not();
+                    return b.not();
+                case QUESTION_MARK:
+                    return new CaseNode(a, b);
+                case SINGLE_ARROW:
+                    if (a instanceof SerNode) {
+                        return ((SerNode) a).next(b);
+                    } else {
+                        return new SerNode(a, b);
+                    }
+                case DOUBLE_ARROW:
+                    if (a instanceof ParNode) {
+                        return ((ParNode) a).next(b);
+                    } else {
+                        return new ParNode(a, b);
+                    }
                 case COLON:
+                    //a?b:c语法，提取操作符?
                     os.pop();
-                    return build(a1, a2, b);
+                    RuleNode t = es.pop();
+                    return new CaseNode(t, a, b);
                 default:
                     //Unsupported Operator
                     throw new UnsupportedOperationException("Unsupported operator:" + op);
@@ -217,5 +220,6 @@ public class NodeParser {
             throw new IllegalArgumentException("Missing operand:" + op);
         }
     }
+
 
 }

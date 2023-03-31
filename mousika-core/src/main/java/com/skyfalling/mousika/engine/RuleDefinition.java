@@ -4,7 +4,8 @@ import lombok.*;
 
 /**
  * 规则定义
- * @author liyifei 
+ *
+ * @author liyifei <liyifei@kuaishou.com>
  */
 @Data
 @AllArgsConstructor
@@ -25,7 +26,12 @@ public class RuleDefinition {
     /**
      * 规则描述
      */
+    @NonNull
     private String desc;
 
+    /**
+     * 使用方式
+     */
+    private int useType = 0;
 
 }

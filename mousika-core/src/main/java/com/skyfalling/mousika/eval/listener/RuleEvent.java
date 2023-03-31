@@ -20,7 +20,10 @@ public class RuleEvent {
     private String ruleExpr;
 
     private Object data;
-
+    /**
+     * 耗时
+     */
+    private long cost;
 
     /**
      * 枚举类型

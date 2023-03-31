@@ -1,11 +1,11 @@
 package com.skyfalling.mousika.suite;
 
-import com.skyfalling.mousika.eval.ActionResult;
-import com.skyfalling.mousika.eval.NaResult;
-import com.skyfalling.mousika.eval.RuleChecker;
-import com.skyfalling.mousika.exception.NoScenarioException;
-import com.skyfalling.mousika.exception.RuleMatchException;
-import lombok.AllArgsConstructor;
+import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.eval.RuleEvaluator;
+import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.result.NodeResult;
+import com.skyfalling.mousika.exception.NoSceneException;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
@@ -13,44 +13,94 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Created on 2022/2/11
+ * 规则套件,针对每个规则场景应用所关联规则集合
  *
- * @author liyifei
+ * @author liyifei <liyifei@kuaishou.com>
  */
-@AllArgsConstructor
+@Getter
 public class RuleSuite {
-
     /**
      * 规则判定器
      */
-    private final RuleChecker ruleChecker;
+    private final RuleEvaluator ruleEvaluator;
     /**
-     * 场景关联的规则集
+     * 场景列表
      */
-    private final Map<String, RuleScenario> scenarios;
+    private final Map<String, RuleScene> scenes;
 
 
-    public RuleSuite(RuleChecker ruleChecker, List<RuleScenario> scenarioList) {
-        this.ruleChecker = ruleChecker;
-        this.scenarios = scenarioList.stream()
-                .collect(Collectors.toMap(RuleScenario::getId, Function.identity(), (v1, v2) -> v2));
+    private static RuleSuite current;
+
+    {
+        current = this;
     }
 
     /**
-     * 判定对象是否符合业务场景
+     * 获取当前规则套件
      *
-     * @param scenarioId 场景名称
+     * @return
      */
-    public ActionResult checkScenario(String scenarioId, Object data) {
-        RuleScenario scenario = scenarios.get(scenarioId);
-        if (scenario == null) {
-            throw new NoScenarioException(scenarioId, "no scenario defined:" + scenarioId);
+    public static RuleSuite get() {
+        return current;
+    }
+
+    /**
+     * @param ruleEvaluator    规则评估器
+     * @param sceneDefinitions 场景定义
+     */
+    public RuleSuite(RuleEvaluator ruleEvaluator, List<SceneDefinition> sceneDefinitions) {
+        this.ruleEvaluator = ruleEvaluator;
+        this.scenes = sceneDefinitions.stream().map(SceneDefinition::build)
+                .collect(Collectors.toMap(RuleScene::getId, Function.identity(), (v1, v2) -> v2));
+    }
+
+    /**
+     * 获取规则场景
+     *
+     * @param sceneKey
+     * @return
+     */
+    public RuleScene getRuleScene(String sceneKey) {
+        return scenes.get(sceneKey);
+    }
+
+    /**
+     * 校验规则集合
+     *
+     * @param ruleNode
+     * @param target
+     * @param <T>
+     * @return
+     */
+    public <T> NodeResult check(RuleNode ruleNode, T target) {
+        return ruleEvaluator.eval(ruleNode, target);
+    }
+
+
+    /**
+     * 校验场景
+     *
+     * @param sceneId     场景ID
+     * @param ruleContext 规则上下文
+     * @return
+     */
+    public NodeResult check(String sceneId, RuleContext ruleContext) {
+        RuleScene ruleScene = scenes.get(String.valueOf(sceneId));
+        if (ruleScene == null) {
+            throw new NoSceneException(sceneId, "no scene defined:" + sceneId);
         }
-        ActionResult actionResult = this.ruleChecker.check(scenario.getRuleActions(), data);
-        if (actionResult instanceof NaResult) {
-            //no suitable rule-set
-            throw new RuleMatchException(scenarioId, "not suitable rules for scenario:" + scenario.getId());
-        }
-        return actionResult;
+        return ruleEvaluator.doEval(ruleScene.getRuleNode(), ruleContext, false);
+    }
+
+
+    /**
+     * 评估表达式
+     *
+     * @param expr   规则表达式
+     * @param target
+     * @return
+     */
+    public NodeResult check(String expr, Object target) {
+        return this.ruleEvaluator.eval(expr, target);
     }
 }

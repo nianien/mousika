@@ -11,41 +11,45 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 条件或
+ * 顺序执行节点<br/>
+ * 最后一个节点的执行结果作为串行结果以及判断条件
  *
- * @author liyifei
+ * @author liyifei <liyifei@kuaishou.com>
  */
 @Getter
-public class OrNode implements RuleNode {
+public class SerNode implements RuleNode {
 
     private List<RuleNode> nodes = new ArrayList<>();
 
     /**
-     * 多个节点条件取或
+     * @param node  至少一个节点
+     * @param nodes 后继节点
      */
-    public OrNode(RuleNode... nodes) {
+    public SerNode(RuleNode node, RuleNode... nodes) {
+        this.nodes.add(node);
         this.nodes.addAll(Arrays.asList(nodes));
     }
 
-    @Override
-    public RuleNode or(RuleNode node) {
+
+    /**
+     * 顺序执行
+     */
+    public SerNode next(RuleNode node) {
         this.nodes.add(node);
         return this;
     }
 
-
     @Override
     public EvalResult eval(RuleContext context) {
-        for (RuleNode node : nodes) {
-            if (context.visit(node).isMatched()) {
-                return new EvalResult(expr(), true);
-            }
-        }
-        return new EvalResult(expr(), false);
+        List<EvalResult> results = nodes.stream().map(context::visit).collect(Collectors.toList());
+        EvalResult result = results.get(results.size() - 1);
+        return new EvalResult(expr(), result.getResult(), result.isMatched());
     }
 
+
+    @Override
     public String expr() {
-        return String.join("||", nodes.stream()
+        return String.join("->", nodes.stream()
                 .map(Objects::toString)
                 .collect(Collectors.toList()));
     }
