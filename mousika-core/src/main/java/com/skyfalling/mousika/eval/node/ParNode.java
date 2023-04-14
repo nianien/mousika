@@ -1,13 +1,15 @@
 package com.skyfalling.mousika.eval.node;
 
 
-import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.eval.visitor.EvalNode;
+import com.skyfalling.mousika.eval.visitor.RuleVisitor;
 import com.skyfalling.mousika.eval.result.EvalResult;
+import lombok.SneakyThrows;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -40,8 +42,20 @@ public class ParNode implements RuleNode {
     }
 
     @Override
-    public EvalResult eval(RuleContext context) {
-        List<EvalResult> results = nodes.parallelStream().map(context::visit).collect(Collectors.toList());
+    @SneakyThrows
+    public EvalResult eval(RuleVisitor context) {
+        EvalNode parentNode = context.getCurrentEval();
+        Vector<EvalResult> results = new Vector<>();
+        CompletableFuture<EvalResult>[] futures = nodes.stream().map(node -> CompletableFuture.supplyAsync(() -> {
+                    //子线程设置当前evalNode
+                    context.setCurrentEval(parentNode);
+                    return context.visit(node);
+                }, new ForkJoinPool()).thenAcceptAsync(r -> results.add(r))
+        ).toArray(n -> new CompletableFuture[n]);
+
+        CompletableFuture.allOf(futures).get(1, TimeUnit.MINUTES);
+        //线程策略会使用当前线程,所以需要恢复父评估节点
+        context.setCurrentEval(parentNode);
         EvalResult result = results.stream().filter(EvalResult::isMatched).findAny().orElse(new EvalResult(null, null));
         return new EvalResult(expr(), result.getResult(), result.isMatched());
     }

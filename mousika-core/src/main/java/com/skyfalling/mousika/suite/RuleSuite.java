@@ -1,12 +1,19 @@
 package com.skyfalling.mousika.suite;
 
-import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.engine.RuleDefinition;
+import com.skyfalling.mousika.engine.RuleEngine;
+import com.skyfalling.mousika.engine.UdfDefinition;
+import com.skyfalling.mousika.eval.visitor.RuleVisitor;
 import com.skyfalling.mousika.eval.RuleEvaluator;
 import com.skyfalling.mousika.eval.node.RuleNode;
+import com.skyfalling.mousika.eval.parser.NodeBuilder;
+import com.skyfalling.mousika.eval.parser.NodeGenerator;
 import com.skyfalling.mousika.eval.result.NodeResult;
 import com.skyfalling.mousika.exception.NoSceneException;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,6 +36,9 @@ public class RuleSuite {
     private final Map<String, RuleScene> scenes;
 
 
+    private final RuleVisitor ruleVisitor = null;
+
+
     private static RuleSuite current;
 
     {
@@ -45,11 +55,14 @@ public class RuleSuite {
     }
 
     /**
-     * @param ruleEvaluator    规则评估器
+     * 构建规则套件
+     *
+     * @param ruleDefinitions  规则定义
+     * @param udfDefinitions   udf定义
      * @param sceneDefinitions 场景定义
      */
-    public RuleSuite(RuleEvaluator ruleEvaluator, List<SceneDefinition> sceneDefinitions) {
-        this.ruleEvaluator = ruleEvaluator;
+    public RuleSuite(List<RuleDefinition> ruleDefinitions, List<UdfDefinition> udfDefinitions, List<SceneDefinition> sceneDefinitions) {
+        this.ruleEvaluator = create(ruleDefinitions, udfDefinitions);
         this.scenes = sceneDefinitions.stream().map(SceneDefinition::build)
                 .collect(Collectors.toMap(RuleScene::getId, Function.identity(), (v1, v2) -> v2));
     }
@@ -57,7 +70,7 @@ public class RuleSuite {
     /**
      * 获取规则场景
      *
-     * @param sceneKey
+     * @param sceneKey 场景key
      * @return
      */
     public RuleScene getRuleScene(String sceneKey) {
@@ -67,12 +80,11 @@ public class RuleSuite {
     /**
      * 校验规则集合
      *
-     * @param ruleNode
-     * @param target
-     * @param <T>
+     * @param ruleNode 规则结合
+     * @param target   用于规则计算的对象
      * @return
      */
-    public <T> NodeResult check(RuleNode ruleNode, T target) {
+    public NodeResult evalRule(RuleNode ruleNode, Object target) {
         return ruleEvaluator.eval(ruleNode, target);
     }
 
@@ -80,27 +92,81 @@ public class RuleSuite {
     /**
      * 校验场景
      *
-     * @param sceneId     场景ID
-     * @param ruleContext 规则上下文
+     * @param sceneId 场景ID
+     * @param target  用于规则计算的对象
      * @return
      */
-    public NodeResult check(String sceneId, RuleContext ruleContext) {
+    public NodeResult evalScene(String sceneId, Object target) {
         RuleScene ruleScene = scenes.get(String.valueOf(sceneId));
         if (ruleScene == null) {
             throw new NoSceneException(sceneId, "no scene defined:" + sceneId);
         }
-        return ruleEvaluator.doEval(ruleScene.getRuleNode(), ruleContext, false);
+        return this.ruleEvaluator.eval(ruleScene.getRuleNode(), target);
     }
 
+
+    /**
+     * 校验场景
+     *
+     * @param sceneId 场景ID
+     * @param target  用于规则计算的对象
+     * @param context 附加上下文信息
+     * @return
+     */
+    public NodeResult evalScene(String sceneId, Object target, Map<String, Object> context) {
+        RuleScene ruleScene = scenes.get(String.valueOf(sceneId));
+        if (ruleScene == null) {
+            throw new NoSceneException(sceneId, "no scene defined:" + sceneId);
+        }
+        return this.ruleEvaluator.eval(ruleScene.getRuleNode(), target, context);
+    }
 
     /**
      * 评估表达式
      *
      * @param expr   规则表达式
-     * @param target
+     * @param target 用于规则计算的对象
      * @return
      */
-    public NodeResult check(String expr, Object target) {
+    public NodeResult evalExpr(String expr, Object target) {
         return this.ruleEvaluator.eval(expr, target);
+    }
+
+
+    /**
+     * 创建规则评估器
+     *
+     * @param ruleDefinitions 规则定义
+     * @param udfDefinitions  udf定义
+     * @return
+     */
+    private RuleEvaluator create(List<RuleDefinition> ruleDefinitions, List<UdfDefinition> udfDefinitions) {
+        Map<String, String> compositeRules = new HashMap<>();
+        RuleEngine ruleEngine = new RuleEngine();
+        Iterator<RuleDefinition> it = ruleDefinitions.iterator();
+        while (it.hasNext()) {
+            RuleDefinition ruleDefinition = it.next();
+            switch (ruleDefinition.getUseType()) {
+                case 1: //决策表
+                    String udf = "udf_rule_table_$" + ruleDefinition.getRuleId();
+                    //动态注册UDF
+                    udfDefinitions
+                            .add(new UdfDefinition(udf, RuleTableUdf.fromJson(ruleDefinition.getExpression())));
+                    //修改规则表达式
+                    ruleDefinition.setExpression(udf + "($)");
+                    break;
+
+                case 2: //复合规则
+                    compositeRules.put(ruleDefinition.getRuleId(), ruleDefinition.getExpression());
+                    break;
+                default:
+            }
+            ruleEngine.register(ruleDefinition);
+        }
+        for (UdfDefinition udfDefinition : udfDefinitions) {
+            ruleEngine.register(udfDefinition);
+        }
+        NodeBuilder.setGenerator(NodeGenerator.create(compositeRules));
+        return new RuleEvaluator(ruleEngine);
     }
 }

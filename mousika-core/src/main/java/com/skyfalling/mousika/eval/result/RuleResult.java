@@ -27,7 +27,7 @@ public class RuleResult extends EvalResult {
      * 子规则
      */
 
-    private List<RuleResult> subRules = new ArrayList<>();
+    private List<RuleResult> details = new ArrayList<>();
 
 
     @Override
@@ -35,8 +35,8 @@ public class RuleResult extends EvalResult {
         return "RuleResult("
                 + "ruleId=" + getExpr()
                 + ",result=" + getResult()
-                + ",desc='" + desc + '\''
-                + (subRules.isEmpty() ? "" : ",subRules=" + subRules)
+                + (desc == null || desc.isEmpty() ? "" : ",desc='" + desc + '\'')
+                + (details.isEmpty() ? "" : ",details=" + details)
                 + ')';
     }
 }

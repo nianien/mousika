@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.udf;
 
-import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.eval.visitor.RuleContext;
 import com.skyfalling.mousika.udf.Functions.Function3;
 
 /**
@@ -18,9 +18,9 @@ public class AdultValidateUdf implements Function3<String, Integer, RuleContext,
     }
 
     @Override
-    public Boolean apply(String name, Integer age, RuleContext context) {
-        System.out.println("@@@@" + context.getProperty("$rules"));
-        context.setProperty("minAge", minAge);
+    public Boolean apply(String name, Integer age, RuleContext ruleContext) {
+        System.out.println("@@@@current rule:" + ruleContext.getRule());
+        ruleContext.setProperty("minAge", minAge);
         return age > minAge;
     }
 }

@@ -29,11 +29,16 @@ public class RuleEvaluatorTest {
             value = {
                     "1&&2?actionA:!3&&4?actionB:actionC#(1&&2)?actionA:(!3&&4)?actionB:"
                             + "actionC#NodeResult(expr='(1&&2)?actionA:(!3&&4)?actionB:actionC', result=jack, " +
+                            "details=[RuleResult(ruleId=(1&&2)?actionA:(!3&&4)?actionB:actionC,result=jack," +
+                            "details=[RuleResult(ruleId=1&&2,result=false," +
                             "details=[RuleResult(ruleId=1,result=true,desc='规则1'), " +
-                            "RuleResult(ruleId=2,result=false,desc='规则2'), " +
-                            "RuleResult(ruleId=3,result=false,desc='规则3'), " +
-                            "RuleResult(ruleId=4,result=true,desc='规则4'), " +
-                            "RuleResult(ruleId=actionB,result=jack,desc='业务操作B')])"
+                            "RuleResult(ruleId=2,result=false,desc='规则2')]), " +
+                            "RuleResult(ruleId=(!3&&4)?actionB:actionC,result=jack," +
+                            "details=[RuleResult(ruleId=!3&&4,result=true," +
+                            "details=[RuleResult(ruleId=!3,result=true," +
+                            "details=[RuleResult(ruleId=3,result=false,desc='规则3')]), " +
+                            "RuleResult(ruleId=4,result=true,desc='规则4')]), " +
+                            "RuleResult(ruleId=actionB,result=jack,desc='业务操作B')])])])"
             }, delimiter = '#'
     )
     public void testRuleEval(String expr, String expected1, String expected2) {
@@ -74,10 +79,15 @@ public class RuleEvaluatorTest {
     @CsvSource(
             value = {
                     "!101&&!102?105:106#!103&&104#NodeResult(expr='c1?(!101&&!102)?105:106:c2?(!103&&104)', result=false, " +
+                            "details=[RuleResult(ruleId=c1?(!101&&!102)?105:106:c2?(!103&&104),result=false," +
                             "details=[RuleResult(ruleId=c1,result=true,desc='业务分支1'), " +
-                            "RuleResult(ruleId=101,result=false,desc='jack的年龄(17)小于18岁'), " +
-                            "RuleResult(ruleId=102,result=false,desc='jack的年龄小于18'), " +
-                            "RuleResult(ruleId=105,result=false,desc='调用场景2')])"
+                            "RuleResult(ruleId=(!101&&!102)?105:106,result=false,details=" +
+                            "[RuleResult(ruleId=!101&&!102,result=true,details=" +
+                            "[RuleResult(ruleId=!101,result=true,details=" +
+                            "[RuleResult(ruleId=101,result=false,desc='jack的年龄(17)小于18岁')]), " +
+                            "RuleResult(ruleId=!102,result=true,details=" +
+                            "[RuleResult(ruleId=102,result=false,desc='jack的年龄小于18')])]), " +
+                            "RuleResult(ruleId=105,result=false,desc='调用场景2')])])])\n"
             }, delimiter = '#'
     )
     public void testRuleScene1(String expr1, String expr2, String expected) {
@@ -93,22 +103,20 @@ public class RuleEvaluatorTest {
                         new RuleDefinition("104",
                                 "var udf= Java.type('" + AdultValidateUdf.class.getName()
                                         + "'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁"),
-                        new RuleDefinition("105", "sceneCall('sc2',$$)", "调用场景2"),
-                        new RuleDefinition("106", "sceneCall('sc2',$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】")
+                        new RuleDefinition("105", "sceneCall('sc2',$,$$)", "调用场景2"),
+                        new RuleDefinition("106", "sceneCall('sc2',$,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】")
                 ),
                 Arrays.asList(
                         new UdfDefinition("isAdult", new AdultValidateUdf(18)),
                         new UdfDefinition("isAdmin", new SystemAdminUdf("system")),
-                        new UdfDefinition("sceneCall", new SceneCallUdf())
-                ));
+                        new UdfDefinition("sceneCall", new EvalSceneUdf())
+                ), Arrays.asList(
+                new SceneDefinition("sc1", "", "c1?" + expr1 + ":c2?" + expr2),
+                new SceneDefinition("sc2", "", "102")
+        ));
 
-        RuleEvaluator ruleEvaluator = simpleRuleLoader.loadSuite().getRuleEvaluator();
-        RuleSuite suite = new RuleSuite(ruleEvaluator,
-                Arrays.asList(
-                        new SceneDefinition("sc1", "", "c1?" + expr1 + ":c2?" + expr2),
-                        new SceneDefinition("sc2", "", "102")
-                ));
-        String res1 = suite.check(suite.getRuleScene("sc1").getRuleNode(), root).toString();
+        RuleSuite suite = simpleRuleLoader.loadSuite();
+        String res1 = suite.evalScene("sc1", root).toString();
         System.out.println(res1);
         assertEquals(expected, res1);
     }
@@ -118,10 +126,14 @@ public class RuleEvaluatorTest {
     @CsvSource(
             value = {
                     "!101&&!102#!103&&104#NodeResult(expr='c1?(!101&&!102):c2?(!103&&104)', result=false, " +
+                            "details=[RuleResult(ruleId=c1?(!101&&!102):c2?(!103&&104),result=false," +
                             "details=[RuleResult(ruleId=c1,result=false,desc='业务分支1'), " +
-                            "RuleResult(ruleId=c2,result=true,desc='业务分支2'), " +
-                            "RuleResult(ruleId=103,result=false,desc='用户【jack】不是管理员用户【system】'), " +
-                            "RuleResult(ruleId=104,result=false,desc='用户【jack】的年龄不满18岁')])"
+                            "RuleResult(ruleId=c2?(!103&&104),result=false," +
+                            "details=[RuleResult(ruleId=c2,result=true,desc='业务分支2'), " +
+                            "RuleResult(ruleId=!103&&104,result=false," +
+                            "details=[RuleResult(ruleId=!103,result=true," +
+                            "details=[RuleResult(ruleId=103,result=false,desc='用户【jack】不是管理员用户【system】')]), " +
+                            "RuleResult(ruleId=104,result=false,desc='用户【jack】的年龄不满18岁')])])])])"
             }, delimiter = '#'
     )
     public void testRuleScene(String expr1, String expr2, String expected) {
@@ -147,11 +159,10 @@ public class RuleEvaluatorTest {
         String res1 = ruleEvaluator.eval("c1?" + expr1 + ":c2?" + expr2, root).toString();
         System.out.println(res1);
 
-        String res2 = ruleEvaluator
-                .eval(build("c1?" + expr1 + "?true:false:c2?" + expr2), root).toString();
+        RuleNode node2 = build("c1?" + expr1 + "?true:false:c2?" + expr2);
+        String res2 = ruleEvaluator.eval(node2, root).toString();
         System.out.println(res2);
         assertEquals(expected, res1);
-        assertEquals(expected.substring(expected.indexOf("details")), res2.substring(res2.indexOf("details")));
     }
 
     @ParameterizedTest

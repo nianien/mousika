@@ -9,6 +9,7 @@ import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;
 import com.skyfalling.mousika.eval.result.NodeResult;
 import com.skyfalling.mousika.udf.SayHelloUdf;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -58,12 +59,13 @@ public class RuleNodeFlowTest {
     @Test
     public void tesSerNode() {
         User root = new User("jack", 19);
-        RuleNode node = NodeBuilder.build("f1?(a1->a2):(f2?(a2->a3):(t3?(a1->a2->a3->a4)))");
+        RuleNode node = NodeBuilder.build("a1->a2->a3->a4");
         System.out.println(node.toString());
         NodeResult nodeResult = new RuleEvaluator(ruleEngine).eval(node, root);
         System.out.println(nodeResult);
     }
 
+    @SneakyThrows
     @Test
     public void tesParNode() {
         User root = new User("jack", 19);

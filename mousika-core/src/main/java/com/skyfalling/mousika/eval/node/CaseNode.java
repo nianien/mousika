@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.eval.node;
 
-import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.eval.visitor.RuleVisitor;
 import com.skyfalling.mousika.eval.result.EvalResult;
 import lombok.Data;
 
@@ -26,13 +26,10 @@ public class CaseNode implements RuleNode {
      */
     private RuleNode falseCase;
 
-    public CaseNode(RuleNode condition) {
-        this.condition = condition;
-    }
 
     /**
-     * @param condition   条件节点
-     * @param trueCase    为真节点
+     * @param condition 条件节点
+     * @param trueCase  为真节点
      * @param falseCase 为假节点
      */
     public CaseNode(RuleNode condition, RuleNode trueCase, RuleNode falseCase) {
@@ -51,7 +48,7 @@ public class CaseNode implements RuleNode {
 
 
     @Override
-    public EvalResult eval(RuleContext context) {
+    public EvalResult eval(RuleVisitor context) {
         EvalResult result = null;
         boolean succeed = context.visit(condition).isMatched();
         if (succeed) {

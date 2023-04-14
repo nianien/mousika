@@ -37,7 +37,7 @@ public interface RuleLoader extends SceneLoader {
     default RuleSuite loadSuite() {
         List<RuleDefinition> ruleDefinitions = new ArrayList<>(this.loadRules());
         List<UdfDefinition> udfDefinitions = new ArrayList<>(this.loadUdfs());
-        return new RuleSuite(create(ruleDefinitions, udfDefinitions), loadScenes());
+        return new RuleSuite(ruleDefinitions, udfDefinitions, loadScenes());
     }
 
 

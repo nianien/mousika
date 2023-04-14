@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.eval.node;
 
-import com.skyfalling.mousika.eval.RuleContext;
+import com.skyfalling.mousika.eval.visitor.RuleVisitor;
 import com.skyfalling.mousika.eval.result.EvalResult;
 import lombok.Getter;
 
@@ -40,7 +40,7 @@ public class SerNode implements RuleNode {
     }
 
     @Override
-    public EvalResult eval(RuleContext context) {
+    public EvalResult eval(RuleVisitor context) {
         List<EvalResult> results = nodes.stream().map(context::visit).collect(Collectors.toList());
         EvalResult result = results.get(results.size() - 1);
         return new EvalResult(expr(), result.getResult(), result.isMatched());

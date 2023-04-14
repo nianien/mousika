@@ -1,4 +1,4 @@
-package com.skyfalling.mousika.eval;
+package com.skyfalling.mousika.eval.visitor;
 
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.eval.listener.ListenerProvider;
@@ -9,9 +9,6 @@ import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.result.EvalResult;
 import com.skyfalling.mousika.eval.result.RuleResult;
 import com.skyfalling.mousika.exception.RuleEvalException;
-import com.skyfalling.mousika.expr.DefaultNodeVisitor;
-import com.skyfalling.mousika.expr.DefaultNodeVisitor.EvalNode;
-import com.skyfalling.mousika.expr.NodeVisitor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,13 +19,13 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
 
 /**
- * 规则上下文默认实现
+ * 规则执行默认实现
  *
  * @author liyifei
  */
 @Slf4j
 @Getter
-public class RuleContextImpl extends LinkedHashMap<String, Object> implements RuleContext {
+public class RuleVisitorImpl extends LinkedHashMap<String, Object> implements RuleVisitor {
 
     /**
      * 执行引擎
@@ -49,38 +46,101 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
     private Map<String, EvalResult> evalCache = new ConcurrentSkipListMap<>();
 
     /**
-     * 用于规则分析
+     * 执行规则根节点
      */
-    private NodeVisitor visitor = new DefaultNodeVisitor(this);
+    private EvalNode rootEval = new EvalNode(null);
+    /**
+     * 当前执行节点
+     */
+    private ThreadLocal<EvalNode> currentEval = ThreadLocal.withInitial(() -> rootEval);
 
 
     /**
      * 指定执行引擎和规则对象
      */
-    public RuleContextImpl(RuleEngine ruleEngine, Object data) {
+    public RuleVisitorImpl(RuleEngine ruleEngine, Object data) {
         this.ruleEngine = ruleEngine;
         this.data = data;
     }
 
 
+    /**
+     * 访问规则节点
+     */
     @Override
-    public String evalDesc(String ruleId) {
-        return ruleEngine.evalRuleDesc(ruleId, data, this);
-    }
-
-    @Override
-    public String getCurrentRule() {
-        return currentRule.get();
+    public EvalResult visit(RuleNode node) {
+        if (node instanceof ExprNode) {
+            this.currentRule.set(node.expr());
+        }
+        EvalNode evalNode = new EvalNode(node.expr());
+        boolean isExprNode = node.getClass() == ExprNode.class;
+        currentEval.get().add(evalNode);
+        if (!isExprNode) {
+            evalNode.setParent(currentEval.get());
+            currentEval.set(evalNode);
+        }
+        EvalResult result = node.eval(this);
+        if (!isExprNode) {
+            //缓存非叶子节点的执行结果
+            this.cache(node.expr(), result);
+            //复合节点执行完毕,回溯到父节点
+            currentEval.set(currentEval.get().getParent());
+        }
+        return result;
     }
 
     /**
-     * 评估单条规则
+     * 评估叶子规则
      *
      * @param ruleId 规则ID
      */
     @Override
     public EvalResult eval(String ruleId) {
         return evalCache.computeIfAbsent(ruleId, this::doEval);
+    }
+
+
+    @Override
+    public String getRule() {
+        return currentRule.get();
+    }
+
+
+    @Override
+    public List<RuleResult> getRuleResults() {
+        List<RuleResult> ruleResults = rootEval.getChildren()
+                .stream()
+                .map(this::transform)
+                .collect(Collectors.toList());
+        return ruleResults;
+    }
+
+
+    @Override
+    public EvalNode getCurrentEval() {
+        return currentEval.get();
+    }
+
+
+    @Override
+    public void setCurrentEval(EvalNode node) {
+        currentEval.set(node);
+    }
+
+
+    @Override
+    public Object getProperty(Object name) {
+        return super.get(name);
+    }
+
+    @Override
+    public void setProperty(String name, Object value) {
+        super.put(name, value);
+    }
+
+    @Override
+    public void removeProperty(String name) {
+        super.remove(name);
     }
 
 
@@ -102,20 +162,7 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
                     new RuleEvent(EventType.EVAL_FAIL, ruleId, e, end - begin));
             throw new RuleEvalException(ruleId, e.getMessage(), e);
         }
-
     }
-
-
-    @Override
-    public List<RuleResult> collect() {
-        List<RuleResult> ruleResults = visitor.getEvalRules()
-                .stream()
-                .map(this::transform)
-                .collect(Collectors.toList());
-        visitor.finish();
-        return ruleResults;
-    }
-
 
     /**
      * 转换规则执行结果
@@ -128,51 +175,31 @@ public class RuleContextImpl extends LinkedHashMap<String, Object> implements Ru
         EvalResult result = evalCache.get(expr);
         RuleResult ruleResult = new RuleResult(result, evalDesc(expr));
         for (EvalNode subNode : node.getChildren()) {
-            ruleResult.getSubRules().add(transform(subNode));
+            ruleResult.getDetails().add(transform(subNode));
         }
         return ruleResult;
     }
 
-    @Override
-    public Object getProperty(Object name) {
-        return super.get(name);
-    }
 
-    @Override
-    public void setProperty(String name, Object value) {
-        super.put(name, value);
-    }
-
-    @Override
-    public RuleContext copy(Map<String, Object> extra) {
-        RuleContextImpl context = new RuleContextImpl(ruleEngine, data);
-        context.putAll(this);
-        context.evalCache.putAll(this.evalCache);
-        if (extra != null && !extra.isEmpty()) {
-            context.putAll(extra);
-        }
-        return context;
+    /**
+     * 评估规则描述
+     *
+     * @param ruleId
+     * @return
+     */
+    private String evalDesc(String ruleId) {
+        return ruleEngine.evalRuleDesc(ruleId, data, this);
     }
 
 
-    @Override
-    public EvalResult visit(RuleNode node) {
-        RuleNode origin = node;
-        if (origin instanceof ExprNode) {
-            this.currentRule.set(node.expr());
-        }
-        return visitor.visit(node);
-    }
-
-    @Override
-    public List<EvalNode> getEvalRules() {
-        return visitor.getEvalRules();
-    }
-
-
-    @Override
-    public void finish() {
-        visitor.finish();
+    /**
+     * 缓存评估结果
+     *
+     * @param expr
+     * @param result
+     */
+    private void cache(String expr, EvalResult result) {
+        evalCache.put(expr, result);
     }
 }
 
