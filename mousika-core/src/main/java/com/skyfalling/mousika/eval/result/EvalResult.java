@@ -60,6 +60,6 @@ public class EvalResult {
         if (res instanceof Map) {
             return !((Map<?, ?>) res).isEmpty();
         }
-        return res != null;
+        return true;
     }
 }
