@@ -50,7 +50,7 @@ public class ParNode implements RuleNode {
                     //子线程设置当前evalNode
                     context.setCurrentEval(parentNode);
                     return context.visit(node);
-                }, new ForkJoinPool()).thenAcceptAsync(r -> results.add(r))
+                }, ForkJoinPool.commonPool()).thenAcceptAsync(r -> results.add(r))
         ).toArray(n -> new CompletableFuture[n]);
 
         CompletableFuture.allOf(futures).get(1, TimeUnit.MINUTES);
