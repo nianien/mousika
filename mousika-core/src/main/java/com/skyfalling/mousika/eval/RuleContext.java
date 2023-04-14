@@ -1,4 +1,4 @@
-package com.skyfalling.mousika.eval.visitor;
+package com.skyfalling.mousika.eval;
 
 /**
  * 规则上下文接口定义

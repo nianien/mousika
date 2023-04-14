@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.udf;
 
 import com.skyfalling.mousika.annotation.Udf;
-import com.skyfalling.mousika.eval.visitor.RuleContext;
+import com.skyfalling.mousika.eval.RuleContext;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

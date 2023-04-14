@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.udf;
 
 import com.skyfalling.mousika.annotation.Udf;
-import com.skyfalling.mousika.eval.visitor.RuleVisitor;
+import com.skyfalling.mousika.eval.RuleVisitor;
 import lombok.NoArgsConstructor;
 
 import java.util.function.BiFunction;

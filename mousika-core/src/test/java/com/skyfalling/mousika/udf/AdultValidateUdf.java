@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.udf;
 
-import com.skyfalling.mousika.eval.visitor.RuleContext;
+import com.skyfalling.mousika.eval.RuleContext;
 import com.skyfalling.mousika.udf.Functions.Function3;
 
 /**

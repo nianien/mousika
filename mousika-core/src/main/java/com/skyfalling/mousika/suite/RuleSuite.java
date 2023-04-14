@@ -3,7 +3,7 @@ package com.skyfalling.mousika.suite;
 import com.skyfalling.mousika.engine.RuleDefinition;
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.engine.UdfDefinition;
-import com.skyfalling.mousika.eval.visitor.RuleVisitor;
+import com.skyfalling.mousika.eval.RuleVisitor;
 import com.skyfalling.mousika.eval.RuleEvaluator;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;

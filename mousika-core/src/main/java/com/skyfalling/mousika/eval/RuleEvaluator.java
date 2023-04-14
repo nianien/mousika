@@ -4,8 +4,6 @@ import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.result.EvalResult;
 import com.skyfalling.mousika.eval.result.NodeResult;
-import com.skyfalling.mousika.eval.visitor.RuleVisitor;
-import com.skyfalling.mousika.eval.visitor.RuleVisitorImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;

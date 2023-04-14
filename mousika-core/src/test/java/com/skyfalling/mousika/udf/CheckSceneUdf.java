@@ -2,7 +2,7 @@ package com.skyfalling.mousika.udf;
 
 
 import com.skyfalling.mousika.annotation.Udf;
-import com.skyfalling.mousika.eval.visitor.RuleVisitor;
+import com.skyfalling.mousika.eval.RuleVisitor;
 import com.skyfalling.mousika.udf.Functions.Function4;
 
 import java.util.Map;
