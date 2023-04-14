@@ -1,25 +1,25 @@
 package com.skyfalling.mousika.udf;
 
 import com.skyfalling.mousika.annotation.Udf;
-import com.skyfalling.mousika.eval.RuleVisitor;
+import com.skyfalling.mousika.eval.context.RuleContext;
 import lombok.NoArgsConstructor;
 
 import java.util.function.BiFunction;
 
 @Udf
 @NoArgsConstructor
-public class GetUserTypeUdf implements BiFunction<String, RuleVisitor, Integer> {
+public class GetUserTypeUdf implements BiFunction<String, RuleContext, Integer> {
 
 
     @Override
-    public Integer apply(String name, RuleVisitor context) {
+    public Integer apply(String name, RuleContext context) {
         int type = findUserType(name, context);
         context.setProperty("user_type", type);
         return type;
     }
 
 
-    private int findUserType(String name, RuleVisitor context) {
+    private int findUserType(String name, RuleContext context) {
         if (name.contains("admin")) {
             context.setProperty("owner", "admin");
             return 1;

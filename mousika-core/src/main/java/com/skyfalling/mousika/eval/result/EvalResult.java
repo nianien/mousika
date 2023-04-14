@@ -40,6 +40,9 @@ public class EvalResult {
 
     /**
      * boolean值解析
+     *
+     * @param res
+     * @return
      */
     private boolean parseBoolean(Object res) {
         if (res == null) {
@@ -49,7 +52,7 @@ public class EvalResult {
             return (Boolean) res;
         }
         if (res instanceof Number) {
-            return ((Number) res).intValue() > 0;
+            return ((Number) res).floatValue() > 0;
         }
         if (res instanceof String) {
             return !((String) res).toLowerCase().matches("no|false|null|0|fail");

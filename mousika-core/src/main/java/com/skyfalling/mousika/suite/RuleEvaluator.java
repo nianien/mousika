@@ -1,6 +1,8 @@
-package com.skyfalling.mousika.eval;
+package com.skyfalling.mousika.suite;
 
 import com.skyfalling.mousika.engine.RuleEngine;
+import com.skyfalling.mousika.eval.context.RuleContext;
+import com.skyfalling.mousika.eval.RuleVisitor;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.result.EvalResult;
 import com.skyfalling.mousika.eval.result.NodeResult;
@@ -53,7 +55,7 @@ public class RuleEvaluator {
      * @return
      */
     public NodeResult eval(RuleNode ruleNode, Object data) {
-        return doEval(ruleNode, new RuleVisitorImpl(ruleEngine, data), true);
+        return doEval(ruleNode, new RuleVisitor(ruleEngine, data), true);
     }
 
     /**
@@ -65,7 +67,7 @@ public class RuleEvaluator {
      * @return
      */
     public NodeResult eval(RuleNode ruleNode, Object data, Map<String, Object> context) {
-        RuleVisitorImpl ruleContext = new RuleVisitorImpl(ruleEngine, data);
+        RuleVisitor ruleContext = new RuleVisitor(ruleEngine, data);
         ruleContext.putAll(context);
         NodeResult result = doEval(ruleNode, ruleContext, false);
         context.putAll(ruleContext);
@@ -80,7 +82,7 @@ public class RuleEvaluator {
      * @param includeDetail 是否获取执行详情
      * @return
      */
-    private NodeResult doEval(RuleNode ruleNode, RuleVisitor context, boolean includeDetail) {
+    private NodeResult doEval(RuleNode ruleNode, RuleContext context, boolean includeDetail) {
         EvalResult evalResult = context.visit(ruleNode);
         // NaResult from expr("null")
         if (evalResult.getResult() instanceof NodeResult) {

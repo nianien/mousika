@@ -1,7 +1,7 @@
 package com.skyfalling.mousika.eval.node;
 
 
-import com.skyfalling.mousika.eval.RuleVisitor;
+import com.skyfalling.mousika.eval.context.RuleContext;
 import com.skyfalling.mousika.eval.result.EvalResult;
 
 /**
@@ -20,7 +20,7 @@ public class CompositeNode extends ExprNode {
     }
 
     @Override
-    public EvalResult eval(RuleVisitor context) {
+    public EvalResult eval(RuleContext context) {
         EvalResult result = context.visit(ruleNode);
         EvalResult evalResult = new EvalResult(this.toString(), result.getResult(), result.isMatched());
         return evalResult;

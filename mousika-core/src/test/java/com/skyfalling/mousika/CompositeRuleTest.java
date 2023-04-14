@@ -1,7 +1,7 @@
 package com.skyfalling.mousika;
 
 import com.skyfalling.mousika.engine.RuleDefinition;
-import com.skyfalling.mousika.eval.RuleEvaluator;
+import com.skyfalling.mousika.suite.RuleEvaluator;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;
 import com.skyfalling.mousika.eval.parser.NodeGenerator;

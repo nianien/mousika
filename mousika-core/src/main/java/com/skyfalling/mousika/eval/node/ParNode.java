@@ -2,7 +2,7 @@ package com.skyfalling.mousika.eval.node;
 
 
 import com.skyfalling.mousika.eval.EvalNode;
-import com.skyfalling.mousika.eval.RuleVisitor;
+import com.skyfalling.mousika.eval.context.RuleContext;
 import com.skyfalling.mousika.eval.result.EvalResult;
 import lombok.SneakyThrows;
 
@@ -43,7 +43,7 @@ public class ParNode implements RuleNode {
 
     @Override
     @SneakyThrows
-    public EvalResult eval(RuleVisitor context) {
+    public EvalResult eval(RuleContext context) {
         EvalNode parentNode = context.getCurrentEval();
         Vector<EvalResult> results = new Vector<>();
         CompletableFuture<EvalResult>[] futures = nodes.stream().map(node -> CompletableFuture.supplyAsync(() -> {

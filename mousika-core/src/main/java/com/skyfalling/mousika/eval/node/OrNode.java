@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.eval.node;
 
-import com.skyfalling.mousika.eval.RuleVisitor;
+import com.skyfalling.mousika.eval.context.RuleContext;
 import com.skyfalling.mousika.eval.result.EvalResult;
 import lombok.Getter;
 
@@ -35,7 +35,7 @@ public class OrNode implements RuleNode {
 
 
     @Override
-    public EvalResult eval(RuleVisitor context) {
+    public EvalResult eval(RuleContext context) {
         for (RuleNode node : nodes) {
             if (context.visit(node).isMatched()) {
                 return new EvalResult(expr(), true);

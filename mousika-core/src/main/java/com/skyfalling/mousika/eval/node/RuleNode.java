@@ -1,6 +1,6 @@
 package com.skyfalling.mousika.eval.node;
 
-import com.skyfalling.mousika.eval.RuleVisitor;
+import com.skyfalling.mousika.eval.context.RuleContext;
 import com.skyfalling.mousika.eval.result.EvalResult;
 
 /**
@@ -14,7 +14,7 @@ public interface RuleNode {
     /**
      * 规则计算
      */
-    EvalResult eval(RuleVisitor context);
+    EvalResult eval(RuleContext context);
 
 
     /**

@@ -2,7 +2,6 @@ package com.skyfalling.mousika.suite;
 
 import java.util.*;
 import com.skyfalling.mousika.engine.*;
-import com.skyfalling.mousika.eval.RuleEvaluator;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;
 import com.skyfalling.mousika.eval.parser.NodeGenerator;
 

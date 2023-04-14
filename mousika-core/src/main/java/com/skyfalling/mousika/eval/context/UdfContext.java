@@ -1,11 +1,11 @@
-package com.skyfalling.mousika.eval;
+package com.skyfalling.mousika.eval.context;
 
 /**
  * 规则上下文接口定义
  *
  * @author liyifei
  */
-public interface RuleContext {
+public interface UdfContext {
 
     /**
      * 规则评估参数
