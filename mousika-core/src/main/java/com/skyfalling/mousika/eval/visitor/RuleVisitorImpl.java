@@ -56,7 +56,10 @@ public class RuleVisitorImpl extends LinkedHashMap<String, Object> implements Ru
 
 
     /**
-     * 指定执行引擎和规则对象
+     * 指定执行引擎和评估对象
+     *
+     * @param ruleEngine
+     * @param data
      */
     public RuleVisitorImpl(RuleEngine ruleEngine, Object data) {
         this.ruleEngine = ruleEngine;
