@@ -1,6 +1,15 @@
 package com.skyfalling.mousika.ui.tree.node;
 
+import com.skyfalling.mousika.ui.tree.node.define.IANode;
+import com.skyfalling.mousika.ui.tree.node.define.ILNode;
+import com.skyfalling.mousika.ui.tree.node.define.IPNode;
+import com.skyfalling.mousika.ui.tree.node.define.TypeNode;
+import com.skyfalling.mousika.ui.tree.visitor.TreeVisitor;
 import com.skyfalling.mousika.utils.JsonUtils;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
  * UI树的定义
@@ -23,54 +32,42 @@ public class TreeNode extends ANode<TreeNode> {
         return new TreeNode();
     }
 
-//    /**
-//     * 遍历树
-//     */
-//    public <T, C extends Collection<T>> C visit(Function<TypeNode, T> function, Supplier<C> supplier) {
-//        return (C) this.visit(this, function, supplier.get());
-//    }
-//
-//    /**
-//     * 遍历树
-//     */
-//    public <T> List<T> visit(Function<TypeNode, T> function) {
-//        return this.visit(function, ArrayList::new);
-//    }
-//
-//    /**
-//     * 遍历节点
-//     */
-//    public void visit(Consumer<TypeNode> consumer) {
-//        visit(n -> {
-//            consumer.accept(n);
-//            return null;
-//        });
-//    }
-//
-//    /**
-//     * 遍历节点
-//     */
-//    private static <T> Collection<T> visit(TypeNode node, Function<TypeNode, T> function, Collection<T> collector) {
-//        T t = function.apply(node);
-//        if (t != null) {
-//            collector.add(t);
-//        }
-//        if (node instanceof ILNode) {
-//            ((ILNode<?>) node).getRules().forEach(e -> visit(e, function, collector));
-//        }
-////        if (node instanceof IANode) {
-////            ((IANode<?>) node).getBranches().forEach(e -> visit(e, function, collector));
-////            visit(((IANode<?>) node).getAction(), function, collector);
-////        }
-//        return collector;
-//    }
-
 
     /**
      * 自定义反序列化
      */
     public static TreeNode fromJson(String json) {
         return JsonUtils.toBean(json, TreeNode.class);
+    }
+
+    /**
+     * 遍历树,获取使用的规则ID
+     *
+     * @return
+     */
+    public Set<String> collect() {
+        return visit(TreeVisitor.RULE_ID_COLLECTOR, new HashSet<>());
+    }
+
+    /**
+     * 遍历树,获取使用的规则ID
+     *
+     * @return
+     */
+    public void validate() {
+        visit(TreeVisitor.NODE_VALIDATOR, null);
+    }
+
+    /**
+     * 遍历树节点
+     *
+     * @param consumer
+     * @param result
+     * @param <T>
+     * @return
+     */
+    public <T> T visit(BiConsumer<TypeNode, T> consumer, T result) {
+        return visit(this, consumer, result);
     }
 
 
@@ -81,5 +78,27 @@ public class TreeNode extends ANode<TreeNode> {
         return JsonUtils.toJson(this);
     }
 
+    /**
+     * 遍历树节点
+     *
+     * @param node     树节点
+     * @param consumer 节点处理
+     * @param result   遍历结果
+     * @return
+     */
+    private static <T> T visit(TypeNode node, BiConsumer<TypeNode, T> consumer, T result) {
+        consumer.accept(node, result);
+        if (node instanceof IANode) {
+            ((IANode<?>) node).getFlows().forEach(e -> visit(e, consumer, result));
+        }
+        if (node instanceof ILNode) {
+            ((ILNode<?>) node).getRules().forEach(e -> visit(e, consumer, result));
+        }
+        if (node instanceof IPNode) {
+            ((IPNode<?>) node).getBranches().forEach(e -> visit(e, consumer, result));
+            visit(((IPNode<?>) node).getAction(), consumer, result);
+        }
+        return result;
+    }
 
 }

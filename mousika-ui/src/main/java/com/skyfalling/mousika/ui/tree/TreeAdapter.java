@@ -55,9 +55,9 @@ public class TreeAdapter {
                 addFlow(rule, aNode);
             }
         } else if (ruleNode instanceof CaseNode) {
-            JNode jNode = new JNode();
-            toIPNode(ruleNode, jNode);
-            aNode.addFlow(jNode);
+            ZNode zNode = new ZNode();
+            toIPNode(ruleNode, zNode);
+            aNode.addFlow(zNode);
         } else {
             throw unSupportException(ruleNode);
         }
@@ -133,9 +133,9 @@ public class TreeAdapter {
         if (fNode instanceof FNode) {
             return NodeBuilder.build(fNode.ruleExpr());
         }
-        if (fNode instanceof JNode) {
-            JNode jNode = (JNode<?>) fNode;
-            CaseNode caseNode = fromIPNode(jNode);
+        if (fNode instanceof ZNode) {
+            ZNode zNode = (ZNode<?>) fNode;
+            CaseNode caseNode = fromIPNode(zNode);
             return caseNode.getTrueCase();
         } else {
             throw unSupportException(fNode);

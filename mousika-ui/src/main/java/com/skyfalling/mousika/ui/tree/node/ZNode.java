@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 复合流程节点, 同时用作{@link IPNode}节点和{@link IFNode}节点
+ * 虚拟流程节点, 同时定义复杂流程, 用作{@link IPNode}节点和{@link IFNode}节点
  *
  * @author liyifei
  * Created on 2022-07-19
  */
 @NoArgsConstructor
-public class JNode<T extends JNode> implements IPNode<T>, IFNode {
+public class ZNode<T extends ZNode> implements IPNode<T>, IFNode {
 
     /**
      * 条件分支

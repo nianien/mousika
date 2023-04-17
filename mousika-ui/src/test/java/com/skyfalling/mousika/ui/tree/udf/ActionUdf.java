@@ -3,7 +3,7 @@ package com.skyfalling.mousika.ui.tree.udf;
 import com.skyfalling.mousika.annotation.Udf;
 import lombok.NoArgsConstructor;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created on 2022/7/1
@@ -12,9 +12,10 @@ import java.util.function.Consumer;
  */
 @Udf
 @NoArgsConstructor
-public class ActionUdf implements Consumer<String> {
+public class ActionUdf implements Function<String, String> {
     @Override
-    public void accept(String s) {
+    public String apply(String s) {
         System.out.println("执行操作:" + s);
+        return s;
     }
 }

@@ -43,8 +43,6 @@ public class NodeTypeResolver extends TypeIdResolverBase {
                 return SimpleType.constructUnsafe(FNode.class);
             case "G":
                 return SimpleType.constructUnsafe(GNode.class);
-            case "J":
-                return SimpleType.constructUnsafe(JNode.class);
             case "L":
                 return SimpleType.constructUnsafe(LNode.class);
             case "P":
@@ -53,6 +51,8 @@ public class NodeTypeResolver extends TypeIdResolverBase {
                 return SimpleType.constructUnsafe(RNode.class);
             case "T":
                 return SimpleType.constructUnsafe(TreeNode.class);
+            case "Z":
+                return SimpleType.constructUnsafe(ZNode.class);
             default:
                 return super.typeFromId(context, id);
         }
