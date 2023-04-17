@@ -179,7 +179,7 @@ public class RuleVisitor extends LinkedHashMap<String, Object> implements RuleCo
         EvalResult result = evalCache.get(expr);
         RuleResult ruleResult = new RuleResult(result, evalDesc(expr));
         for (EvalNode subNode : node.getChildren()) {
-            ruleResult.getDetails().add(transform(subNode));
+            ruleResult.getSubRules().add(transform(subNode));
         }
         return ruleResult;
     }

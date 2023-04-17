@@ -67,15 +67,16 @@ public class CaseNode implements RuleNode {
     public String expr() {
         if (trueCase != null && falseCase != null) {
             return condition + "?" + trueCase + ":" + falseCase;
-        } else if (falseCase == null) {
+        } else if (trueCase != null) {
             return condition + "?" + trueCase;
-        } else {
+        } else if (falseCase != null) {
             return condition.not() + "?" + falseCase;
         }
+        return condition.expr();
     }
 
     @Override
     public String toString() {
-        return this.expr();
+        return "(" + this.expr() + ")";
     }
 }

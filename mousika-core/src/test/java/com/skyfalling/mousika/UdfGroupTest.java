@@ -21,7 +21,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author lichaoshuai
+ * 
  * Created on 2022-08-26
  */
 @Udf

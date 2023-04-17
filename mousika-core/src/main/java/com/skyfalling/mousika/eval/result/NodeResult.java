@@ -35,7 +35,7 @@ public class NodeResult {
     @Override
     public String toString() {
         return "NodeResult("
-                + "expr='" + expr + '\''
+                + "expr=" + expr
                 + ", result=" + result
                 + ", details=" + details
                 + ')';

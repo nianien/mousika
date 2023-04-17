@@ -27,16 +27,16 @@ public class RuleResult extends EvalResult {
      * 子规则
      */
 
-    private List<RuleResult> details = new ArrayList<>();
+    private List<RuleResult> subRules = new ArrayList<>();
 
 
     @Override
     public String toString() {
         return "RuleResult("
-                + "ruleId=" + getExpr()
-                + ",result=" + getResult()
+                + "expr=" + expr
+                + ",result=" + result
                 + (desc == null || desc.isEmpty() ? "" : ",desc='" + desc + '\'')
-                + (details.isEmpty() ? "" : ",details=" + details)
+                + (subRules.isEmpty() ? "" : ",subRules=" + subRules)
                 + ')';
     }
 }

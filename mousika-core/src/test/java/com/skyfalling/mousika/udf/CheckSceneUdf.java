@@ -9,7 +9,7 @@ import com.skyfalling.mousika.udf.Functions.Function4;
 import java.util.Map;
 
 /**
- * @author lichaoshuai
+ * 
  * Created on 2022-08-26
  */
 @Udf(group = "sys")

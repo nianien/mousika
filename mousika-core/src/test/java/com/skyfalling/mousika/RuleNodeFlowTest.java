@@ -4,16 +4,20 @@ import com.skyfalling.mousika.bean.User;
 import com.skyfalling.mousika.engine.RuleDefinition;
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.engine.UdfDefinition;
-import com.skyfalling.mousika.suite.RuleEvaluator;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;
 import com.skyfalling.mousika.eval.result.NodeResult;
+import com.skyfalling.mousika.suite.RuleEvaluator;
 import com.skyfalling.mousika.udf.SayHelloUdf;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created on 2023/3/28
@@ -43,6 +47,22 @@ public class RuleNodeFlowTest {
         for (RuleDefinition ruleDefinition : ruleDefinitions) {
             ruleEngine.register(ruleDefinition);
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "t1?f3?a1:f4?a2:a3#t1?(f3?a1:(f4?a2:a3))",
+            "t1?f3?a1:(f4?a2):a3#t1?(f3?a1:(f4?a2)):a3",
+            "f1?t2?t3?a1:a2:a3#f1?(t2?(t3?a1:a2):a3)"
+    }, delimiter = '#')
+    public void testEval(String expr, String expected) {
+        User root = new User("jack", 19);
+        RuleNode node = NodeBuilder.build(expr);
+        System.out.println(node.expr());
+        NodeResult nodeResult = new RuleEvaluator(ruleEngine).eval(node, root);
+        System.out.println(nodeResult);
+        assertEquals(expected, node.expr());
+
     }
 
     @Test

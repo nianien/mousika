@@ -14,11 +14,11 @@ public class EvalResult {
     /**
      * 待评估表达式
      */
-    private String expr;
+    protected String expr;
     /**
      * 引擎计算返回值
      */
-    private final Object result;
+    protected final Object result;
     /**
      * 当作为判断条件时,返回值转boolean值
      */

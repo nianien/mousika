@@ -4,6 +4,7 @@ package com.skyfalling.mousika.eval.node;
 import com.skyfalling.mousika.eval.EvalNode;
 import com.skyfalling.mousika.eval.context.RuleContext;
 import com.skyfalling.mousika.eval.result.EvalResult;
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.util.*;
@@ -19,16 +20,15 @@ import java.util.stream.Collectors;
  *
  * @author liyifei
  */
+@Getter
 public class ParNode implements RuleNode {
 
     private List<RuleNode> nodes = new ArrayList<>();
 
     /**
-     * @param node  至少一个节点
-     * @param nodes 后继节点
+     * @param nodes 子节点
      */
-    public ParNode(RuleNode node, RuleNode... nodes) {
-        this.nodes.add(node);
+    public ParNode(RuleNode... nodes) {
         this.nodes.addAll(Arrays.asList(nodes));
     }
 
@@ -64,7 +64,7 @@ public class ParNode implements RuleNode {
     @Override
     public String expr() {
         return String.join("=>", nodes.stream()
-                .map(Objects::toString)
+                .map(Objects::toString/*RuleNode::expr*/)
                 .collect(Collectors.toList()));
     }
 

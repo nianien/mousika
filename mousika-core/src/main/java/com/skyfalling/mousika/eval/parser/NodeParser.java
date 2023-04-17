@@ -2,9 +2,7 @@ package com.skyfalling.mousika.eval.parser;
 
 
 import com.skyfalling.mousika.eval.node.CaseNode;
-import com.skyfalling.mousika.eval.node.ParNode;
 import com.skyfalling.mousika.eval.node.RuleNode;
-import com.skyfalling.mousika.eval.node.SerNode;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -196,17 +194,8 @@ public class NodeParser {
                 case QUESTION_MARK:
                     return new CaseNode(a, b);
                 case SINGLE_ARROW:
-                    if (a instanceof SerNode) {
-                        return ((SerNode) a).next(b);
-                    } else {
-                        return new SerNode(a, b);
-                    }
                 case DOUBLE_ARROW:
-                    if (a instanceof ParNode) {
-                        return ((ParNode) a).next(b);
-                    } else {
-                        return new ParNode(a, b);
-                    }
+                    return a.next(b);
                 case COLON:
                     //a?b:c语法，提取操作符?
                     os.pop();

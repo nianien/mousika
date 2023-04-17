@@ -13,6 +13,7 @@
     <url>https://github.com/nianien/mousika</url>
     <modules>
         <module>mousika-core</module>
+        <module>mousika-ui</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

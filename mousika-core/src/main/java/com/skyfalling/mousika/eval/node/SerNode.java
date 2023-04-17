@@ -21,12 +21,11 @@ public class SerNode implements RuleNode {
 
     private List<RuleNode> nodes = new ArrayList<>();
 
+
     /**
-     * @param node  至少一个节点
-     * @param nodes 后继节点
+     * @param nodes 子节点
      */
-    public SerNode(RuleNode node, RuleNode... nodes) {
-        this.nodes.add(node);
+    public SerNode(RuleNode... nodes) {
         this.nodes.addAll(Arrays.asList(nodes));
     }
 
@@ -50,7 +49,7 @@ public class SerNode implements RuleNode {
     @Override
     public String expr() {
         return String.join("->", nodes.stream()
-                .map(Objects::toString)
+                .map(Objects::toString/*RuleNode::expr*/)
                 .collect(Collectors.toList()));
     }
 
