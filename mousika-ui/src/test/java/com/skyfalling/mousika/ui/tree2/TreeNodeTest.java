@@ -139,7 +139,7 @@ public class TreeNodeTest {
         c2.setAction(new ANode("a2"));
         d1.addBranch(c2);
         d1.setAction(new ANode("a3"));
-        RuleNode rule = JsonUtils.toBean(JsonUtils.toJson(tree),TreeNode.class).toRule();
+        RuleNode rule = JsonUtils.toBean(JsonUtils.toJson(tree), TreeNode.class).toRule();
         TreeNode t2 = new TreeNode().fromRule(rule);
         System.out.println(JsonUtils.toJson(t2));
         System.out.println(rule);
@@ -169,43 +169,11 @@ public class TreeNodeTest {
 
     @Test
     public void testFromExprNode() {
-//        RuleNode caseNode = NodeBuilder.build("c1?a1");
-//        TreeNode treeNode = new TreeNode().fromRule(caseNode);
-//        System.out.println(JsonUtils.toJson(treeNode));
-//        System.out.println(treeNode.toRule());
-        System.out.println(NodeBuilder.build("!!a"));
+        RuleNode caseNode = NodeBuilder.build("c1?a1");
+        TreeNode treeNode = new TreeNode().fromRule(caseNode);
+        System.out.println(JsonUtils.toJson(treeNode));
+        System.out.println(treeNode.toRule());
     }
 
 
-//    public static void main(String[] args) {
-//        Tree tree = new Tree();
-//        ANode a1 = new ANode("a1");
-//        ANode a2 = new ANode("a2");
-//        CNode c1 = new CNode("c1");
-//        CNode c2 = new CNode("c2");
-//        tree.setNext(a1);
-//        a1.setNext(c1);
-//        c1.setNext(c2);
-//        c2.setNext(a2);
-//        JNode j1 = new JNode();
-//        j1.setRule(LNode.and().addRule(new RNode("r1")).addRule(new RNode("r2")));
-//        a2.setNext(j1);
-//
-//        ANode a3 = new ANode("a3");
-//        j1.setNext(a3);
-//
-//        DNode d1 = new DNode();
-//        a3.setNext(d1);
-//        CNode c3 = new CNode("c3");
-//        ANode a4 = new ANode("a4");
-//        c3.setNext(a4);
-//        d1.addBranch(c3);
-//        JNode j2 = new JNode();
-//        j2.setRule(LNode.or().addRule(new RNode("r3")).addRule(new RNode("r4")));
-//        d1.addBranch(j2);
-//        d1.setAction(new ANode("a5"));
-//        System.out.println(JsonUtils.toJson(a1));
-//
-//        System.out.println(tree.toRule());
-//    }
 }
