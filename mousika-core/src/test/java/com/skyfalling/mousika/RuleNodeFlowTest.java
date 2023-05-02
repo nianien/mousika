@@ -49,6 +49,16 @@ public class RuleNodeFlowTest {
         }
     }
 
+    @Test
+    public void testNop() {
+        User root = new User("jack", 19);
+        RuleNode node = NodeBuilder.build("(nop->a1)->(nop->a2->a3)");
+        System.out.println(node.expr());
+        NodeResult nodeResult = new RuleEvaluator(ruleEngine).eval(node, root);
+        System.out.println(nodeResult);
+    }
+
+
     @ParameterizedTest
     @CsvSource(value = {
             "t1?f3?a1:f4?a2:a3#t1?(f3?a1:(f4?a2:a3))",

@@ -40,7 +40,10 @@ public class SerNode implements RuleNode {
 
     @Override
     public EvalResult eval(RuleContext context) {
-        List<EvalResult> results = nodes.stream().map(context::visit).collect(Collectors.toList());
+        List<EvalResult> results = nodes.stream()
+                .filter(e -> !e.expr().equals("nop"))
+                .map(context::visit)
+                .collect(Collectors.toList());
         EvalResult result = results.get(results.size() - 1);
         return new EvalResult(expr(), result.getResult(), result.isMatched());
     }

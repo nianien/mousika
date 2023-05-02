@@ -46,12 +46,15 @@ public class ParNode implements RuleNode {
     public EvalResult eval(RuleContext context) {
         EvalNode parentNode = context.getCurrentEval();
         Vector<EvalResult> results = new Vector<>();
-        CompletableFuture<EvalResult>[] futures = nodes.stream().map(node -> CompletableFuture.supplyAsync(() -> {
-                    //子线程设置当前evalNode
-                    context.setCurrentEval(parentNode);
-                    return context.visit(node);
-                }, ForkJoinPool.commonPool()).thenAcceptAsync(r -> results.add(r))
-        ).toArray(n -> new CompletableFuture[n]);
+        CompletableFuture<EvalResult>[] futures = nodes.stream()
+                .filter(e -> !e.expr().equals("nop"))
+                .map(node -> CompletableFuture.supplyAsync(() -> {
+                            //子线程设置当前evalNode
+                            context.setCurrentEval(parentNode);
+                            return context.visit(node);
+                        }, ForkJoinPool.commonPool()).thenAcceptAsync(r -> results.add(r))
+                )
+                .toArray(n -> new CompletableFuture[n]);
 
         CompletableFuture.allOf(futures).get(1, TimeUnit.MINUTES);
         //线程策略会使用当前线程,所以需要恢复父评估节点

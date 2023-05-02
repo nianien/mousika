@@ -1,6 +1,7 @@
 package com.skyfalling.mousika.engine;
 
 import com.cudrania.core.utils.StringUtils;
+import com.skyfalling.mousika.eval.result.NaResult;
 import com.skyfalling.mousika.udf.Functions;
 import com.skyfalling.mousika.udf.UdfDelegate;
 import lombok.SneakyThrows;
@@ -47,7 +48,8 @@ public class RuleEngine {
         //添加默认规则定义
         this.register(new RuleDefinition("true", "true", "SUCCESS"));
         this.register(new RuleDefinition("false", "false", "FAILED"));
-        this.register(new RuleDefinition("null", "Java.type('com.kuaishou.ad.mousika.eval.result.NaResult').DEFAULT", "NOP"));
+        this.register(new RuleDefinition("null", "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NULL"));
+        this.register(new RuleDefinition("nop", "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NOP"));
     }
 
     /**
