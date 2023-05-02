@@ -169,10 +169,12 @@ public class TreeNodeTest {
 
     @Test
     public void testFromExprNode() {
-        RuleNode caseNode = NodeBuilder.build("c1?a1");
-        TreeNode treeNode = new TreeNode().fromRule(caseNode);
-        System.out.println(JsonUtils.toJson(treeNode));
-        System.out.println(treeNode.toRule());
+        RuleNode rule = NodeBuilder.build("c1");
+        TreeNode t1 = new TreeNode().fromRule(rule);
+        System.out.println(JsonUtils.toJson(t1));
+        RuleNode rule2 = NodeBuilder.build("c1?nop");
+        TreeNode t2 = new TreeNode().fromRule(rule2);
+        System.out.println(JsonUtils.toJson(t2));
     }
 
 
