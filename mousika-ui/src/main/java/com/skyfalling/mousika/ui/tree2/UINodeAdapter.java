@@ -3,7 +3,7 @@ package com.skyfalling.mousika.ui.tree2;
 import com.google.common.base.Preconditions;
 import com.skyfalling.mousika.eval.node.*;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;
-import com.skyfalling.mousika.ui.tree2.node.FlowNode;
+import com.skyfalling.mousika.ui.tree2.node.define.FlowNode;
 import com.skyfalling.mousika.ui.tree2.node.flow.*;
 import com.skyfalling.mousika.ui.tree2.node.rule.LNode;
 import com.skyfalling.mousika.ui.tree2.node.rule.RNode;

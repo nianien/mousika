@@ -1,9 +1,9 @@
-package com.skyfalling.mousika.ui.tree2.node;
+package com.skyfalling.mousika.ui.tree2.node.define;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
-import com.skyfalling.mousika.ui.tree2.NodeTypeResolver;
+import com.skyfalling.mousika.ui.tree2.resolver.NodeTypeResolver;
 
 /**
  * 节点类型定义

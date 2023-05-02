@@ -1,11 +1,8 @@
-package com.skyfalling.mousika.ui.tree2;
+package com.skyfalling.mousika.ui.tree2.node;
 
 import com.skyfalling.mousika.eval.node.RuleNode;
-import com.skyfalling.mousika.ui.tree2.node.FlowNode;
+import com.skyfalling.mousika.ui.tree2.UINodeAdapter;
 import com.skyfalling.mousika.ui.tree2.node.flow.ANode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * UI树定义
@@ -13,17 +10,18 @@ import lombok.Setter;
  *
  * @author liyifei
  */
-@NoArgsConstructor
-public class TreeNode {
-    @Getter
-    @Setter
-    private FlowNode next = new ANode("nop");
+public class TreeNode extends ANode {
+
+    public TreeNode() {
+        super("");
+        this.setNext(ANode.NOP);
+    }
 
     private static UINodeAdapter adapter = new UINodeAdapter();
 
 
     public RuleNode toRule() {
-        return adapter.toRule(next);
+        return adapter.toRule(getNext());
     }
 
     public TreeNode fromRule(RuleNode ruleNode) {

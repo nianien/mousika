@@ -2,7 +2,7 @@ package com.skyfalling.mousika.ui.tree2.node.flow;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-import com.skyfalling.mousika.ui.tree2.node.FlowNode;
+import com.skyfalling.mousika.ui.tree2.node.define.FlowNode;
 import lombok.Getter;
 import lombok.Setter;
 

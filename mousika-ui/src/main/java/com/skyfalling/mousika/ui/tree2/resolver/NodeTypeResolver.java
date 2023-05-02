@@ -1,10 +1,11 @@
-package com.skyfalling.mousika.ui.tree2;
+package com.skyfalling.mousika.ui.tree2.resolver;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.SimpleType;
+import com.skyfalling.mousika.ui.tree2.node.TreeNode;
 import com.skyfalling.mousika.ui.tree2.node.flow.*;
 import com.skyfalling.mousika.ui.tree2.node.rule.LNode;
 import com.skyfalling.mousika.ui.tree2.node.rule.RNode;

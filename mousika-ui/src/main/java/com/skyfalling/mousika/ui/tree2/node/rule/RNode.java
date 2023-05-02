@@ -1,7 +1,9 @@
 package com.skyfalling.mousika.ui.tree2.node.rule;
 
-import com.skyfalling.mousika.ui.tree2.node.IRNode;
-import com.skyfalling.mousika.ui.tree2.node.UINode;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.skyfalling.mousika.ui.tree2.node.define.IRNode;
+import com.skyfalling.mousika.ui.tree2.node.define.UINode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,10 +24,10 @@ public class RNode extends UINode implements IRNode {
     private boolean negative;
 
 
+    @JsonCreator(mode = Mode.PROPERTIES)
     public RNode(String expr) {
         super(expr);
     }
-
 
     public RNode(String expr, boolean negative) {
         super(expr);
