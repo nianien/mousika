@@ -43,5 +43,6 @@
 
 ```
 注：nop不参与规则计算，仅用于反序列化UI树时区分同义表达式，存在同义表达式的情况如下：
-+ SNode、PNode单分支时，与ANode的规则表达式相同
++ CNode无action时，与ANode的规则表达式相同
++ SNode、PNode单分支时，规则表达式相同，且与ANode相同
 + DNode单分支且无action时，与CNode的规则表达式相同
