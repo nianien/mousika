@@ -21,11 +21,11 @@ public class TreeNodeTest {
     @Test
     public void testFlow() {
         TreeNode tree = new TreeNode();
-        ANode a1 = new ANode("a1");
-        ANode a2 = new ANode("a2");
-        CNode c3 = new CNode("c3");
-        ANode a3 = new ANode("a3");
-        ANode a4 = new ANode("a4");
+        ANode a1 = a("a1");
+        ANode a2 = a("a2");
+        CNode c3 = c("c3");
+        ANode a3 = a("a3");
+        ANode a4 = a("a4");
         tree.setNext(a1);
         a1.setNext(a2);
         a2.setNext(c3);
@@ -47,16 +47,22 @@ public class TreeNodeTest {
         tree.setNext(a0);
         DNode d1 = new DNode();
         a0.setNext(d1);
-        CNode c1 = new CNode("c1");
-        c1.setAction(new ANode("a1"));
-        d1.addBranch(c1);
-        CNode c2 = new CNode("c2");
-        c2.setAction(new ANode("a2"));
-        d1.addBranch(c2);
+        d1.addBranch(c("c1", "a1"));
+        d1.addBranch(c("c2", "a2"));
         d1.setAction(new ANode("a3"));
         RuleNode rule = tree.toRule();
+        RuleNode ruleNode3 = NodeBuilder.build(rule.expr());
+        System.out.println(JsonUtils.toJson(rule));
+        System.out.println(JsonUtils.toJson(ruleNode3));
+        TreeNode t2 = new TreeNode().fromRule(rule);
+
+        RuleNode rule2 = t2.toRule();
         System.out.println(rule);
+        System.out.println(rule2);
         System.out.println(JsonUtils.toJson(tree));
+        System.out.println(JsonUtils.toJson(t2));
+        assertEquals(rule.expr(), rule2.expr());
+        assertEquals(JsonUtils.toJson(tree), JsonUtils.toJson(t2));
     }
 
 
@@ -112,12 +118,12 @@ public class TreeNodeTest {
     public void testParallel() {
         TreeNode tree = new TreeNode();
         PNode p1 = new PNode();
-        ANode a0 = new ANode("a0");
+        ANode a0 = a("a0");
         tree.setNext(a0);
         a0.setNext(p1);
-        p1.addBranch(new ANode("a1"));
-        p1.addBranch(new ANode("a2"));
-        p1.addBranch(new ANode("a3"));
+        p1.addBranch(a("a1"));
+        p1.addBranch(a("a2"));
+        p1.addBranch(a("a3"));
         System.out.println(tree.toRule());
     }
 
@@ -130,15 +136,13 @@ public class TreeNodeTest {
         a0.setNext(d1);
         JNode j1 = new JNode();
         j1.setRule(LNode.and()
-                .addRule(LNode.or().addRule(new RNode("r1")).addRule(new RNode("r2")))
-                .addRule(LNode.or().addRule(new RNode("r3")).addRule(new RNode("r4"))));
+                .addRule(LNode.or().addRule(r("r1")).addRule(r("r2")))
+                .addRule(LNode.or().addRule(r("r3")).addRule(r("r4"))));
         j1.setAction(new ANode("a1"));
         d1.addBranch(j1);
 
-        CNode c2 = new CNode("c2");
-        c2.setAction(new ANode("a2"));
-        d1.addBranch(c2);
-        d1.setAction(new ANode("a3"));
+        d1.addBranch(c("c2","a2"));
+        d1.setAction(a("a3"));
         RuleNode rule = JsonUtils.toBean(JsonUtils.toJson(tree), TreeNode.class).toRule();
         TreeNode t2 = new TreeNode().fromRule(rule);
         System.out.println(JsonUtils.toJson(t2));
@@ -178,4 +182,81 @@ public class TreeNodeTest {
     }
 
 
+    @Test
+    public void testTree() {
+        TreeNode tree = new TreeNode();
+        SNode s0 = new SNode();
+        tree.setNext(s0);
+        PNode pn = new PNode();
+        s0.addBranch(pn);
+        //build pn
+        pn.addBranch(a("a1"));
+        pn.addBranch(a("a2"));
+        pn.addBranch(a("a3"));
+
+
+        //build d1
+        DNode d1 = new DNode();
+        s0.addBranch(d1);
+
+        // add branch d1_j
+        JNode d1_j = new JNode();
+        //add d1_j
+        d1_j.setRule(LNode.or().addRule(r("c1")).addRule(LNode.and().addRule(r("c2")).addRule(r("c3"))));
+
+        //add d1_j_s
+        SNode d1_j_s = new SNode();
+
+
+        DNode d1_j_s_d = new DNode();
+        d1_j_s_d.addBranch(c("c1", "a1"));
+        JNode d1_j_s_d_j = new JNode();
+        d1_j_s_d_j.setRule(LNode.and().addRule(r("c2")).addRule(r("c3")));
+        d1_j_s_d_j.setAction(a("a3"));
+        d1_j_s_d.addBranch(d1_j_s_d_j);
+
+        d1_j_s.addBranch(d1_j_s_d);
+        d1_j_s.addBranch(c("c4", "a4"));
+
+        d1_j.setAction(d1_j_s);
+
+        d1.addBranch(d1_j);
+
+        //add d1_c5 for d1
+        CNode d1_c5 = new CNode("c5");
+        DNode c5_d = new DNode();
+        c5_d.addBranch(c("c6", "a6"));
+        c5_d.addBranch(c("c7", "a7"));
+        c5_d.setAction(a("a5"));
+        d1_c5.setAction(c5_d);
+        d1.addBranch(d1_c5);
+
+        SNode d1_s = new SNode();
+        d1_s.addBranch(c("c8", "a8"));
+        d1_s.addBranch(c("c9", "a9"));
+        d1.setAction(d1_s);
+        System.out.println(JsonUtils.toJson(tree));
+        System.out.println(tree.toRule());
+        TreeNode t2 = new TreeNode().fromRule(tree.toRule());
+        assertEquals(JsonUtils.toJson(tree), JsonUtils.toJson(t2));
+    }
+
+
+    private CNode c(String c, String a) {
+        CNode cn = new CNode(c);
+        cn.setAction(new ANode(a));
+        return cn;
+    }
+
+    private CNode c(String c) {
+        return new CNode(c);
+    }
+
+    private ANode a(String a) {
+        return new ANode(a);
+    }
+
+    private RNode r(String r) {
+        return new RNode(r);
+    }
 }

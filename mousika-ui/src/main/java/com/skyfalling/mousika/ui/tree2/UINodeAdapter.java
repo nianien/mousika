@@ -134,7 +134,7 @@ public class UINodeAdapter {
             throw new IllegalArgumentException("DNode's action is required!");
         }
         List<CNode> branches = new ArrayList<>(dn.getBranches());
-        CaseNode root = new CaseNode(null, null);
+        CaseNode root = new CaseNode(new ExprNode(""), new ExprNode(""));
         CaseNode current = root;
         for (int i = 0; i < branches.size(); i++) {
             CNode fn = branches.get(i);
@@ -165,7 +165,7 @@ public class UINodeAdapter {
                 nodes.add(toRule(next));
             }
         }
-        return new SerNode(nodes.toArray(new RuleNode[0]));
+        return nodes.size() == 1 ? nodes.get(0) : new SerNode(nodes.toArray(new RuleNode[0]));
     }
 
 
