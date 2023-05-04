@@ -33,14 +33,49 @@
 ## 6.UI树交互
 ![ui-tree.png](mousika-ui/src/main/resources/img/ui-tree.png)
 ```text
- (nop->(nop=>a1=>a2=>a3)
+ (nop->(nop=>a11=>a12=>a13)
  ->((c1||(c2&&c3))
  ?
  (nop->(c1?a1:((c2&&c3)?a3:nop))->(c4?a4))
  :
  (c5?(c6?a6:(c7?a7:a5)):(nop->(c8?a8)->(c9?a9)))))
-
-
+```
+上述表达式执行逻辑如下:
+```shell
+ a11 &
+ a12 &
+ a13 &
+ wait
+ 
+ if [c1||c2&&c3];then
+    if [c1];then
+      a1;
+    elif [c2&&c3];then
+      a3;
+    fi
+    
+    if [c4];then
+      a4;
+    fi
+    
+ elif [c5];then
+    if [c6];then
+      a6;
+    elif [c7];then  
+      a7;
+    else
+      a5;
+    fi
+    
+ else
+    if [c8];then
+      a8;
+    fi;
+    
+    if [c9];then
+      a9;
+    fi
+ fi
 ```
 注：nop不参与规则计算，仅用于反序列化UI树时区分同义表达式，存在同义表达式的情况如下：
 + CNode无action时，与ANode的规则表达式相同
