@@ -33,12 +33,7 @@
 ## 6.UI树交互
 ![ui-tree.png](mousika-ui/src/main/resources/img/ui-tree.png)
 ```text
- (nop->(nop=>a11=>a12=>a13)
- ->((c1||(c2&&c3))
- ?
- (nop->(c1?a1:((c2&&c3)?a3:nop))->(c4?a4))
- :
- (c5?(c6?a6:(c7?a7:a5)):(nop->(c8?a8)->(c9?a9)))))
+ (nop->(nop=>a11=>a12=>a13)->((c1||(c2&&c3))?(nop->(c1?a1:((c2&&c3)?a3:nop))->(c4?a4)):(c5?(c6?a6:(c7?a7:a5)):(nop->(c8?a8)->(c9?a9)))))
 ```
 上述表达式执行逻辑如下:
 ```shell
