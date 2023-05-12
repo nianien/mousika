@@ -108,7 +108,7 @@ public class TreeNodeTest {
         s1.addBranch(a3);
         RuleNode rule = tree.toRule();
         System.out.println(rule);
-        assertEquals("nop->(a1->a2)->(a3->a4)", rule.expr());
+        assertEquals("∅->(a1->a2)->(a3->a4)", rule.expr());
         TreeNode t2 = new TreeNode().fromRule(rule);
         System.out.println(JsonUtils.toJson(t2));
         assertEquals(JsonUtils.toJson(tree), JsonUtils.toJson(t2));

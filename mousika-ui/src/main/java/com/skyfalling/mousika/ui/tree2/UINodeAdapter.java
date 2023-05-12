@@ -93,7 +93,7 @@ public class UINodeAdapter {
      */
     private RuleNode pNode2Rule(PNode pn) {
         List<RuleNode> rules = pn.getBranches().stream().map(this::toRule).collect(Collectors.toList());
-        rules.add(0, new ExprNode(FlowNode.NOP));
+        rules.add(0, new ExprNode(FlowNode.Φ));
         return new ParNode(rules.toArray(new RuleNode[0]));
     }
 
@@ -105,7 +105,7 @@ public class UINodeAdapter {
      */
     private RuleNode sNode2Rule(SNode sn) {
         List<RuleNode> rules = sn.getBranches().stream().map(this::toRule).collect(Collectors.toList());
-        rules.add(0, new ExprNode(FlowNode.NOP));
+        rules.add(0, new ExprNode(FlowNode.Φ));
         return new SerNode(rules.toArray(new RuleNode[0]));
     }
 
@@ -245,9 +245,12 @@ public class UINodeAdapter {
      */
     private FlowNode serNode2FlowNode(SerNode serNode) {
         List<RuleNode> nodes = serNode.getNodes();
+        if(nodes.isEmpty()){
+            return null;
+        }
         RuleNode first = nodes.get(0);
         nodes = nodes.subList(1, nodes.size());
-        if (first.expr().equals(FlowNode.NOP)) {// SNode
+        if (first.expr().equals(FlowNode.Φ)) {// SNode
             SNode sn = new SNode();
             nodes.forEach(n -> sn.addBranch(fromRule(n)));
             return sn;
@@ -273,8 +276,11 @@ public class UINodeAdapter {
      */
     private FlowNode parNode2FlowNode(ParNode parNode) {
         List<RuleNode> nodes = parNode.getNodes();
+        if(nodes.isEmpty()){
+            return null;
+        }
         RuleNode first = nodes.get(0);
-        if (first.expr().equals(FlowNode.NOP)) {
+        if (first.expr().equals(FlowNode.Φ)) {
             nodes = nodes.subList(1, nodes.size());
         }
         PNode pn = new PNode();

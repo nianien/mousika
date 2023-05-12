@@ -47,7 +47,7 @@ public class ParNode implements RuleNode {
         EvalNode parentNode = context.getCurrentEval();
         Vector<EvalResult> results = new Vector<>();
         CompletableFuture<EvalResult>[] futures = nodes.stream()
-                .filter(e -> !e.expr().equals("nop"))
+                .filter(e -> !e.expr().equals(Φ))
                 .map(node -> CompletableFuture.supplyAsync(() -> {
                             //子线程设置当前evalNode
                             context.setCurrentEval(parentNode);

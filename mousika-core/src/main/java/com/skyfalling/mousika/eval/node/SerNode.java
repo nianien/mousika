@@ -41,7 +41,7 @@ public class SerNode implements RuleNode {
     @Override
     public EvalResult eval(RuleContext context) {
         List<EvalResult> results = nodes.stream()
-                .filter(e -> !e.expr().equals("nop"))
+                .filter(e -> !e.expr().equals(Φ))
                 .map(context::visit)
                 .collect(Collectors.toList());
         EvalResult result = results.get(results.size() - 1);

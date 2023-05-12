@@ -49,7 +49,7 @@ public class RuleEngine {
         this.register(new RuleDefinition("true", "true", "SUCCESS"));
         this.register(new RuleDefinition("false", "false", "FAILED"));
         this.register(new RuleDefinition("null", "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NULL"));
-        this.register(new RuleDefinition("nop", "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NOP"));
+        this.register(new RuleDefinition("∅", "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NOP"));
     }
 
     /**

@@ -10,6 +10,7 @@ import com.skyfalling.mousika.eval.result.EvalResult;
  */
 public interface RuleNode {
 
+    String Φ = "∅";
 
     /**
      * 规则计算

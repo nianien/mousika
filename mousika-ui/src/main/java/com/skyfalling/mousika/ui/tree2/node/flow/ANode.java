@@ -20,7 +20,7 @@ import lombok.Setter;
  */
 public class ANode extends FlowNode {
 
-    public final static ANode NOP = new ANode(FlowNode.NOP);
+    public final static ANode NOP = new ANode(FlowNode.Φ);
     @Getter
     @Setter
     private FlowNode next;

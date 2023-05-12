@@ -13,7 +13,7 @@ package com.skyfalling.mousika.ui.tree2.node.define;
  */
 public abstract class FlowNode extends UINode implements TypeNode {
 
-    public final static String NOP = "nop";
+    public final static String Φ = "∅";
 
     public FlowNode(String expr) {
         super(expr);
