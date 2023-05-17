@@ -15,7 +15,7 @@ import static com.skyfalling.mousika.eval.parser.NodeBuilder.build;
 
 
 /**
- * 规则执行器<br/>
+ * 规则执行器<br>
  * 给定一个规则集合以及校验对象,返回规则集合的校验结果
  *
  * @author liyifei

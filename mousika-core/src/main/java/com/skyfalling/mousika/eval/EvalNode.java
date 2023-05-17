@@ -22,7 +22,7 @@ public class EvalNode {
     private EvalNode parent;
 
     /**
-     * 子执行节点<br/>
+     * 子执行节点<br>
      * 引擎支持并行,必须线程安全
      */
     private List<EvalNode> children = new Vector<>();

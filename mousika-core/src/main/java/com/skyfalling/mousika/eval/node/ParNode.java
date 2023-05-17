@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * 并行执行节点<br/>
+ * 并行执行节点<br>
  * 最后执行的节点结果作为并行结果; 如果存在节点结果为真，则并行结果作为判断条件为真,否则为假
  * Created on 2023/3/31
  *
