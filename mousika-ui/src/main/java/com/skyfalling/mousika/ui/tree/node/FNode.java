@@ -2,8 +2,11 @@ package com.skyfalling.mousika.ui.tree.node;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skyfalling.mousika.ui.tree.node.define.IFNode;
 import com.skyfalling.mousika.ui.tree.node.define.TypeNode;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * 流程节点{@link IFNode}实现
@@ -11,7 +14,6 @@ import com.skyfalling.mousika.ui.tree.node.define.TypeNode;
  * @author liyifei
  * Created on 2022-07-19
  */
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FNode implements IFNode, TypeNode {
 
     /**
@@ -21,7 +23,7 @@ public class FNode implements IFNode, TypeNode {
 
 
     @JsonCreator(mode = Mode.PROPERTIES)
-    public FNode(String expr) {
+    public FNode(@JsonProperty("expr") String expr) {
         this.expr = expr;
     }
 

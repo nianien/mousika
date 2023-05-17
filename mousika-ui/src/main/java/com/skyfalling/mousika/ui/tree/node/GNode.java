@@ -2,6 +2,7 @@ package com.skyfalling.mousika.ui.tree.node;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skyfalling.mousika.ui.tree.node.define.ILNode;
 import com.skyfalling.mousika.ui.tree.node.define.IPNode;
 import com.skyfalling.mousika.ui.tree.node.define.IRNode;
@@ -16,7 +17,6 @@ import java.util.List;
  * @author liyifei
  * Created on 2022-07-19
  */
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GNode extends PNode<GNode> implements IPNode<GNode>, ILNode<GNode> {
 
     /**
@@ -26,7 +26,7 @@ public class GNode extends PNode<GNode> implements IPNode<GNode>, ILNode<GNode> 
     private final List<IRNode> rules = new ArrayList<>();
 
     @JsonCreator(mode = Mode.PROPERTIES)
-    public GNode(String expr) {
+    public GNode(@JsonProperty("expr") String expr) {
         super(expr);
     }
 

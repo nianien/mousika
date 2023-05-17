@@ -1,6 +1,7 @@
 package com.skyfalling.mousika.ui.tree.node;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skyfalling.mousika.ui.tree.node.define.IRNode;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,10 +12,9 @@ import lombok.Setter;
  * 规则节点{@link IRNode}实现
  *
  * @author liyifei
- * 
+ * <p>
  * Created on 2022-07-19
  */
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RNode<T extends RNode> implements IRNode<T> {
 
     /**
@@ -30,7 +30,7 @@ public class RNode<T extends RNode> implements IRNode<T> {
     private String expr;
 
     @JsonCreator
-    public RNode(String expr) {
+    public RNode(@JsonProperty("expr") String expr) {
         this.expr = expr;
     }
 

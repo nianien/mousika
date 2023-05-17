@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author liyifei
  */
-public class TreeNodeTest {
+public class Tree2NodeTest {
 
     @Test
     public void testFlow() {

@@ -4,6 +4,7 @@ import com.cudrania.core.utils.StringUtils;
 import com.skyfalling.mousika.eval.result.NaResult;
 import com.skyfalling.mousika.udf.Functions;
 import com.skyfalling.mousika.udf.UdfDelegate;
+import com.skyfalling.mousika.utils.Constants;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,10 +47,10 @@ public class RuleEngine {
 
     {
         //添加默认规则定义
-        this.register(new RuleDefinition("true", "true", "SUCCESS"));
-        this.register(new RuleDefinition("false", "false", "FAILED"));
-        this.register(new RuleDefinition("null", "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NULL"));
-        this.register(new RuleDefinition("∅", "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NOP"));
+        this.register(new RuleDefinition(Constants.TRUE, Constants.TRUE, "SUCCESS"));
+        this.register(new RuleDefinition(Constants.FALSE, Constants.FALSE, "FAILED"));
+        this.register(new RuleDefinition(Constants.NULL, "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NULL"));
+        this.register(new RuleDefinition(Constants.NOP, "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NOP"));
     }
 
     /**

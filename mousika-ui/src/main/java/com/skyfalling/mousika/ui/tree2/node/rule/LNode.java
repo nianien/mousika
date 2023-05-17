@@ -2,6 +2,7 @@ package com.skyfalling.mousika.ui.tree2.node.rule;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skyfalling.mousika.ui.tree2.node.define.IRNode;
 import lombok.Getter;
 
@@ -25,7 +26,7 @@ public class LNode extends RNode implements IRNode {
     private List<RNode> rules = new ArrayList<>();
 
     @JsonCreator(mode = Mode.PROPERTIES)
-    public LNode(String expr) {
+    public LNode(@JsonProperty("expr") String expr) {
         super(expr);
     }
 

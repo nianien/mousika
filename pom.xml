@@ -8,7 +8,7 @@
     <artifactId>mousika</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
-    <name>io.github.nianien:mousika</name>
+    <name>mousika</name>
     <description>business based rule engine</description>
     <url>https://github.com/nianien/mousika</url>
     <modules>
@@ -193,7 +193,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
+                    <version>3.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -213,6 +213,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

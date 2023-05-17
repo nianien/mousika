@@ -7,6 +7,7 @@ import com.skyfalling.mousika.ui.tree2.node.define.FlowNode;
 import com.skyfalling.mousika.ui.tree2.node.flow.*;
 import com.skyfalling.mousika.ui.tree2.node.rule.LNode;
 import com.skyfalling.mousika.ui.tree2.node.rule.RNode;
+import com.skyfalling.mousika.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +94,7 @@ public class UINodeAdapter {
      */
     private RuleNode pNode2Rule(PNode pn) {
         List<RuleNode> rules = pn.getBranches().stream().map(this::toRule).collect(Collectors.toList());
-        rules.add(0, new ExprNode(FlowNode.Φ));
+        rules.add(0, new ExprNode(Constants.NOP));
         return new ParNode(rules.toArray(new RuleNode[0]));
     }
 
@@ -105,7 +106,7 @@ public class UINodeAdapter {
      */
     private RuleNode sNode2Rule(SNode sn) {
         List<RuleNode> rules = sn.getBranches().stream().map(this::toRule).collect(Collectors.toList());
-        rules.add(0, new ExprNode(FlowNode.Φ));
+        rules.add(0, new ExprNode(Constants.NOP));
         return new SerNode(rules.toArray(new RuleNode[0]));
     }
 
@@ -250,7 +251,7 @@ public class UINodeAdapter {
         }
         RuleNode first = nodes.get(0);
         nodes = nodes.subList(1, nodes.size());
-        if (first.expr().equals(FlowNode.Φ)) {// SNode
+        if (first.expr().equals(Constants.NOP)) {// SNode
             SNode sn = new SNode();
             nodes.forEach(n -> sn.addBranch(fromRule(n)));
             return sn;
@@ -280,7 +281,7 @@ public class UINodeAdapter {
             return null;
         }
         RuleNode first = nodes.get(0);
-        if (first.expr().equals(FlowNode.Φ)) {
+        if (first.expr().equals(Constants.NOP)) {
             nodes = nodes.subList(1, nodes.size());
         }
         PNode pn = new PNode();

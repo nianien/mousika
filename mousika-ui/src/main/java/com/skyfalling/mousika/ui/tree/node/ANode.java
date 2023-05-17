@@ -2,6 +2,7 @@ package com.skyfalling.mousika.ui.tree.node;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skyfalling.mousika.ui.tree.node.define.IANode;
 import com.skyfalling.mousika.ui.tree.node.define.IFNode;
 import com.skyfalling.mousika.ui.tree.node.define.TypeNode;
@@ -16,7 +17,6 @@ import java.util.List;
  * @author liyifei
  * Created on 2022-07-19
  */
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ANode<T extends ANode> implements IANode<T>, TypeNode {
 
     /**
@@ -31,7 +31,7 @@ public class ANode<T extends ANode> implements IANode<T>, TypeNode {
     private final List<IFNode> flows = new ArrayList<>();
 
     @JsonCreator(mode = Mode.PROPERTIES)
-    public ANode(String expr) {
+    public ANode(@JsonProperty("expr") String expr) {
         this.expr = expr;
     }
 

@@ -4,6 +4,7 @@ package com.skyfalling.mousika.eval.node;
 import com.skyfalling.mousika.eval.EvalNode;
 import com.skyfalling.mousika.eval.context.RuleContext;
 import com.skyfalling.mousika.eval.result.EvalResult;
+import com.skyfalling.mousika.utils.Constants;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -47,7 +48,7 @@ public class ParNode implements RuleNode {
         EvalNode parentNode = context.getCurrentEval();
         Vector<EvalResult> results = new Vector<>();
         CompletableFuture<EvalResult>[] futures = nodes.stream()
-                .filter(e -> !e.expr().equals(Φ))
+                .filter(e -> !e.expr().equals(Constants.NOP))
                 .map(node -> CompletableFuture.supplyAsync(() -> {
                             //子线程设置当前evalNode
                             context.setCurrentEval(parentNode);

@@ -6,10 +6,10 @@ import com.skyfalling.mousika.bean.User.Contact;
 import com.skyfalling.mousika.engine.RuleDefinition;
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.engine.UdfDefinition;
-import com.skyfalling.mousika.suite.RuleEvaluator;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;
 import com.skyfalling.mousika.eval.result.NodeResult;
+import com.skyfalling.mousika.suite.RuleEvaluator;
 import com.skyfalling.mousika.udf.*;
 import com.skyfalling.mousika.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * 
  * Created on 2022-08-26
  */
 @Udf
@@ -44,7 +43,7 @@ public class UdfGroupTest {
         NodeResult eval = new RuleEvaluator(engine).eval(decisionNode, arg);
         System.out.println(eval);
         assertEquals(eval.toString(),
-                "NodeResult(expr='1', result=China, details=[RuleResult(ruleId=1,result=China,desc='sys say')])");
+                "NodeResult(expr=1, result=China, details=[RuleResult(expr=1,result=China,desc='sys say')])");
     }
 
     @Test
@@ -91,8 +90,8 @@ public class UdfGroupTest {
         NodeResult result = new RuleEvaluator(engine).eval(decisionNode, arg);
         System.out.println(result);
         assertEquals(result.toString(),
-                "NodeResult(expr='1', result=This is China k:river v:ChangJiang;, " +
-                        "details=[RuleResult(ruleId=1,result=This is China k:river v:ChangJiang;,desc='sys.helloWithGeneric')])");
+                "NodeResult(expr=1, result=This is China k:river v:ChangJiang;, " +
+                        "details=[RuleResult(expr=1,result=This is China k:river v:ChangJiang;,desc='sys.helloWithGeneric')])");
     }
 
 
@@ -111,9 +110,9 @@ public class UdfGroupTest {
         String arg = "China";
         NodeResult result = new RuleEvaluator(engine).eval(NodeBuilder.build("1"), arg);
         System.out.println(result);
-        assertEquals(result.toString(),
-                "NodeResult(expr='1', result=This is China Outstanding person : [qi] k:river v:ChangJiang;, " +
-                        "details=[RuleResult(ruleId=1,result=This is China Outstanding person : [qi] k:river v:ChangJiang;,desc='sys.helloWithGeneric')])");
+        assertEquals("NodeResult(expr=1, result=This is China Outstanding person : [qi] k:river v:ChangJiang;, " +
+                        "details=[RuleResult(expr=1,result=This is China Outstanding person : [qi] k:river v:ChangJiang;,desc='sys.helloWithGeneric')])",
+                result.toString());
     }
 
     @Test
@@ -130,8 +129,8 @@ public class UdfGroupTest {
         String arg = "China";
         NodeResult result = new RuleEvaluator(engine).eval(NodeBuilder.build("1"), arg);
         System.out.println(result);
-        assertEquals(result.toString(),
-                "NodeResult(expr='1', result=success, details=[RuleResult(ruleId=1,result=success,desc='sys.checkScene')])");
+        assertEquals("NodeResult(expr=1, result=success, details=[RuleResult(expr=1,result=success,desc='sys.checkScene')])",
+                result.toString());
     }
 
     /**

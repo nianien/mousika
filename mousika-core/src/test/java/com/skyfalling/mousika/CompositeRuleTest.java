@@ -1,11 +1,12 @@
 package com.skyfalling.mousika;
 
 import com.skyfalling.mousika.engine.RuleDefinition;
-import com.skyfalling.mousika.suite.RuleEvaluator;
 import com.skyfalling.mousika.eval.node.RuleNode;
 import com.skyfalling.mousika.eval.parser.NodeBuilder;
 import com.skyfalling.mousika.eval.parser.NodeGenerator;
 import com.skyfalling.mousika.mock.SimpleRuleLoader;
+import com.skyfalling.mousika.suite.RuleEvaluator;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -79,6 +80,11 @@ public class CompositeRuleTest {
         RuleEvaluator ruleEvaluator = simpleRuleLoader.loadSuite().getRuleEvaluator();
         String res1 = ruleEvaluator.eval("1002->1001&&1003", null).toString();
         System.out.println(res1);
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        NodeBuilder.setGenerator(NodeGenerator.create());
     }
 
 }

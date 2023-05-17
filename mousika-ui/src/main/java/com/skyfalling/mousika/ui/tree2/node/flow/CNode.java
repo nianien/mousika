@@ -2,6 +2,7 @@ package com.skyfalling.mousika.ui.tree2.node.flow;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skyfalling.mousika.ui.tree2.node.define.FlowNode;
 import com.skyfalling.mousika.ui.tree2.node.define.IRNode;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class CNode extends FlowNode implements IRNode {
     private FlowNode action = ANode.NOP;
 
     @JsonCreator(mode = Mode.PROPERTIES)
-    public CNode(String expr) {
+    public CNode(@JsonProperty("expr") String expr) {
         super(expr);
     }
 
