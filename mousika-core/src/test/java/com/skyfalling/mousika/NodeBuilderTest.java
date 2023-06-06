@@ -25,6 +25,7 @@ public class NodeBuilderTest {
             }
     )
     public void testParse(String expr, String expected) {
+
         RuleNode node = build(expr);
         System.out.println(expr = node.expr());
         assertEquals(expected, expr);

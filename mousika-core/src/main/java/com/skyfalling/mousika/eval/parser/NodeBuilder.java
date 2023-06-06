@@ -48,7 +48,7 @@ public class NodeBuilder {
         return nodeCache.computeIfAbsent(expr, ruleExpr -> {
             long begin = System.currentTimeMillis();
             try {
-                RuleNode node = NodeParser.parse(ruleExpr, defaultGenerator);
+                RuleNode node = Antlr4Parser.parse(ruleExpr, defaultGenerator);
                 long end = System.currentTimeMillis();
                 ListenerProvider.DEFAULT.onParse(new RuleEvent(EventType.PARSE_SUCCEED, ruleExpr, node, end - begin));
                 return node;

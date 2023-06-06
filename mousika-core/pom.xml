@@ -8,7 +8,57 @@
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <antlr4.dir>${project.build.directory}/generated-sources/antlr4</antlr4.dir>
+    </properties>
 
     <artifactId>mousika-core</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4</artifactId>
+            <version>${antlr4.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>${antlr4.version}</version>
+                <configuration>
+                    <visitor>true</visitor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>
+                                <!-- 命令行参数 -package ${package} 定义生成java代码的包名-->
+                                <argument>-package</argument>
+                                <argument>com.nianien.antlr4</argument>
+                                <!-- 输出生成的Java源码文件位置,与上面 -package 定义的包名匹配
+                                 -->
+                                <argument>-o</argument>
+                                <argument>${antlr4.dir}/com/nianien/antlr4</argument>
+                            </arguments>
+                            <!-- 指定语法文件的编码方式,默认utf-8 -->
+                            <!--<inputEncoding>utf-8</inputEncoding>-->
+                            <!-- ANTLR 语法文件(.g4) 所在位置-->
+                            <sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>
+                            <!-- 生成语法树侦听器(Listener)代码,默认为true -->
+                            <listener>true</listener>
+                            <!-- 生成语法树访问器(Visitor)代码,默认为false-->
+                            <visitor>true</visitor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
