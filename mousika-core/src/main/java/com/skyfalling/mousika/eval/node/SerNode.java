@@ -59,6 +59,6 @@ public class SerNode implements RuleNode {
 
     @Override
     public String toString() {
-        return nodes.size() > 1 ? "(" + expr() + ")" : expr();
+        return "(" + expr() + ")";
     }
 }

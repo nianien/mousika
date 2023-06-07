@@ -29,7 +29,7 @@ fragment ESC:'\\'[btnr"\\];
 
 CONST: '\'' [-]?DIGIT+ '\'';
 
-ID: (ID_LETTER|DIGIT)+;
+ID: '∅'|(ID_LETTER|DIGIT)+;
 fragment ID_LETTER:'a'..'z'|'A'..'Z'|'_';
 fragment DIGIT:'0'..'9';
 
