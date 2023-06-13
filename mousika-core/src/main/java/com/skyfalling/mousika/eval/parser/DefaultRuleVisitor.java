@@ -51,16 +51,11 @@ public class DefaultRuleVisitor extends RuleBaseVisitor {
     public Object visitIF(RuleParser.IFContext ctx) {
         RuleNode r1 = (RuleNode) ctx.expr(0).accept(this);
         RuleNode r2 = (RuleNode) ctx.expr(1).accept(this);
-        RuleNode r3 = (RuleNode) ctx.expr(2).accept(this);
+        RuleParser.ExprContext expr = ctx.expr(2);
+        RuleNode r3 = expr == null ? null : (RuleNode) expr.accept(this);
         return new CaseNode(r1, r2, r3);
     }
 
-    @Override
-    public Object visitSEMI_IF(RuleParser.SEMI_IFContext ctx) {
-        RuleNode r1 = (RuleNode) ctx.expr(0).accept(this);
-        RuleNode r2 = (RuleNode) ctx.expr(1).accept(this);
-        return new CaseNode(r1, r2);
-    }
 
     @Override
     public Object visitNOT(RuleParser.NOTContext ctx) {

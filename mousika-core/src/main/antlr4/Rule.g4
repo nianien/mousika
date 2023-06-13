@@ -9,8 +9,7 @@ expr
  | '!'<assoc=right> expr #NOT
  | expr '&&' expr #AND
  | expr '||' expr #OR
- | expr '?' expr ':' expr #IF
- | expr '?' expr #SEMI_IF
+ | expr '?'  expr (':' expr)? #IF
  | expr '->' expr #SER
  | expr '=>' expr #PAR
  | LIMIT LP CONST ',' CONST ',' arguments RP #LIMIT
