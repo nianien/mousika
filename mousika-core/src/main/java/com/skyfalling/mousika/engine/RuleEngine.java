@@ -26,7 +26,7 @@ public class RuleEngine {
     /**
      * 脚本引擎
      */
-    private ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+    private ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     /**
      * 源脚本
      */

@@ -17,10 +17,18 @@
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
+        <lombok.version>1.18.26</lombok.version>
+        <logback.version>1.2.10</logback.version>
         <jackson.version>2.12.6</jackson.version>
+        <cudrania.version>1.0.2.8</cudrania.version>
+        <janino.version>3.1.6</janino.version>
+        <spring.version>5.1.6.RELEASE</spring.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
+        <jackson-datatype-protobuf.version>0.9.13</jackson-datatype-protobuf.version>
         <revision>1.0.0</revision>
         <antlr4.version>4.7.2</antlr4.version>
+        <graal.version>23.0.1</graal.version>
     </properties>
     <licenses>
         <license>
@@ -49,37 +57,37 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.2</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.10</version>
+            <version>${logback.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
-            <version>3.1.6</version>
+            <version>${janino.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
+            <version>${junit-jupiter.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.1.6.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.nianien</groupId>
             <artifactId>cudrania</artifactId>
-            <version>1.0.2.8</version>
+            <version>${cudrania.version}</version>
         </dependency>
         <!-- jackson-->
         <dependency>
@@ -95,7 +103,12 @@
         <dependency>
             <groupId>com.hubspot.jackson</groupId>
             <artifactId>jackson-datatype-protobuf</artifactId>
-            <version>0.9.13</version>
+            <version>${jackson-datatype-protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.4</version>
         </dependency>
 
     </dependencies>
@@ -143,7 +156,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.11.0</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>

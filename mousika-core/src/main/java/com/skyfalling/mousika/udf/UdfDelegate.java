@@ -2,7 +2,7 @@ package com.skyfalling.mousika.udf;
 
 import com.cudrania.core.reflection.Reflections;
 import com.skyfalling.mousika.utils.JsonUtils;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import java.lang.reflect.Method;
 import java.util.*;
