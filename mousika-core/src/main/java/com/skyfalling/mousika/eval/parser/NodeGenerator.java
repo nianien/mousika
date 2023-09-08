@@ -36,7 +36,7 @@ public interface NodeGenerator extends Function<String, RuleNode> {
                 new NodeGenerator() {
                     @Override
                     public RuleNode apply(String s) {
-                        return NodeParser.parse(s, expr -> parseRecursively(expr, new Stack<>()));
+                        return Antlr4Parser.parse(s, expr -> parseRecursively(expr, new Stack<>()));
                     }
 
                     /**
