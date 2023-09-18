@@ -50,7 +50,7 @@ public interface NodeGenerator extends Function<String, RuleNode> {
                         if (compositeRules.containsKey(expr)) {
                             try {
                                 resolved.push(expr);
-                                return new CompositeNode(expr, NodeParser.parse(compositeRules.get(expr), s -> {
+                                return new CompositeNode(expr, Antlr4Parser.parse(compositeRules.get(expr), s -> {
                                     if (resolved.contains(s)) {
                                         throw new IllegalStateException(
                                                 "circular dependency between composite rules [" + expr + "] and [" + s + "]");
