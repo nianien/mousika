@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <antlr4.dir>${project.build.directory}/generated-sources/antlr4</antlr4.dir>
-        <byte-buddy.version>1.14.9</byte-buddy.version>
     </properties>
 
     <artifactId>mousika-core</artifactId>
@@ -19,12 +18,10 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4</artifactId>
-            <version>${antlr4.version}</version>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>${byte-buddy.version}</version>
         </dependency>
     </dependencies>
 
