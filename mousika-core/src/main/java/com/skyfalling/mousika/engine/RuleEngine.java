@@ -7,13 +7,18 @@ import com.skyfalling.mousika.udf.UdfDelegate;
 import com.skyfalling.mousika.utils.Constants;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.jar.asm.Opcodes;
 
 import javax.script.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
 
 /**
  * 规则引擎
@@ -49,8 +54,9 @@ public class RuleEngine {
         //添加默认规则定义
         this.register(new RuleDefinition(Constants.TRUE, Constants.TRUE, "SUCCESS"));
         this.register(new RuleDefinition(Constants.FALSE, Constants.FALSE, "FAILED"));
-        this.register(new RuleDefinition(Constants.NULL, "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NULL"));
-        this.register(new RuleDefinition(Constants.NOP, "Java.type('"+ NaResult.class.getName()+"').DEFAULT", "NOP"));
+        this.register(new RuleDefinition(Constants.NULL, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NULL"));
+        this.register(new RuleDefinition(Constants.NOP, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NOP"));
+
     }
 
     /**
@@ -179,7 +185,10 @@ public class RuleEngine {
     @SneakyThrows
     private Object doEval(CompiledScript script, Object root, Object context) {
         Bindings bindings = engine.createBindings();
-        bindings.putAll(udfs);
+        //注册udf
+        for (Entry<String, Object> entry : udfs.entrySet()) {
+            bindings.put(entry.getKey(), udfs2FuncObj(entry.getValue()));
+        }
         bindings.put("$", root);
         bindings.put("$$", context);
         return script.eval(bindings);
@@ -195,6 +204,49 @@ public class RuleEngine {
             }
         }
         return compiledScript;
+    }
+
+
+    /**
+     * 将一组UDF注册成动态函数对象
+     *
+     * @param udf
+     * @return
+     */
+    @SneakyThrows
+    public static Object udfs2FuncObj(Object udf) {
+        if (udf instanceof Map) {
+            return map2Obj((Map) udf);
+        }
+        return udf;
+    }
+
+    /**
+     * 将map转换成动态类对象<p/>
+     * key为字段名，value为字段值
+     *
+     * @param map
+     * @return
+     */
+    @SneakyThrows
+    public static Object map2Obj(Map<String, Object> map) {
+        Builder<Object> subclass = new ByteBuddy()
+                .subclass(Object.class);
+        for (Entry<String, Object> entry : map.entrySet()) {
+            subclass = subclass.defineField(entry.getKey(), Object.class, Opcodes.ACC_PUBLIC);
+        }
+        Object instance = subclass
+                .make()
+                .load(Thread.currentThread().getContextClassLoader())
+                .getLoaded().newInstance();
+        for (Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                instance.getClass().getField(entry.getKey()).set(instance, map2Obj((Map) entry.getValue()));
+            } else {
+                instance.getClass().getField(entry.getKey()).set(instance, entry.getValue());
+            }
+        }
+        return instance;
     }
 
 }

@@ -31,11 +31,11 @@ public class UdfGroupTest {
     public void testSayHello() {
         RuleEngine engine = new RuleEngine();
         List<RuleDefinition> definitions = Arrays.asList(
-                new RuleDefinition("1", "policy.sayHello($)", "sys say")
+                new RuleDefinition("1", "policy.replace($)", "sys say")
         );
         definitions.forEach(engine::register);
         List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("policy", "sayHello", new SayHelloUdf())
+                new UdfDefinition("policy", "replace", new SayHelloUdf())
         );
         udfDefinitions.forEach(engine::register);
         String arg = "China";
