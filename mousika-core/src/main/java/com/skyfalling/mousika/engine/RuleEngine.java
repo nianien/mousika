@@ -1,23 +1,13 @@
 package com.skyfalling.mousika.engine;
 
-import com.cudrania.core.utils.StringUtils;
 import com.skyfalling.mousika.eval.result.NaResult;
-import com.skyfalling.mousika.udf.Functions;
-import com.skyfalling.mousika.udf.UdfDelegate;
 import com.skyfalling.mousika.utils.Constants;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.dynamic.DynamicType.Builder;
-import net.bytebuddy.jar.asm.Opcodes;
 
 import javax.script.*;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 /**
@@ -47,7 +37,7 @@ public class RuleEngine {
     /**
      * UDF列表
      */
-    private Map<String, Object> udfs = new ConcurrentHashMap<>();
+    private UdfContainer udfContainer = new UdfContainer();
 
 
     {
@@ -89,55 +79,7 @@ public class RuleEngine {
      * @param udfDefinition
      */
     public void register(UdfDefinition udfDefinition) {
-        register(udfDefinition.getGroup(), udfDefinition.getName(), udfDefinition.getUdf());
-    }
-
-    /**
-     * 注册自定义函数
-     *
-     * @param group
-     * @param name
-     * @param udf
-     */
-    protected void register(String group, String name, Object udf) {
-        Map map = this.udfs;
-        if (StringUtils.isNotEmpty(group)) {
-            String[] tokens = group.replaceAll("\\s", "").split("\\.+");
-            int i = 0;
-            for (; i < tokens.length; i++) {
-                String token = tokens[i];
-                Object o = map.computeIfAbsent(token, k -> new HashMap<>());
-                if (o instanceof Map) {
-                    map = (Map) o;
-                } else {
-                    String conflictName = Arrays.stream(tokens).limit(i + 1).collect(Collectors.joining("."));
-                    throw new IllegalArgumentException("udf: " + conflictName + " is already defined!");
-                }
-            }
-        }
-        if (map.containsKey(name)) {
-            throw new IllegalArgumentException("udf: " + name + " is already defined!");
-        }
-        doRegister(map, name, udf);
-    }
-
-    /**
-     * 注册自定义函数
-     *
-     * @param map
-     * @param name
-     * @param udf
-     */
-    protected void doRegister(Map map, String name, Object udf) {
-        Class<?>[] interfaces = udf.getClass().getInterfaces();
-        for (Class<?> anInterface : interfaces) {
-            //只代理通过Functions定义的udf
-            if (anInterface.getName().indexOf(Functions.class.getName()) != -1) {
-                map.put(name, UdfDelegate.of(udf));
-                return;
-            }
-        }
-        map.put(name, udf);
+        this.udfContainer.register(udfDefinition);
     }
 
     /**
@@ -185,12 +127,9 @@ public class RuleEngine {
     @SneakyThrows
     private Object doEval(CompiledScript script, Object root, Object context) {
         Bindings bindings = engine.createBindings();
-        //注册udf
-        for (Entry<String, Object> entry : udfs.entrySet()) {
-            bindings.put(entry.getKey(), udfs2FuncObj(entry.getValue()));
-        }
         bindings.put("$", root);
         bindings.put("$$", context);
+        bindings.putAll(udfContainer.compileUdf());
         return script.eval(bindings);
     }
 
@@ -206,47 +145,5 @@ public class RuleEngine {
         return compiledScript;
     }
 
-
-    /**
-     * 将一组UDF注册成动态函数对象
-     *
-     * @param udf
-     * @return
-     */
-    @SneakyThrows
-    public static Object udfs2FuncObj(Object udf) {
-        if (udf instanceof Map) {
-            return map2Obj((Map) udf);
-        }
-        return udf;
-    }
-
-    /**
-     * 将map转换成动态类对象<p/>
-     * key为字段名，value为字段值
-     *
-     * @param map
-     * @return
-     */
-    @SneakyThrows
-    public static Object map2Obj(Map<String, Object> map) {
-        Builder<Object> subclass = new ByteBuddy()
-                .subclass(Object.class);
-        for (Entry<String, Object> entry : map.entrySet()) {
-            subclass = subclass.defineField(entry.getKey(), Object.class, Opcodes.ACC_PUBLIC);
-        }
-        Object instance = subclass
-                .make()
-                .load(Thread.currentThread().getContextClassLoader())
-                .getLoaded().newInstance();
-        for (Entry<String, Object> entry : map.entrySet()) {
-            if (entry.getValue() instanceof Map) {
-                instance.getClass().getField(entry.getKey()).set(instance, map2Obj((Map) entry.getValue()));
-            } else {
-                instance.getClass().getField(entry.getKey()).set(instance, entry.getValue());
-            }
-        }
-        return instance;
-    }
 
 }
