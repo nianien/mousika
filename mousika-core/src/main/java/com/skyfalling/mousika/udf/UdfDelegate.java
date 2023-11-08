@@ -2,10 +2,9 @@ package com.skyfalling.mousika.udf;
 
 import com.cudrania.core.reflection.Reflections;
 import com.skyfalling.mousika.utils.JsonUtils;
-import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 /**
@@ -49,7 +48,7 @@ public interface UdfDelegate<P, R> {
         private static BiFunction<Object, Class, Object> converter = (s, t) -> {
             s = convertIntoJavaObject(s);
             if (s instanceof Wrapper) {
-                return ((Wrapper) s).udf; //嵌套udf的参数在嵌套方中已处理
+                return ((Wrapper) s).udf; //嵌套udf的参数在嵌套方法中已处理
             }
             if (!(s instanceof String)) {
                 s = JsonUtils.toJson(s);
@@ -60,24 +59,7 @@ public interface UdfDelegate<P, R> {
 
         // do ScriptObjectMirror JS -> Java conversion fix array converted map problem
         private static Object convertIntoJavaObject(Object scriptObj) {
-            if (scriptObj instanceof ScriptObjectMirror) {
-                ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror) scriptObj;
-                if (scriptObjectMirror.isArray()) {
-                    List<Object> list = new ArrayList<>();
-                    for (Map.Entry<String, Object> entry : scriptObjectMirror.entrySet()) {
-                        list.add(convertIntoJavaObject(entry.getValue()));
-                    }
-                    return list;
-                } else {
-                    Map<String, Object> map = new HashMap<>();
-                    for (Map.Entry<String, Object> entry : scriptObjectMirror.entrySet()) {
-                        map.put(entry.getKey(), convertIntoJavaObject(entry.getValue()));
-                    }
-                    return map;
-                }
-            } else {
-                return scriptObj;
-            }
+            return scriptObj;
         }
 
         /**

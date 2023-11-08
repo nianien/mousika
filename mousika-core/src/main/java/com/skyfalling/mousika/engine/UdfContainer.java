@@ -8,12 +8,16 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
+import javax.script.CompiledScript;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,12 +42,16 @@ public class UdfContainer {
      *
      * @return
      */
-    public Map<String, Object> compile() {
+    public Map<String, Object> compile(Function<String, CompiledScript> compiler) {
         Map<String, Object> udfCompiled = new ConcurrentHashMap<>();
         //编译udf
-        for (Entry<String, Object> entry : udfDefined.entrySet()) {
-            udfCompiled.put(entry.getKey(), compileUdf("UDF$" + StringUtils.capitalize(entry.getKey()), entry.getValue()));
-        }
+        udfDefined.forEach((k, v) -> {
+            if (v instanceof String) {//js udf
+                udfCompiled.put(k, compiler.apply((String) v));
+            } else {// java udf
+                udfCompiled.put(k, compileUdf("UDF$" + StringUtils.capitalize(k), v));
+            }
+        });
         return udfCompiled;
     }
 
@@ -94,6 +102,10 @@ public class UdfContainer {
      * @param udf
      */
     private void doRegister(Map map, String name, Object udf) {
+        if (udf instanceof String) {
+            //js脚本
+            map.put(name, udf);
+        }
         Class<?>[] interfaces = udf.getClass().getInterfaces();
         for (Class<?> anInterface : interfaces) {
             //只代理通过Functions定义的udf
@@ -130,7 +142,12 @@ public class UdfContainer {
                 .load(Thread.currentThread().getContextClassLoader())
                 .getLoaded().newInstance();
         for (Entry<String, Object> entry : udfMap.entrySet()) {
-            instance.getClass().getField(entry.getKey()).set(instance, compileUdf(name + "$" + StringUtils.capitalize(entry.getKey()), entry.getValue()));
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String clazz = name + "$" + StringUtils.capitalize(key);
+            //注意: 这里不是setter方法,而是setField的底层实现,直接访问字段
+            MethodHandle setter = MethodHandles.lookup().findSetter(instance.getClass(), key, Object.class);
+            setter.bindTo(instance).invoke(compileUdf(clazz, value));
         }
         return instance;
     }

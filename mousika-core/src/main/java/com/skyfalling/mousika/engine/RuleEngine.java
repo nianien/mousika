@@ -25,7 +25,16 @@ public class RuleEngine {
     /**
      * 脚本引擎
      */
-    private ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+    /**
+     * 脚本引擎
+     */
+    private static ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
+
+    static {
+        Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
+        bindings.put("polyglot.js.nashorn-compat", true);
+    }
+
     /**
      * 规则定义
      */
@@ -51,7 +60,7 @@ public class RuleEngine {
         this.register(new RuleDefinition(Constants.NULL, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NULL"));
         this.register(new RuleDefinition(Constants.NOP, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NOP"));
         ruleDefinitions.forEach(this::register);
-        this.compiledUdfs = new UdfContainer(udfDefinitions).compile();
+        this.compiledUdfs = new UdfContainer(udfDefinitions).compile(this::doCompile);
     }
 
     /**
@@ -98,30 +107,6 @@ public class RuleEngine {
         return script.eval(bindings);
     }
 
-    @SneakyThrows
-    private CompiledScript compile(String expression) {
-        CompiledScript compiledScript = compiledScripts.get(expression);
-        if (compiledScript == null) {
-            compiledScript = ((Compilable) engine).compile(expression);
-        }
-        return compiledScript;
-    }
-
-
-    @SneakyThrows
-    private CompiledScript compileDesc(String originDesc) {
-        // 正则表达式转换成字符串计算
-        // "代理商【{$.agentId}】不允许【{$.customerId}】跨开{不需要转义}"
-        // ==> "代理商【"+$.agentId+"】不允许【"+$.customerId+"】跨开{不需要转义}"
-        String expression = "\"" + originDesc.replaceAll("\\{(\\$+\\..+?)\\}", "\\\"+$1+\\\"") + "\"";
-        CompiledScript compiledScript = compiledDesc.get(expression);
-        if (compiledScript == null) {
-            compiledScript = ((Compilable) engine).compile(expression);
-        }
-        return compiledScript;
-    }
-
-
     /**
      * 注册规则
      */
@@ -134,5 +119,36 @@ public class RuleEngine {
         compileDesc(definition.getDesc());
     }
 
+    private CompiledScript compile(String expression) {
+        CompiledScript compiledScript = compiledScripts.get(expression);
+        if (compiledScript == null) {
+            compiledScript = doCompile(expression);
+        }
+        return compiledScript;
+    }
 
+
+    /**
+     * 编译规则描述，形如:{$.agentId}格式的表达式支持参数代入<p/>
+     *
+     * @param originDesc
+     * @return
+     */
+    private CompiledScript compileDesc(String originDesc) {
+        // 正则表达式转换成字符串计算
+        // "代理商：{$.agentId} 不允许 客户：{$.customerId}】跨开，这里{不需要转义}"
+        // ==> "代理商："+$.agentId+" 不允许 "+$.customerId+"：跨开，这里{不需要转义}"
+        String expression = "\"" + originDesc.replaceAll("\\{(\\$+\\..+?)\\}", "\\\"+$1+\\\"") + "\"";
+        CompiledScript compiledScript = compiledDesc.get(expression);
+        if (compiledScript == null) {
+            compiledScript = doCompile(expression);
+        }
+        return compiledScript;
+    }
+
+
+    @SneakyThrows
+    private synchronized CompiledScript doCompile(String expression) {
+        return ((Compilable) engine).compile(expression);
+    }
 }

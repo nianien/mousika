@@ -34,8 +34,7 @@ public class UdfGroupTest {
                         new RuleDefinition("2", "policy.sys.replace($)", "sys say")
                 ))
                 .udfDefinitions(Arrays.asList(
-                        new UdfDefinition("policy.sys", "replace", new SayHelloUdf()),
-                        new UdfDefinition("policy.sys", "replace2", new SayHelloUdf())
+                        new UdfDefinition("policy.sys", "replace", new SayHelloUdf())
                 )).build();
 
         String arg = "China";
