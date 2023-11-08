@@ -41,11 +41,12 @@ public class UdfContainer {
         if (this.udfCompiled == null) {
             synchronized (this) {
                 if (this.udfCompiled == null) {
-                    udfCompiled = new ConcurrentHashMap<>();
+                    Map<String, Object> udfCompiled = new ConcurrentHashMap<>();
                     //编译udf
                     for (Entry<String, Object> entry : udfDefined.entrySet()) {
                         this.udfCompiled.put(entry.getKey(), compileUdf("UDF$" + StringUtils.capitalize(entry.getKey()), entry.getValue()));
                     }
+                    this.udfCompiled = udfCompiled;
                 }
             }
         }
