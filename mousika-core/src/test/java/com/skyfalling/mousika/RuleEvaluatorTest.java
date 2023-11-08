@@ -105,7 +105,7 @@ public class RuleEvaluatorTest {
                                 "var udf= Java.type('" + AdultValidateUdf.class.getName()
                                         + "'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁"),
                         new RuleDefinition("105", "sceneCall('sc2',$,$$)", "调用场景2"),
-                        new RuleDefinition("106", "sceneCall('sc2'$,,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】")
+                        new RuleDefinition("106", "sceneCall('sc2',$,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】")
                 ),
                 Arrays.asList(
                         new UdfDefinition("isAdult", new AdultValidateUdf(18)),

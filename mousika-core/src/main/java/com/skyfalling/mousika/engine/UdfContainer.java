@@ -44,7 +44,7 @@ public class UdfContainer {
                     Map<String, Object> udfCompiled = new ConcurrentHashMap<>();
                     //编译udf
                     for (Entry<String, Object> entry : udfDefined.entrySet()) {
-                        this.udfCompiled.put(entry.getKey(), compileUdf("UDF$" + StringUtils.capitalize(entry.getKey()), entry.getValue()));
+                        udfCompiled.put(entry.getKey(), compileUdf("UDF$" + StringUtils.capitalize(entry.getKey()), entry.getValue()));
                     }
                     this.udfCompiled = udfCompiled;
                 }
