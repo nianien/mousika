@@ -33,6 +33,11 @@ public class UdfContainer {
      */
     private Map<String, Object> udfDefined = new ConcurrentHashMap<>();
 
+    /**
+     * UDF列表
+     *
+     * @param udfDefinitions
+     */
     public UdfContainer(List<UdfDefinition> udfDefinitions) {
         udfDefinitions.forEach(this::register);
     }
