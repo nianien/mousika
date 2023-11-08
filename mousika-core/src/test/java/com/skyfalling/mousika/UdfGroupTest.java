@@ -15,7 +15,6 @@ import com.skyfalling.mousika.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,17 +28,16 @@ public class UdfGroupTest {
 
     @Test
     public void testSayHello() {
-        RuleEngine engine = new RuleEngine();
-        List<RuleDefinition> definitions = Arrays.asList(
-                new RuleDefinition("1", "policy.sys.replace($)", "sys say"),
-                new RuleDefinition("2", "policy.sys.replace($)", "sys say")
-        );
-        definitions.forEach(engine::register);
-        List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("policy.sys", "replace", new SayHelloUdf()),
-                new UdfDefinition("policy.sys", "replace2", new SayHelloUdf())
-        );
-        udfDefinitions.forEach(engine::register);
+        RuleEngine engine = RuleEngine.builder()
+                .ruleDefinitions(Arrays.asList(
+                        new RuleDefinition("1", "policy.sys.replace($)", "sys say"),
+                        new RuleDefinition("2", "policy.sys.replace($)", "sys say")
+                ))
+                .udfDefinitions(Arrays.asList(
+                        new UdfDefinition("policy.sys", "replace", new SayHelloUdf()),
+                        new UdfDefinition("policy.sys", "replace2", new SayHelloUdf())
+                )).build();
+
         String arg = "China";
         RuleNode decisionNode = NodeBuilder.build("1");
         NodeResult eval = new RuleEvaluator(engine).eval(decisionNode, arg);
@@ -50,17 +48,14 @@ public class UdfGroupTest {
 
     @Test
     public void testAutoCastUdf() {
-
-        RuleEngine engine = new RuleEngine();
-        List<RuleDefinition> definitions = Arrays.asList(
-                new RuleDefinition("1", "sys.user($)", "name of user"),
-                new RuleDefinition("2", "sys.user($,'robbin')", "name of user")
-        );
-        definitions.forEach(engine::register);
-        List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("sys", "user", new AutoCastUdf())
-        );
-        udfDefinitions.forEach(engine::register);
+        RuleEngine engine = RuleEngine.builder()
+                .ruleDefinitions(Arrays.asList(
+                        new RuleDefinition("1", "sys.user($)", "name of user"),
+                        new RuleDefinition("2", "sys.user($,'robbin')", "name of user")
+                ))
+                .udfDefinitions(Arrays.asList(
+                        new UdfDefinition("sys", "user", new AutoCastUdf())
+                )).build();
         User user = new User("jack.ma", 18, new Contact("11111@ks.com", "1111"));
         String json = JsonUtils.toJson(user);
         Map map = JsonUtils.toMap(json, String.class, Object.class);
@@ -78,15 +73,12 @@ public class UdfGroupTest {
 
     @Test
     public void testSayHelloWithGeneric() {
-        RuleEngine engine = new RuleEngine();
-        List<RuleDefinition> definitions = Arrays.asList(
-                new RuleDefinition("1", "sys.sayHello($, {\"river\":\"ChangJiang\"})", "sys.helloWithGeneric")
-        );
-        definitions.forEach(engine::register);
-        List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("sys", "sayHello", new HelloWithGenericUdf())
-        );
-        udfDefinitions.forEach(engine::register);
+        RuleEngine engine = RuleEngine.builder()
+                .ruleDefinitions(Arrays.asList(
+                        new RuleDefinition("1", "sys.sayHello($, {\"river\":\"ChangJiang\"})", "sys.helloWithGeneric")
+                )).udfDefinitions(Arrays.asList(
+                        new UdfDefinition("sys", "sayHello", new HelloWithGenericUdf())
+                )).build();
         String arg = "China";
         RuleNode decisionNode = NodeBuilder.build("1");
         NodeResult result = new RuleEvaluator(engine).eval(decisionNode, arg);
@@ -99,16 +91,16 @@ public class UdfGroupTest {
 
     @Test
     public void testSayHelloWithGeneric2() {
-        RuleEngine engine = new RuleEngine();
-        List<RuleDefinition> definitions = Arrays.asList(
-                new RuleDefinition("1", "sys.sayHello($, [\"qi\"], {\"river\":\"ChangJiang\"})",
-                        "sys.helloWithGeneric")
-        );
-        definitions.forEach(engine::register);
-        List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("sys", "sayHello", new HelloWithGenericUdf())
-        );
-        udfDefinitions.forEach(engine::register);
+        RuleEngine engine = RuleEngine.builder()
+                .ruleDefinitions(Arrays.asList(
+                        new RuleDefinition("1", "sys.sayHello($, [\"qi\"], {\"river\":\"ChangJiang\"})",
+                                "sys.helloWithGeneric")
+                ))
+                .udfDefinitions(Arrays.asList(
+                        new UdfDefinition("sys", "sayHello", new HelloWithGenericUdf())
+                ))
+                .build();
+
         String arg = "China";
         NodeResult result = new RuleEvaluator(engine).eval(NodeBuilder.build("1"), arg);
         System.out.println(result);
@@ -119,15 +111,13 @@ public class UdfGroupTest {
 
     @Test
     public void testSaySceneCheck() {
-        RuleEngine engine = new RuleEngine();
-        List<RuleDefinition> definitions = Arrays.asList(
-                new RuleDefinition("1", "sys.checkScene(\"11\", 11, $$, {\"river\":\"ChangJiang\"})", "sys.checkScene")
-        );
-        definitions.forEach(engine::register);
-        List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("sys", "checkScene", new CheckSceneUdf())
-        );
-        udfDefinitions.forEach(engine::register);
+        RuleEngine engine = RuleEngine.builder()
+                .ruleDefinitions(Arrays.asList(
+                        new RuleDefinition("1", "sys.checkScene(\"11\", 11, $$, {\"river\":\"ChangJiang\"})", "sys.checkScene")
+                ))
+                .udfDefinitions(Arrays.asList(
+                        new UdfDefinition("sys", "checkScene", new CheckSceneUdf())
+                )).build();
         String arg = "China";
         NodeResult result = new RuleEvaluator(engine).eval(NodeBuilder.build("1"), arg);
         System.out.println(result);
@@ -140,19 +130,17 @@ public class UdfGroupTest {
      */
     @Test
     public void testNestedUdf() {
-        RuleEngine engine = new RuleEngine();
-        List<RuleDefinition> definitions = Arrays.asList(
-                new RuleDefinition("1",
-                        "policy.invokeUdf($, [\"qi\"], {\"river\":\"ChangJiang\"},sys.sayHello)",
-                        "policy nestedHelloUdf"));
-        definitions.forEach(engine::register);
-        List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("policy", "invokeUdf", new CallAnotherUdfUdf()),
-                new UdfDefinition("sys", "sayHello", new HelloWithGenericUdf())
-        );
-        udfDefinitions.forEach(engine::register);
+        RuleEngine.RuleEngineBuilder builder = RuleEngine.builder()
+                .ruleDefinitions(Arrays.asList(
+                        new RuleDefinition("1",
+                                "policy.invokeUdf($, [\"qi\"], {\"river\":\"ChangJiang\"},sys.sayHello)",
+                                "policy nestedHelloUdf")))
+                .udfDefinitions(Arrays.asList(
+                        new UdfDefinition("policy", "invokeUdf", new CallAnotherUdfUdf()),
+                        new UdfDefinition("sys", "sayHello", new HelloWithGenericUdf())
+                ));
         String arg = "China";
-        NodeResult result = new RuleEvaluator(engine).eval(NodeBuilder.build("1"), arg);
+        NodeResult result = new RuleEvaluator(builder.build()).eval(NodeBuilder.build("1"), arg);
         System.out.println(result);
     }
 

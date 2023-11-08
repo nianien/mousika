@@ -76,7 +76,7 @@ public class RuleVisitor extends LinkedHashMap<String, Object> implements RuleCo
         if (node instanceof ExprNode) {
             this.currentRule.set(node.expr());
         }
-        EvalNode evalNode = new EvalNode(node.expr());
+        EvalNode evalNode = new EvalNode(node);
         boolean isExprNode = node.getClass() == ExprNode.class;
         currentEval.get().add(evalNode);
         if (!isExprNode) {
@@ -175,9 +175,10 @@ public class RuleVisitor extends LinkedHashMap<String, Object> implements RuleCo
      * @return
      */
     private RuleResult transform(EvalNode node) {
-        String expr = node.getExpr();
+        RuleNode ruleNode = node.getRuleNode();
+        String expr = ruleNode.expr();
         EvalResult result = evalCache.get(expr);
-        RuleResult ruleResult = new RuleResult(result, evalDesc(expr));
+        RuleResult ruleResult = new RuleResult(result, ruleNode instanceof ExprNode ? evalDesc(expr) : "");
         for (EvalNode subNode : node.getChildren()) {
             ruleResult.getSubRules().add(transform(subNode));
         }
