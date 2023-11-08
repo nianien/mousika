@@ -10,6 +10,7 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,29 +27,20 @@ public class UdfContainer {
      */
     private Map<String, Object> udfDefined = new ConcurrentHashMap<>();
 
-    /**
-     * 编译后的UDF
-     */
-    private Map<String, Object> udfCompiled = new ConcurrentHashMap<>();
-
+    public UdfContainer(List<UdfDefinition> udfDefinitions) {
+        udfDefinitions.forEach(this::register);
+    }
 
     /**
      * 获取编译后的UDF
      *
      * @return
      */
-    public Map<String, Object> compileUdf() {
-        if (this.udfCompiled == null) {
-            synchronized (this) {
-                if (this.udfCompiled == null) {
-                    Map<String, Object> udfCompiled = new ConcurrentHashMap<>();
-                    //编译udf
-                    for (Entry<String, Object> entry : udfDefined.entrySet()) {
-                        this.udfCompiled.put(entry.getKey(), compileUdf("UDF$" + StringUtils.capitalize(entry.getKey()), entry.getValue()));
-                    }
-                    this.udfCompiled = udfCompiled;
-                }
-            }
+    public Map<String, Object> compile() {
+        Map<String, Object> udfCompiled = new ConcurrentHashMap<>();
+        //编译udf
+        for (Entry<String, Object> entry : udfDefined.entrySet()) {
+            udfCompiled.put(entry.getKey(), compileUdf("UDF$" + StringUtils.capitalize(entry.getKey()), entry.getValue()));
         }
         return udfCompiled;
     }
@@ -61,7 +53,6 @@ public class UdfContainer {
      */
     public void register(UdfDefinition udfDefinition) {
         register(udfDefinition.getGroup(), udfDefinition.getName(), udfDefinition.getUdf());
-        this.udfCompiled = null;
     }
 
     /**
@@ -71,7 +62,7 @@ public class UdfContainer {
      * @param name
      * @param udf
      */
-    protected void register(String group, String name, Object udf) {
+    private void register(String group, String name, Object udf) {
         Map map = this.udfDefined;
         if (StringUtils.isNotEmpty(group)) {
             String[] tokens = group.replaceAll("\\s", "").split("\\.+");
@@ -100,7 +91,7 @@ public class UdfContainer {
      * @param name
      * @param udf
      */
-    protected void doRegister(Map map, String name, Object udf) {
+    private void doRegister(Map map, String name, Object udf) {
         Class<?>[] interfaces = udf.getClass().getInterfaces();
         for (Class<?> anInterface : interfaces) {
             //只代理通过Functions定义的udf

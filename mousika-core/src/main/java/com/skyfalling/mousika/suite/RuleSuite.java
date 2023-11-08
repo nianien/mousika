@@ -141,7 +141,7 @@ public class RuleSuite {
      */
     private RuleEvaluator create(List<RuleDefinition> ruleDefinitions, List<UdfDefinition> udfDefinitions) {
         Map<String, String> compositeRules = new HashMap<>();
-        RuleEngine ruleEngine = new RuleEngine();
+        RuleEngine.RuleEngineBuilder ruleEngine = RuleEngine.builder();
         Iterator<RuleDefinition> it = ruleDefinitions.iterator();
         while (it.hasNext()) {
             RuleDefinition ruleDefinition = it.next();
@@ -154,18 +154,15 @@ public class RuleSuite {
                     //修改规则表达式
                     ruleDefinition.setExpression(udf + "($)");
                     break;
-
                 case 2: //复合规则
                     compositeRules.put(ruleDefinition.getRuleId(), ruleDefinition.getExpression());
                     break;
                 default:
             }
-            ruleEngine.register(ruleDefinition);
         }
-        for (UdfDefinition udfDefinition : udfDefinitions) {
-            ruleEngine.register(udfDefinition);
-        }
+        ruleEngine.ruleDefinitions(ruleDefinitions);
+        ruleEngine.udfDefinitions(udfDefinitions);
         NodeBuilder.setGenerator(NodeGenerator.create(compositeRules));
-        return new RuleEvaluator(ruleEngine);
+        return new RuleEvaluator(ruleEngine.build());
     }
 }

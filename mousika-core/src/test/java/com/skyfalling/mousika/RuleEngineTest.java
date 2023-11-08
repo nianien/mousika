@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author liyifei
  */
 public class RuleEngineTest {
+    private RuleEngine ruleEngine = RuleEngine.builder().build();
 
     @SneakyThrows
     @Test
     public void ruleRuleEngine() {
-        RuleEngine ruleEngine = new RuleEngine();
         Object res = ruleEngine.evalExpr("[5,6].indexOf($.q)!=-1", new HashMap<String, Integer>() {
             {
                 put("q", 5);
@@ -39,7 +39,6 @@ public class RuleEngineTest {
 
     @Test
     public void testDesc() {
-        RuleEngine ruleEngine = new RuleEngine();
         String desc = "代理商【{$.agentId}】不允许【{$.customerId}】跨开{}";
         desc = "\"" + desc.replaceAll("\\{(\\$+\\..+?)\\}", "\\\"+$1+\\\"") + "\"";
         System.out.println(desc);
@@ -53,7 +52,6 @@ public class RuleEngineTest {
     //number类型计算
     @Test
     public void testNumberTypeEval() {
-        RuleEngine ruleEngine = new RuleEngine();
         Object res = ruleEngine.evalExpr("$.liveZuanCurrentMonth*1", new HashMap<String, Object>() {
             {
                 put("liveZuanCurrentMonth", 5);

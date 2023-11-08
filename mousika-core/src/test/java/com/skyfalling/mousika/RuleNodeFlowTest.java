@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RuleNodeFlowTest {
 
 
-    private RuleEngine ruleEngine = new RuleEngine();
+    private RuleEngine ruleEngine;
 
     {
         List<RuleDefinition> ruleDefinitions = Arrays.asList(
@@ -44,9 +44,7 @@ public class RuleNodeFlowTest {
                 new RuleDefinition("a3", "'a3'", "业务操作3"),
                 new RuleDefinition("a4", "'a4'", "业务操作4")
         );
-        for (RuleDefinition ruleDefinition : ruleDefinitions) {
-            ruleEngine.register(ruleDefinition);
-        }
+        ruleEngine = RuleEngine.builder().ruleDefinitions(ruleDefinitions).build();
     }
 
     @Test
@@ -109,24 +107,18 @@ public class RuleNodeFlowTest {
     public void tesIfElse() {
         RuleNode actionNode = NodeBuilder.build("a?b:c");
         System.out.println(actionNode.toString());
-        RuleEngine ruleEngine = new RuleEngine();
-        List<RuleDefinition> ruleDefinitions = Arrays.asList(
-                new RuleDefinition("a", "true", "规则1"),
-                new RuleDefinition("b", "false", "规则2"),
-                new RuleDefinition("c", "sayHello($.name);", "业务操作"),
-                new RuleDefinition("d", "'d'", "规则2")
-        );
-        for (RuleDefinition ruleDefinition : ruleDefinitions) {
-            ruleEngine.register(ruleDefinition);
-        }
-        List<UdfDefinition> udfDefinitions = Arrays.asList(
-                new UdfDefinition("sayHello", new SayHelloUdf())
-        );
-        for (UdfDefinition udfDefinition : udfDefinitions) {
-            ruleEngine.register(udfDefinition);
-        }
+        RuleEngine.RuleEngineBuilder builder = RuleEngine.builder()
+                .ruleDefinitions(Arrays.asList(
+                        new RuleDefinition("a", "true", "规则1"),
+                        new RuleDefinition("b", "false", "规则2"),
+                        new RuleDefinition("c", "sayHello($.name);", "业务操作"),
+                        new RuleDefinition("d", "'d'", "规则2")
+                ))
+                .udfDefinitions(Arrays.asList(
+                        new UdfDefinition("sayHello", new SayHelloUdf())
+                ));
         User root = new User("jack", 19);
-        NodeResult nodeResult = new RuleEvaluator(ruleEngine).eval(actionNode, root);
+        NodeResult nodeResult = new RuleEvaluator(builder.build()).eval(actionNode, root);
         System.out.println(nodeResult);
 
     }

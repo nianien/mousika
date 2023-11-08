@@ -42,7 +42,7 @@ public class RuleEvaluatorTest {
             }, delimiter = '#'
     )
     public void testRuleEval(String expr, String expected1, String expected2) {
-        RuleEngine ruleEngine = new RuleEngine();
+        RuleEngine.RuleEngineBuilder builder = RuleEngine.builder();
         List<RuleDefinition> ruleDefinitions = Arrays.asList(
                 new RuleDefinition("1", "1==1", "规则1"),
                 new RuleDefinition("2", "2!=2", "规则2"),
@@ -52,19 +52,17 @@ public class RuleEvaluatorTest {
                 new RuleDefinition("actionB", "dist($.name,$$.owner);sayHello($.name);", "业务操作B"),
                 new RuleDefinition("actionC", "'c'", "业务操作C")
         );
-        for (RuleDefinition ruleDefinition : ruleDefinitions) {
-            ruleEngine.register(ruleDefinition);
-        }
+        builder.ruleDefinitions(ruleDefinitions);
+
         List<UdfDefinition> udfDefinitions = Arrays.asList(
                 new UdfDefinition("dist", new DistributeUdf()),
                 new UdfDefinition("sayHello", new SayHelloUdf()),
                 new UdfDefinition("getUserType", new GetUserTypeUdf())
         );
-        for (UdfDefinition udfDefinition : udfDefinitions) {
-            ruleEngine.register(udfDefinition);
-        }
+        builder.udfDefinitions(udfDefinitions);
+
         User root = new User("jack", 19);
-        RuleEvaluator ruleEvaluator = new RuleEvaluator(ruleEngine);
+        RuleEvaluator ruleEvaluator = new RuleEvaluator(builder.build());
         RuleNode ruleNode = build(expr);
         System.out.println(ruleNode);
         assertEquals(expected1, ruleNode.expr());
@@ -105,7 +103,7 @@ public class RuleEvaluatorTest {
                                 "var udf= Java.type('" + AdultValidateUdf.class.getName()
                                         + "'); new udf(18).apply($.name,$.age,$$)", "用户【{$.name}】的年龄不满{$$.minAge}岁"),
                         new RuleDefinition("105", "sceneCall('sc2',$,$$)", "调用场景2"),
-                        new RuleDefinition("106", "sceneCall('sc2'$,,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】")
+                        new RuleDefinition("106", "sceneCall('sc2',$,$$)", "用户【{$.name}】不是管理员用户【{$$.admin}】")
                 ),
                 Arrays.asList(
                         new UdfDefinition("isAdult", new AdultValidateUdf(18)),
@@ -114,7 +112,7 @@ public class RuleEvaluatorTest {
                 ), Arrays.asList(
                 new SceneDefinition("sc1", "", "c1?" + expr1 + ":c2?" + expr2),
                 new SceneDefinition("sc2", "", "102")
-                ));
+        ));
 
         RuleSuite suite = simpleRuleLoader.loadSuite();
         String res1 = suite.evalScene("sc1", root).toString();
@@ -189,8 +187,8 @@ public class RuleEvaluatorTest {
             delimiter = '#'
     )
     public void testRule1_0(String expr, String expected) {
-        RuleEngine ruleEngine = new RuleEngine();
-        for (RuleDefinition f : Arrays.asList(
+        RuleEngine.RuleEngineBuilder builder = RuleEngine.builder();
+        builder.ruleDefinitions(Arrays.asList(
                 new RuleDefinition("1", "false", "规则1"),
                 new RuleDefinition("2", "true", "规则2"),
                 new RuleDefinition("3", "false", "规则3"),
@@ -198,10 +196,8 @@ public class RuleEvaluatorTest {
                 new RuleDefinition("5", "true", "规则5"),
                 new RuleDefinition("6", "true", "规则6"),
                 new RuleDefinition("7", "true", "规则7")
-        )) {
-            ruleEngine.register(f);
-        }
-        RuleEvaluator ruleEvaluator = new RuleEvaluator(ruleEngine);
+        ));
+        RuleEvaluator ruleEvaluator = new RuleEvaluator(builder.build());
         User root = new User("jack", 19);
         NodeResult check = ruleEvaluator.eval(expr, root);
         System.out.println(check);
