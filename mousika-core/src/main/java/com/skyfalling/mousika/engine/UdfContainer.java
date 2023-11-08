@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
+ * UDF容器，用于将UDF分组编译成对象
+ *
  * @author : liyifei
  * @created : 2023/11/7, 星期二
  * Copyright (c) 2004-2029 All Rights Reserved.

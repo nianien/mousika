@@ -1,5 +1,6 @@
 package com.skyfalling.mousika.eval;
 
+import com.skyfalling.mousika.eval.node.RuleNode;
 import lombok.Data;
 
 import java.util.List;
@@ -12,9 +13,9 @@ import java.util.Vector;
 public class EvalNode {
 
     /**
-     * 规则表达式
+     * 规则节点
      */
-    private final String expr;
+    private final RuleNode ruleNode;
 
     /**
      * 父执行节点
@@ -30,10 +31,10 @@ public class EvalNode {
     /**
      * 执行节点
      *
-     * @param expr
+     * @param ruleNode
      */
-    public EvalNode(String expr) {
-        this.expr = expr;
+    public EvalNode(RuleNode ruleNode) {
+        this.ruleNode = ruleNode;
     }
 
     /**
@@ -47,6 +48,6 @@ public class EvalNode {
 
     @Override
     public String toString() {
-        return expr;
+        return ruleNode.expr();
     }
 }
