@@ -88,7 +88,7 @@ public interface UdfDelegate<P, R> {
         }
 
 
-        public static Object convert(Object parameter, Type parameterType) {
+        private static Object convert(Object parameter, Type parameterType) {
             if (parameterType instanceof Class) {
                 Class clazz = (Class) parameterType;
                 if (clazz.isInstance(parameter)) {
