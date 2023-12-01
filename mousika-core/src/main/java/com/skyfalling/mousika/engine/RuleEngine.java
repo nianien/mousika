@@ -115,7 +115,10 @@ public class RuleEngine {
             throw new IllegalArgumentException("duplicate function defined: " + definition.getRuleId());
         }
         ruleDefinitions.put(definition.getRuleId(), definition);
-        compile(definition.getExpression());
+        if (definition.getUseType() != 2) {
+            //符合规则不编译
+            compile(definition.getExpression());
+        }
         compileDesc(definition.getDesc());
     }
 

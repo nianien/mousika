@@ -74,9 +74,7 @@ public class CompositeRuleTest {
                         new RuleDefinition("1003", "1001?1002->1004", "1003描述", 2),
                         new RuleDefinition("1004", "false", "1004描述")
                 ),
-
                 Arrays.asList());
-
         RuleEvaluator ruleEvaluator = simpleRuleLoader.loadSuite().getRuleEvaluator();
         String res1 = ruleEvaluator.eval("1002->1001&&1003", null).toString();
         System.out.println(res1);

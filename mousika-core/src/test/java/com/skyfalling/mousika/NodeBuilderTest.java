@@ -52,8 +52,7 @@ public class NodeBuilderTest {
 
     @Test
     public void testSer() {
-//        System.out.println(NodeBuilder.build("∅->(1->2->3)->(4->5->6)->(7->8->9)").expr());
-        //#f3?t1:(f4?t2:t3)
+        System.out.println(NodeBuilder.build("∅->(1001?1002)->1004").expr());
         System.out.println(NodeBuilder.build("f3?t1:f4?t2:t3").expr());
     }
 

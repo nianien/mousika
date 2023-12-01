@@ -7,6 +7,7 @@ import com.skyfalling.mousika.utils.JsonUtils;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * Udf代理接口, 默认实现类型自动转化
@@ -46,6 +47,22 @@ public interface UdfDelegate<P, R> {
 
     class Wrapper implements UdfDelegate {
 
+        private static BiFunction<Object, Type, Object> converter = (s, t) -> {
+            if (s instanceof Wrapper) {
+                return ((Wrapper) s).udf; //嵌套udf的参数在嵌套方法中已处理
+            }
+            if (!(s instanceof String)) {
+                s = JsonUtils.toJson(s);
+            }
+            Object v = JsonUtils.toBean((String) s, new TypeReference<>() {
+                @Override
+                public Type getType() {
+                    return t;
+                }
+            });
+            return v != null ? v : s;
+        };
+
 
         /**
          * 代理函数
@@ -73,67 +90,8 @@ public interface UdfDelegate<P, R> {
                 throw new RuntimeException("no compatible method has " + params.length + " parameters!");
             }
             Method method = found.get();
-            Object[] casts = convert(params, method.getGenericParameterTypes());
+            Object[] casts = Reflections.convert(params, method.getGenericParameterTypes(), converter);
             return Reflections.invoke(method, udf, casts);
-        }
-
-
-        public static Object[] convert(Object[] parameters, Type[] parameterTypes) {
-            Object[] castParams = new Object[parameters.length];
-            for (int i = 0; i < parameterTypes.length; i++) {
-                Type parameterType = parameterTypes[i];
-                castParams[i] = convert(parameters[i], parameterType);
-            }
-            return castParams;
-        }
-
-
-        private static Object convert(Object parameter, Type parameterType) {
-            if (parameterType instanceof Class) {
-                Class clazz = (Class) parameterType;
-                if (clazz.isInstance(parameter)) {
-                    return parameter;
-                }
-                if (parameter instanceof String) {
-                    String valueString = (String) parameter;
-                    if (clazz.equals(String.class)) {
-                        return valueString;
-                    }
-                    if (clazz.equals(Boolean.TYPE) || clazz.equals(Boolean.class)) {
-                        return Boolean.valueOf(valueString);
-                    }
-                    if (clazz.equals(Byte.TYPE) || clazz.equals(Byte.class)) {
-                        return Byte.valueOf(valueString);
-                    }
-                    if (clazz.equals(Short.TYPE) || clazz.equals(Short.class)) {
-                        return Short.valueOf(valueString);
-                    }
-                    if (clazz.equals(Integer.TYPE) || clazz.equals(Integer.class)) {
-                        return Integer.valueOf(valueString);
-                    }
-                    if (clazz.equals(Long.TYPE) || clazz.equals(Long.class)) {
-                        return Long.valueOf(valueString);
-                    }
-                    if (clazz.equals(Float.TYPE) || clazz.equals(Float.class)) {
-                        return Float.valueOf(valueString);
-                    }
-                    if (clazz.equals(Double.TYPE) || clazz.equals(Double.class)) {
-                        return Double.valueOf(valueString);
-                    }
-                    if (clazz.equals(Character.TYPE) || clazz.equals(Character.class)) {
-                        return Character.valueOf(valueString.charAt(0));
-                    }
-                    if (clazz.isEnum()) {
-                        return Enum.valueOf((Class<Enum>) clazz, valueString);
-                    }
-                }
-            }
-            return JsonUtils.toBean(JsonUtils.toJson(parameter), new TypeReference<>() {
-                @Override
-                public Type getType() {
-                    return parameterType;
-                }
-            });
         }
 
     }
