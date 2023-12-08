@@ -40,13 +40,34 @@ public class RuleEngineTest {
     }
 
 
+    /**
+     * 测试js函数
+     */
+    @SneakyThrows
+    @Test
+    public void testJsUdf0() {
+        RuleEngine.RuleEngineBuilder builder = RuleEngine.builder();
+        builder.udfDefinition(new UdfDefinition("jdUdf", "test", """
+                function test(begin,end) {
+                    var sum = begin; for (var i = 0; i < end; i++) {
+                        sum = sum + i % 8
+                    }
+                    return sum;
+                }
+                """));
+        RuleEngine engine = builder.build();
+        Object object = engine.evalExpr("jdUdf.test(1001,10000)", null, null);
+        System.out.println(object);
+    }
 
-
+    /**
+     * 测试多线程下的js函数
+     */
     @SneakyThrows
     @Test
     public void testJsUdf() {
         RuleEngine.RuleEngineBuilder builder = RuleEngine.builder();
-        builder.udfDefinition(new UdfDefinition("jdUdf","test", """
+        builder.udfDefinition(new UdfDefinition("jdUdf", "test", """
                 function test(begin) {
                     var sum = begin; for (var i = 0; i < 10000; i++) {
                         sum = sum + i % 8

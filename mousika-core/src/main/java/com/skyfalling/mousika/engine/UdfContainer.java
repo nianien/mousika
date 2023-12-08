@@ -101,18 +101,11 @@ public class UdfContainer {
      * @param udf
      */
     private void doRegister(Map map, String name, Object udf, BiFunction<String, String, Object> compiler) {
-        Class<?>[] interfaces = udf.getClass().getInterfaces();
-        for (Class<?> anInterface : interfaces) {
-            //只代理通过Functions定义的udf
-            if (anInterface.getName().indexOf(Functions.class.getName()) != -1) {
-                map.put(name, UdfDelegate.of(udf));
-                return;
-            }
-        }
         if (udf instanceof String) {
-            //编译js脚本函数
-            map.put(name, new JsUdf(name, (String) udf, compiler));
+            //代理JsUdf
+            map.put(name, UdfDelegate.of(new JsUdf(name, (String) udf, compiler)));
         } else {
+            //其他UDF
             map.put(name, udf);
         }
     }

@@ -83,6 +83,10 @@ public interface UdfDelegate<P, R> {
          */
         @Override
         public Object apply(Object... params) {
+            //兼容JsUdf的可变参数
+            if (udf instanceof JsUdf) {
+                params = new Object[]{params};
+            }
             int n = params.length;
             Optional<Method> found = Reflections.getMethods(udf.getClass(), m -> m.getName().equals("apply") && m.getParameterCount() == n && !m.isBridge() //the overloaded method is marked as being a "bridge method".
             ).stream().findFirst();

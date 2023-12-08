@@ -8,7 +8,7 @@ import java.util.function.Function;
  * @created : 2023/12/8, 星期五
  * Copyright (c) 2004-2029 All Rights Reserved.
  **/
-public class JsUdf implements Function<Object, Object> {
+public class JsUdf implements Function<Object[], Object> {
 
     private ThreadLocal<Function<Object[], Object>> jsFunctionCompiled;
 
@@ -20,14 +20,12 @@ public class JsUdf implements Function<Object, Object> {
      * @param compiler   函数编译器
      */
     public JsUdf(String name, String jsFunction, BiFunction<String, String, Object> compiler) {
-        jsFunctionCompiled = ThreadLocal.withInitial(() -> {
-            return (Function<Object[], Object>) compiler.apply(name, jsFunction);
-        });
+        jsFunctionCompiled = ThreadLocal.withInitial(() -> (Function<Object[], Object>) compiler.apply(name, jsFunction));
     }
 
     @Override
-    public Object apply(Object objects) {
-        return jsFunctionCompiled.get().apply(new Object[]{objects});
+    public Object apply(Object... objects) {
+        return jsFunctionCompiled.get().apply(objects);
     }
 
 
