@@ -1,6 +1,10 @@
 package com.skyfalling.mousika.udf;
 
-import java.util.function.BiFunction;
+import lombok.SneakyThrows;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.util.function.Function;
 
 /**
@@ -10,23 +14,44 @@ import java.util.function.Function;
  **/
 public class JsUdf implements Function<Object[], Object> {
 
-    private ThreadLocal<Function<Object[], Object>> jsFunctionCompiled;
+
+    private final String funcName;
+    private final String funcBody;
+
+
+    /**
+     * 类级线程副本
+     */
+    private static ThreadLocal<ScriptEngine> engineFactory = ThreadLocal.withInitial(() -> new ScriptEngineManager().getEngineByName("js"));
+    /**
+     * 实例级线程副本
+     */
+    private ThreadLocal<Object> funcFactory = ThreadLocal.withInitial(this::createFuncObject);
+
 
     /**
      * JS函数UDF
      *
-     * @param name       函数名称
-     * @param jsFunction 函数定义
-     * @param compiler   函数编译器
+     * @param funcName 函数名称
+     * @param funcBody 函数定义
      */
-    public JsUdf(String name, String jsFunction, BiFunction<String, String, Object> compiler) {
-        jsFunctionCompiled = ThreadLocal.withInitial(() -> (Function<Object[], Object>) compiler.apply(name, jsFunction));
+    @SneakyThrows
+    public JsUdf(String funcName, String funcBody) {
+        this.funcName = funcName;
+        this.funcBody = funcBody;
     }
 
     @Override
     public Object apply(Object... objects) {
-        return jsFunctionCompiled.get().apply(objects);
+        Function<Object[], Object> func = (Function<Object[], Object>) funcFactory.get();
+        return func.apply(objects);
     }
 
+    @SneakyThrows
+    private Object createFuncObject() {
+        ScriptEngine engine = engineFactory.get();
+        engine.eval(funcBody);
+        return engine.getBindings(ScriptContext.ENGINE_SCOPE).get(funcName);
+    }
 
 }

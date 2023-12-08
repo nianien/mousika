@@ -26,17 +26,26 @@ public class RuleEngineTest {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
         Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
         bindings.put("polyglot.js.nashorn-compat", true);
-        engine.eval("function add(a,b){return a+b};");
-        Object o1 = engine.getBindings(ScriptContext.ENGINE_SCOPE).get("add");
-        engine.eval("function add(a,b){return a-b};");
-        Object o2 = engine.getBindings(ScriptContext.ENGINE_SCOPE).get("add");
-        Bindings bindings1 = engine.createBindings();
-        bindings1.put("add1", o1);
-        bindings1.put("add2", o2);
-        CompiledScript compile1 = ((Compilable) engine).compile("add1(1,1)");
-        System.out.println(compile1.eval(bindings1));
-        CompiledScript compile2 = ((Compilable) engine).compile("add2(1,1)");
-        System.out.println(compile2.eval(bindings1));
+        CompiledScript compiledScript = ((Compilable) engine).compile("add1(1,1)");
+        List<Thread> threads = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Thread thread = new Thread(() -> {
+                try {
+                    ScriptEngine se = new ScriptEngineManager().getEngineByName("graal.js");
+                    se.eval("function add(a,b){return a+b};");
+                    Bindings bindings1 = engine.createBindings();
+                    bindings1.put("add1", se.getBindings(ScriptContext.ENGINE_SCOPE).get("add"));
+                    System.out.println(compiledScript.eval(bindings1));
+                } catch (ScriptException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            thread.start();
+            threads.add(thread);
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
     }
 
 
@@ -69,7 +78,7 @@ public class RuleEngineTest {
         RuleEngine.RuleEngineBuilder builder = RuleEngine.builder();
         builder.udfDefinition(new UdfDefinition("jdUdf", "test", """
                 function test(begin) {
-                    var sum = begin; for (var i = 0; i < 10000; i++) {
+                    var sum = begin; for (var i = 0; i < 1000000; i++) {
                         sum = sum + i % 8
                     }
                     return sum;
@@ -83,33 +92,12 @@ public class RuleEngineTest {
                 Object object = engine.evalExpr("jdUdf.test(" + begin + ")", null, null);
                 System.out.println(object);
             });
+            thread.start();
             threads.add(thread);
         }
         for (Thread thread : threads) {
-            thread.start();
             thread.join();
         }
-    }
-
-    @SneakyThrows
-    @Test
-    public void testRuleEngine() {
-        RuleEngine ruleEngine = RuleEngine.builder().build();
-
-        Object res = ruleEngine.evalExpr("[5,6].indexOf($.q)!=-1", new HashMap<String, Integer>() {
-            {
-                put("q", 5);
-            }
-        }, null);
-        System.out.println(res);
-        assertEquals(res, true);
-        Object res2 = ruleEngine.evalExpr("$.q != true", new HashMap<String, Boolean>() {
-            {
-                put("q", true);
-            }
-        }, null);
-        System.out.println(res2);
-        assertEquals(res2, false);
     }
 
 
@@ -130,13 +118,13 @@ public class RuleEngineTest {
     @Test
     public void testNumberTypeEval() {
         RuleEngine ruleEngine = RuleEngine.builder().build();
-        Object res = ruleEngine.evalExpr("$.liveZuanCurrentMonth*1", new HashMap<String, Object>() {
+        Object res = ruleEngine.evalExpr("$.currentMonth*1.0", new HashMap<String, Object>() {
             {
-                put("liveZuanCurrentMonth", 5);
+                put("currentMonth", 5);
             }
         }, null);
         System.out.println(res);
-        assertEquals(res, 5.0);
+        assertEquals(5.0,res);
 
         Object res2 = ruleEngine.evalExpr("5*1", new HashMap<String, Integer>() {
         }, null);

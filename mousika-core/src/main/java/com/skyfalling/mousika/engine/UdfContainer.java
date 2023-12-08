@@ -1,7 +1,6 @@
 package com.skyfalling.mousika.engine;
 
 import com.cudrania.core.utils.StringUtils;
-import com.skyfalling.mousika.udf.Functions;
 import com.skyfalling.mousika.udf.JsUdf;
 import com.skyfalling.mousika.udf.UdfDelegate;
 import lombok.SneakyThrows;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -38,8 +36,8 @@ public class UdfContainer {
      *
      * @param udfDefinitions
      */
-    public UdfContainer(List<UdfDefinition> udfDefinitions, BiFunction<String, String, Object> compiler) {
-        udfDefinitions.forEach(udf -> register(udf, compiler));
+    public UdfContainer(List<UdfDefinition> udfDefinitions) {
+        udfDefinitions.forEach(udf -> register(udf));
     }
 
     /**
@@ -60,8 +58,8 @@ public class UdfContainer {
      *
      * @param udfDefinition
      */
-    public void register(UdfDefinition udfDefinition, BiFunction<String, String, Object> compiler) {
-        register(udfDefinition.getGroup(), udfDefinition.getName(), udfDefinition.getUdf(), compiler);
+    public void register(UdfDefinition udfDefinition) {
+        register(udfDefinition.getGroup(), udfDefinition.getName(), udfDefinition.getUdf());
     }
 
     /**
@@ -71,7 +69,7 @@ public class UdfContainer {
      * @param name
      * @param udf
      */
-    private void register(String group, String name, Object udf, BiFunction<String, String, Object> compiler) {
+    private void register(String group, String name, Object udf) {
         Map map = this.udfDefined;
         if (StringUtils.isNotEmpty(group)) {
             String[] tokens = group.replaceAll("\\s", "").split("\\.+");
@@ -90,7 +88,7 @@ public class UdfContainer {
         if (map.containsKey(name)) {
             throw new IllegalArgumentException("udf: " + name + " is already defined!");
         }
-        doRegister(map, name, udf, compiler);
+        doRegister(map, name, udf);
     }
 
     /**
@@ -100,14 +98,12 @@ public class UdfContainer {
      * @param name
      * @param udf
      */
-    private void doRegister(Map map, String name, Object udf, BiFunction<String, String, Object> compiler) {
+    private void doRegister(Map map, String name, Object udf) {
         if (udf instanceof String) {
-            //代理JsUdf
-            map.put(name, UdfDelegate.of(new JsUdf(name, (String) udf, compiler)));
-        } else {
-            //其他UDF
-            map.put(name, udf);
+            udf = new JsUdf(name, (String) udf);
         }
+        //代理JsUdf
+        map.put(name, UdfDelegate.of(udf));
     }
 
 

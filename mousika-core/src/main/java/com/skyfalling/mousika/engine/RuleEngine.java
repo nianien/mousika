@@ -25,7 +25,7 @@ public class RuleEngine {
     /**
      * 脚本引擎
      */
-    private ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
+    private ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
 
     {
         Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
@@ -57,15 +57,8 @@ public class RuleEngine {
         this.register(new RuleDefinition(Constants.NULL, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NULL"));
         this.register(new RuleDefinition(Constants.NOP, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NOP"));
         ruleDefinitions.forEach(this::register);
-        this.compiledUdfs = new UdfContainer(udfDefinitions, (name, func) -> {
-            //编译JS函数
-            try {
-                engine.eval(func);
-                return engine.getBindings(ScriptContext.ENGINE_SCOPE).get(name);
-            } catch (ScriptException e) {
-                throw new RuntimeException(e);
-            }
-        }).compile();
+        ThreadLocal<ScriptEngine> engineFactory = ThreadLocal.withInitial(() -> new ScriptEngineManager().getEngineByName("graal.js"));
+        this.compiledUdfs = new UdfContainer(udfDefinitions).compile();
     }
 
     /**
