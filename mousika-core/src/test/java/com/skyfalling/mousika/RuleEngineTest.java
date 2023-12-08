@@ -1,11 +1,14 @@
 package com.skyfalling.mousika;
 
 import com.skyfalling.mousika.engine.RuleEngine;
+import com.skyfalling.mousika.engine.UdfDefinition;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 import javax.script.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author liyifei
  */
 public class RuleEngineTest {
-    private RuleEngine ruleEngine = RuleEngine.builder().build();
 
     @SneakyThrows
     @Test
@@ -37,10 +39,41 @@ public class RuleEngineTest {
         System.out.println(compile2.eval(bindings1));
     }
 
+
+
+
+    @SneakyThrows
+    @Test
+    public void testJsUdf() {
+        RuleEngine.RuleEngineBuilder builder = RuleEngine.builder();
+        builder.udfDefinition(new UdfDefinition("jdUdf","test", """
+                function test(begin) {
+                    var sum = begin; for (var i = 0; i < 10000; i++) {
+                        sum = sum + i % 8
+                    }
+                    return sum;
+                }
+                """));
+        RuleEngine engine = builder.build();
+        List<Thread> threads = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            int begin = i;
+            Thread thread = new Thread(() -> {
+                Object object = engine.evalExpr("jdUdf.test(" + begin + ")", null, null);
+                System.out.println(object);
+            });
+            threads.add(thread);
+        }
+        for (Thread thread : threads) {
+            thread.start();
+            thread.join();
+        }
+    }
+
     @SneakyThrows
     @Test
     public void testRuleEngine() {
-
+        RuleEngine ruleEngine = RuleEngine.builder().build();
 
         Object res = ruleEngine.evalExpr("[5,6].indexOf($.q)!=-1", new HashMap<String, Integer>() {
             {
@@ -61,6 +94,7 @@ public class RuleEngineTest {
 
     @Test
     public void testDesc() {
+        RuleEngine ruleEngine = RuleEngine.builder().build();
         String desc = "代理商【{$.agentId}】不允许【{$.customerId}】跨开{}";
         desc = "\"" + desc.replaceAll("\\{(\\$+\\..+?)\\}", "\\\"+$1+\\\"") + "\"";
         System.out.println(desc);
@@ -74,6 +108,7 @@ public class RuleEngineTest {
     //number类型计算
     @Test
     public void testNumberTypeEval() {
+        RuleEngine ruleEngine = RuleEngine.builder().build();
         Object res = ruleEngine.evalExpr("$.liveZuanCurrentMonth*1", new HashMap<String, Object>() {
             {
                 put("liveZuanCurrentMonth", 5);

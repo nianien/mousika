@@ -2,13 +2,13 @@ package com.skyfalling.mousika.engine;
 
 import com.cudrania.core.utils.StringUtils;
 import com.skyfalling.mousika.udf.Functions;
+import com.skyfalling.mousika.udf.JsUdf;
 import com.skyfalling.mousika.udf.UdfDelegate;
 import lombok.SneakyThrows;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
-import javax.script.CompiledScript;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -38,25 +38,19 @@ public class UdfContainer {
      *
      * @param udfDefinitions
      */
-    public UdfContainer(List<UdfDefinition> udfDefinitions) {
-        udfDefinitions.forEach(this::register);
+    public UdfContainer(List<UdfDefinition> udfDefinitions, BiFunction<String, String, Object> compiler) {
+        udfDefinitions.forEach(udf -> register(udf, compiler));
     }
 
     /**
-     * 获取编译后的UDF
+     * 分组的UDF集成一个对象
      *
      * @return
      */
-    public Map<String, Object> compile(Function<String, CompiledScript> compiler) {
+    public Map<String, Object> compile() {
         Map<String, Object> udfCompiled = new ConcurrentHashMap<>();
         //编译udf
-        udfDefined.forEach((k, v) -> {
-            if (v instanceof String) {//js udf
-                udfCompiled.put(k, compiler.apply((String) v));
-            } else {// java udf
-                udfCompiled.put(k, compileUdf("UDF$" + StringUtils.capitalize(k), v));
-            }
-        });
+        this.udfDefined.forEach((k, v) -> udfCompiled.put(k, compileUdf("UDF$" + StringUtils.capitalize(k), v)));
         return udfCompiled;
     }
 
@@ -66,8 +60,8 @@ public class UdfContainer {
      *
      * @param udfDefinition
      */
-    public void register(UdfDefinition udfDefinition) {
-        register(udfDefinition.getGroup(), udfDefinition.getName(), udfDefinition.getUdf());
+    public void register(UdfDefinition udfDefinition, BiFunction<String, String, Object> compiler) {
+        register(udfDefinition.getGroup(), udfDefinition.getName(), udfDefinition.getUdf(), compiler);
     }
 
     /**
@@ -77,7 +71,7 @@ public class UdfContainer {
      * @param name
      * @param udf
      */
-    private void register(String group, String name, Object udf) {
+    private void register(String group, String name, Object udf, BiFunction<String, String, Object> compiler) {
         Map map = this.udfDefined;
         if (StringUtils.isNotEmpty(group)) {
             String[] tokens = group.replaceAll("\\s", "").split("\\.+");
@@ -96,7 +90,7 @@ public class UdfContainer {
         if (map.containsKey(name)) {
             throw new IllegalArgumentException("udf: " + name + " is already defined!");
         }
-        doRegister(map, name, udf);
+        doRegister(map, name, udf, compiler);
     }
 
     /**
@@ -106,11 +100,7 @@ public class UdfContainer {
      * @param name
      * @param udf
      */
-    private void doRegister(Map map, String name, Object udf) {
-        if (udf instanceof String) {
-            //js脚本
-            map.put(name, udf);
-        }
+    private void doRegister(Map map, String name, Object udf, BiFunction<String, String, Object> compiler) {
         Class<?>[] interfaces = udf.getClass().getInterfaces();
         for (Class<?> anInterface : interfaces) {
             //只代理通过Functions定义的udf
@@ -119,7 +109,12 @@ public class UdfContainer {
                 return;
             }
         }
-        map.put(name, udf);
+        if (udf instanceof String) {
+            //编译js脚本函数
+            map.put(name, new JsUdf(name, (String) udf, compiler));
+        } else {
+            map.put(name, udf);
+        }
     }
 
 
@@ -147,7 +142,9 @@ public class UdfContainer {
                 .load(Thread.currentThread().getContextClassLoader())
                 .getLoaded().newInstance();
         for (Entry<String, Object> entry : udfMap.entrySet()) {
+            //udf的名称,不含命名空间
             String key = entry.getKey();
+            //udf的实例
             Object value = entry.getValue();
             String clazz = name + "$" + StringUtils.capitalize(key);
             //注意: 这里不是setter方法,而是setField的底层实现,直接访问字段

@@ -25,12 +25,9 @@ public class RuleEngine {
     /**
      * 脚本引擎
      */
-    /**
-     * 脚本引擎
-     */
-    private static ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
+    private ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
 
-    static {
+    {
         Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
         bindings.put("polyglot.js.nashorn-compat", true);
     }
@@ -60,7 +57,7 @@ public class RuleEngine {
         this.register(new RuleDefinition(Constants.NULL, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NULL"));
         this.register(new RuleDefinition(Constants.NOP, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NOP"));
         ruleDefinitions.forEach(this::register);
-        this.compiledUdfs = new UdfContainer(udfDefinitions).compile(this::doCompile);
+        this.compiledUdfs = new UdfContainer(udfDefinitions, this::compileFunction).compile();
     }
 
     /**
@@ -150,8 +147,27 @@ public class RuleEngine {
     }
 
 
+    /**
+     * 编译JS脚本
+     *
+     * @param expression
+     * @return
+     */
     @SneakyThrows
     private synchronized CompiledScript doCompile(String expression) {
         return ((Compilable) engine).compile(expression);
+    }
+
+
+    /**
+     * 编译JS函数
+     *
+     * @param expression
+     * @return
+     */
+    @SneakyThrows
+    private Object compileFunction(String name, String expression) {
+        engine.eval(expression);
+        return engine.getBindings(ScriptContext.ENGINE_SCOPE).get(name);
     }
 }
