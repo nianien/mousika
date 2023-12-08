@@ -57,7 +57,15 @@ public class RuleEngine {
         this.register(new RuleDefinition(Constants.NULL, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NULL"));
         this.register(new RuleDefinition(Constants.NOP, "Java.type('" + NaResult.class.getName() + "').DEFAULT", "NOP"));
         ruleDefinitions.forEach(this::register);
-        this.compiledUdfs = new UdfContainer(udfDefinitions, this::compileFunction).compile();
+        this.compiledUdfs = new UdfContainer(udfDefinitions, (name, func) -> {
+            //编译JS函数
+            try {
+                engine.eval(func);
+                return engine.getBindings(ScriptContext.ENGINE_SCOPE).get(name);
+            } catch (ScriptException e) {
+                throw new RuntimeException(e);
+            }
+        }).compile();
     }
 
     /**
@@ -159,15 +167,4 @@ public class RuleEngine {
     }
 
 
-    /**
-     * 编译JS函数
-     *
-     * @param expression
-     * @return
-     */
-    @SneakyThrows
-    private Object compileFunction(String name, String expression) {
-        engine.eval(expression);
-        return engine.getBindings(ScriptContext.ENGINE_SCOPE).get(name);
-    }
 }

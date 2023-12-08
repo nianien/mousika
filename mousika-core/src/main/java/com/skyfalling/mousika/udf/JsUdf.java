@@ -21,8 +21,7 @@ public class JsUdf implements Function<Object, Object> {
      */
     public JsUdf(String name, String jsFunction, BiFunction<String, String, Object> compiler) {
         jsFunctionCompiled = ThreadLocal.withInitial(() -> {
-            Function<Object[], Object> value = (Function<Object[], Object>) compiler.apply(name, jsFunction);
-            return value;
+            return (Function<Object[], Object>) compiler.apply(name, jsFunction);
         });
     }
 
