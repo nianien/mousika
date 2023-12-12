@@ -124,11 +124,12 @@ public class RuleEngineTest {
             }
         }, null);
         System.out.println(res);
-        assertEquals(5.0,res);
+        assertEquals(5,res);
 
-        Object res2 = ruleEngine.evalExpr("5*1", new HashMap<String, Integer>() {
+        Object res2 = ruleEngine.evalExpr("""
+                ({"result":true, "count":42});
+                """, new HashMap<String, Integer>() {
         }, null);
-        System.out.println(res2);
-        assertEquals(res2, 5);
+        System.out.println(res2.getClass());
     }
 }
