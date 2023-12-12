@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created on 2023/3/31
@@ -114,7 +115,6 @@ public class RuleEngineTest {
         assertEquals("代理商【a】不允许【b】跨开{}", ruleEngine.evalExpr(desc, map, null));
     }
 
-    //number类型计算
     @Test
     public void testNumberTypeEval() {
         RuleEngine ruleEngine = RuleEngine.builder().build();
@@ -124,6 +124,7 @@ public class RuleEngineTest {
             }
         }, null);
         System.out.println(res);
+
         assertEquals(5,res);
 
         Object res2 = ruleEngine.evalExpr("""
@@ -131,5 +132,6 @@ public class RuleEngineTest {
                 """, new HashMap<String, Integer>() {
         }, null);
         System.out.println(res2.getClass());
+        assertTrue(res2 instanceof Map);
     }
 }
