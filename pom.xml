@@ -27,7 +27,7 @@
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <jackson-datatype-protobuf.version>0.9.13</jackson-datatype-protobuf.version>
         <revision>1.0.0</revision>
-        <antlr4.version>4.7.2</antlr4.version>
+        <antlr4.version>4.13.1</antlr4.version>
         <graalvm.version>22.3.4</graalvm.version>
         <byte-buddy.version>1.14.9</byte-buddy.version>
     </properties>
@@ -214,7 +214,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.3.0</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
@@ -227,7 +227,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.7.0</version>
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
@@ -259,13 +259,55 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <!-- 从 git 中取 commit 信息 -->
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>4.9.10</version>
+                    <executions>
+                        <execution>
+                            <id>get-the-git-infos</id>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- 不生成 git.properties 文件，只注入属性 -->
+                        <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                        <!-- 设置时间格式 -->
+                        <dateFormat>yyyyMMddHHmmss</dateFormat>
+                        <!-- 设置时区 -->
+                        <dateFormatTimeZone>GMT+8</dateFormatTimeZone>
+                        <!-- 设置 commit id 长度 -->
+                        <abbrevLength>7</abbrevLength>
+                        <!-- 在离线模式下也尝试获取 git 信息 -->
+                        <offline>false</offline>
+                    </configuration>
+                </plugin>
+                <!-- 动态设置 JAR 文件名 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <configuration>
+                        <finalName>${project.artifactId}</finalName>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -281,6 +323,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -317,6 +371,40 @@
                     <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
+        </profile>
+        <profile>
+            <id>install-jar</id>
+            <activation>
+                <!-- 只有存在源码目录的模块才会激活；父聚合 POM 不会激活 -->
+                <file>
+                    <exists>src/main/java</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install-jar</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                                <configuration>
+                                    <file>${project.build.directory}/${project.artifactId}.jar</file>
+                                    <pomFile>${project.basedir}/.flattened-pom.xml</pomFile>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}-${git.commit.time}-${git.commit.id.abbrev}</version>
+                                    <packaging>jar</packaging>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
