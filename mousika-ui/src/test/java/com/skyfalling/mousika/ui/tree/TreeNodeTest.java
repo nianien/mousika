@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Created on 2022/6/27
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class TreeNodeTest {
 

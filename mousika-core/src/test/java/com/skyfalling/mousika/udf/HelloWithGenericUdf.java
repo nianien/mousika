@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 /**
  * 
  * Created on 2022-08-26
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Udf(group = "sys")
 public class HelloWithGenericUdf implements Function2<String, Map<String, Object>, Object>, Function3<String, List<String>, Map<String, Object>, Object> {

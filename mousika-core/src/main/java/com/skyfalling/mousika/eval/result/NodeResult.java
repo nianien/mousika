@@ -11,7 +11,7 @@ import java.util.List;
  * 节点执行结果, 规则集的分支结果
  * Created on 2022/8/2
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 @AllArgsConstructor

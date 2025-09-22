@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author skyfalling {@literal <skyfalling@live.com>}
+ */
 @AllArgsConstructor
 public class SimpleRuleLoader implements RuleLoader {
     private List<RuleDefinition> rules;

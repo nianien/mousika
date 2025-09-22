@@ -3,7 +3,7 @@ package com.skyfalling.mousika.eval.parser;
 /**
  * 运算符枚举定义
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public enum Operator {
     PAREN_OPEN("(", 0),

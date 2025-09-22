@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 规则加载接口定义
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface RuleLoader extends SceneLoader {
     /**

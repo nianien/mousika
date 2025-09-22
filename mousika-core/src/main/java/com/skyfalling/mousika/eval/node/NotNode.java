@@ -7,7 +7,7 @@ import lombok.Getter;
 /**
  * 条件取反
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public class NotNode implements RuleNode {

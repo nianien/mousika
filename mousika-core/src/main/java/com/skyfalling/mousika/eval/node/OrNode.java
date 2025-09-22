@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * 条件或
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public class OrNode implements RuleNode {

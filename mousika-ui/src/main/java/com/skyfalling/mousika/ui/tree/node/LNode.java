@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 逻辑节点{@link ILNode}实现
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * <p>
  * Created on 2022-07-19
  */

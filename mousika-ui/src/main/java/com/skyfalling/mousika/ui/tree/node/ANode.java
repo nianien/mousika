@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * 动作节点{@link IANode}实现
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public class ANode<T extends ANode> implements IANode<T>, TypeNode {

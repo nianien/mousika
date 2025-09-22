@@ -4,7 +4,7 @@ package com.skyfalling.mousika.udf;
  * 函数定义
  * Created on 2022/1/28
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface Functions {
 

@@ -7,7 +7,7 @@ import lombok.Getter;
 /**
  * 表达式规则
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public class ExprNode implements RuleNode {

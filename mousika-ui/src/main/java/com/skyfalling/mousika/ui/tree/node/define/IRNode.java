@@ -3,7 +3,7 @@ package com.skyfalling.mousika.ui.tree.node.define;
 /**
  * 简单规则节点, 用于条件判断
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public interface IRNode<T extends IRNode> extends TypeNode {

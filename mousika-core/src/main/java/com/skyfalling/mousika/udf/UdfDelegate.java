@@ -42,7 +42,7 @@ public interface UdfDelegate<P, R> {
      * UDF代理类
      * Created on 2022/12/6
      *
-     * @author liyifei
+     * @author skyfalling {@literal <skyfalling@live.com>}
      */
 
     class Wrapper implements UdfDelegate {

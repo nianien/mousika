@@ -8,7 +8,7 @@ import com.skyfalling.mousika.ui.tree2.resolver.NodeTypeResolver;
 /**
  * 节点类型定义
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @JsonTypeInfo(use = Id.CUSTOM, property = "type")/*用于JSON序列化的多态支持*/
 @JsonTypeIdResolver(NodeTypeResolver.class)

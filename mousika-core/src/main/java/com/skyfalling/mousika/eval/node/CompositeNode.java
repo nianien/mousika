@@ -8,7 +8,7 @@ import com.skyfalling.mousika.eval.result.EvalResult;
  * 复合节点
  * Created on 2023/3/30
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class CompositeNode extends ExprNode {
 

@@ -8,7 +8,7 @@ package com.skyfalling.mousika.ui.tree2.node.define;
  *     fN
  * </pre>
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public abstract class FlowNode extends UINode implements TypeNode {

@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * 条件分支节点, 包含匹配该分支的动作节点{@link IANode}和用于进一步判断的子分支列表
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public interface IPNode<T extends IPNode> extends TypeNode {

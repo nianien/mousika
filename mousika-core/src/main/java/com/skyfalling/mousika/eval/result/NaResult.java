@@ -2,6 +2,8 @@ package com.skyfalling.mousika.eval.result;
 
 /**
  * 表示无结果,用于区别null
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class NaResult extends NodeResult {
 

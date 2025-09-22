@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 /**
  * 用于条件规则组合的逻辑节点,针对{@link IRNode}节点进行逻辑运算
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public interface ILNode<T extends ILNode> extends IRNode<T> {

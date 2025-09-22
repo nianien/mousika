@@ -8,7 +8,7 @@ import java.util.function.Function;
 /**
  * Created on 2022/7/1
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Udf
 @NoArgsConstructor

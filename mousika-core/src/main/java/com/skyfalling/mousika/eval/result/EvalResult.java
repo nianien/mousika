@@ -7,6 +7,8 @@ import java.util.Map;
 
 /**
  * 表达式评估结果
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Data
 public class EvalResult {

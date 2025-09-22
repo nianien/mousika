@@ -11,7 +11,7 @@ import java.util.List;
  * UI树适配器,支持规则节点与UI节点的互相转换
  * Created on 2023/4/15
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class TreeAdapter {
 

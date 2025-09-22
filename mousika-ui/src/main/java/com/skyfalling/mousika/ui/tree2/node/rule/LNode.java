@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Logic组合规则节点
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * <p>
  * Created on 2022-07-19
  */

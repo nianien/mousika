@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 处理UI树节点类型的序列化与反序列化,支持多态
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Slf4j
 public class NodeTypeResolver extends TypeIdResolverBase {

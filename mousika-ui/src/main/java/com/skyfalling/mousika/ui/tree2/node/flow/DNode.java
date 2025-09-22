@@ -15,7 +15,7 @@ import lombok.Setter;
  * </pre>
  * 条件约束: {@link DNode#action}不可为空
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 @Getter

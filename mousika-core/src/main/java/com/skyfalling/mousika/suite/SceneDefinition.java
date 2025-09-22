@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 /**
  * 场景定义
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Data
 @AllArgsConstructor

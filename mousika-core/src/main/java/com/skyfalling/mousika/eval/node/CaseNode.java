@@ -8,7 +8,7 @@ import lombok.Data;
  * 条件执行节点
  * Created on 2023/3/28
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Data
 public class CaseNode implements RuleNode {

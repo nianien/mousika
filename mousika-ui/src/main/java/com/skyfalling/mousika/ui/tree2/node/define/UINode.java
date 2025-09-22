@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * UI节点
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public abstract class UINode implements TypeNode {

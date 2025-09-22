@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 /**
  * 用于声明某个对象为UDF
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

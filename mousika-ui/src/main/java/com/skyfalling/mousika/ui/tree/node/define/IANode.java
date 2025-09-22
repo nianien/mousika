@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 动作节点, 本身是一个流程节点, 同时包含后续流程节点{@link IFNode}
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public interface IANode<T extends IANode> extends TypeNode {

@@ -8,7 +8,7 @@ import com.skyfalling.mousika.ui.tree2.node.flow.ANode;
  * UI树定义
  * Created on 2023/4/27
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class TreeNode extends ANode {
 

@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 /**
  * 默认规则计算
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @AllArgsConstructor
 public class DefaultRuleVisitor extends RuleBaseVisitor {

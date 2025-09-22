@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 规则评估异常
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2021-11-19
  */
 @Data

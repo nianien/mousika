@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 /**
  * 任意匹配节点
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @NoArgsConstructor
 public class LimitNode implements RuleNode {

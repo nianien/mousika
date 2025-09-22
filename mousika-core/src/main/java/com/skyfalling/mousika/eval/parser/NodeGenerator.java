@@ -14,7 +14,7 @@ import java.util.function.Function;
  * 节点生成器
  * Created on 2022/6/17
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface NodeGenerator extends Function<String, RuleNode> {
 

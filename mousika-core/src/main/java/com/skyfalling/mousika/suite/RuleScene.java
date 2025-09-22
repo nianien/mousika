@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 规则场景
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Data
 @AllArgsConstructor

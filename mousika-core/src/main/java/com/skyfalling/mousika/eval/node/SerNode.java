@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * 顺序执行节点<br>
  * 最后一个节点的执行结果作为串行结果以及判断条件
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public class SerNode implements RuleNode {

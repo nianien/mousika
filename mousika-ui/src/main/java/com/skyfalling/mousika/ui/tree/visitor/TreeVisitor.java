@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
 /**
  * Created on 2022/8/3
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface TreeVisitor {
 

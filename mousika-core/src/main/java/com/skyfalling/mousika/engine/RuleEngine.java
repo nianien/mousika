@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * 规则引擎
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Slf4j
 public class RuleEngine {

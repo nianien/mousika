@@ -8,6 +8,8 @@ import org.antlr.v4.runtime.*;
 
 /**
  * 基于Antlr4的规则解析
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class Antlr4Parser {
 

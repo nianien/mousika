@@ -8,6 +8,8 @@ import java.util.Vector;
 
 /**
  * 评估节点定义
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Data
 public class EvalNode {

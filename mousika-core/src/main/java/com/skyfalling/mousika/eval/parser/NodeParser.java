@@ -15,6 +15,8 @@ import static com.skyfalling.mousika.eval.parser.Operator.*;
 
 /**
  * 规则解析器，用于生成规则节点树
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class NodeParser {
     private static final int TOK_WORD = 2;
@@ -24,7 +26,9 @@ public class NodeParser {
 
 
     /**
-     * @param expression 规则集表达式,形式为规则ID的逻辑组合,如(1||2)&&(3||!4)
+     * @param expression 规则集表达式,形式为规则ID的逻辑组合,如{@literal (1||2)&&(3||!4)}
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
      */
     public static RuleNode parse(String expression, NodeGenerator generator) {
         return doParse(tokenize(expression), generator);
@@ -33,6 +37,8 @@ public class NodeParser {
 
     /**
      * 解析表达式
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
      */
     private static List<String> tokenize(String input) {
         int pos = 0;
@@ -110,6 +116,8 @@ public class NodeParser {
      * 生成规则树
      *
      * @param generator 节点生成器
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
      */
     private static RuleNode doParse(List<String> tokens, Function<String, RuleNode> generator) {
         // 变量栈
@@ -176,6 +184,8 @@ public class NodeParser {
 
     /**
      * 节点运算
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
      */
     private static RuleNode doOperate(Stack<RuleNode> es, Stack<Operator> os) {
         Operator op = os.pop();

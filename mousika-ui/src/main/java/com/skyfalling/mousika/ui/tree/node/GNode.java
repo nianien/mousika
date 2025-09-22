@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * 复合分支节点, 同时用作分支节点{@link IPNode}和逻辑节点{@link ILNode}
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public class GNode extends PNode<GNode> implements IPNode<GNode>, ILNode<GNode> {

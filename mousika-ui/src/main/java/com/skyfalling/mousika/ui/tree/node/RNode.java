@@ -11,7 +11,7 @@ import lombok.Setter;
 /**
  * 规则节点{@link IRNode}实现
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * <p>
  * Created on 2022-07-19
  */

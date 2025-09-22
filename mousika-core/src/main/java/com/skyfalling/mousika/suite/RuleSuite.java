@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * 规则套件,针对每个规则场景应用所关联规则集合
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public class RuleSuite {

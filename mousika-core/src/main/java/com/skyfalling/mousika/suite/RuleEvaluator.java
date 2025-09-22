@@ -18,7 +18,7 @@ import static com.skyfalling.mousika.eval.parser.NodeBuilder.build;
  * 规则执行器<br>
  * 给定一个规则集合以及校验对象,返回规则集合的校验结果
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Slf4j
 public class RuleEvaluator {
@@ -39,7 +39,7 @@ public class RuleEvaluator {
     /**
      * 评估规则表达式
      *
-     * @param ruleExpr 规则ID表达式,如(1||2)&&(3||!4)
+     * @param ruleExpr 规则ID表达式,如{@literal (1||2)&&(3||!4)}
      * @param data     用于规则计算的数据对象
      * @return
      */

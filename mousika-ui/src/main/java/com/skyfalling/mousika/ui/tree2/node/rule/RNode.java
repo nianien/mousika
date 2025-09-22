@@ -11,7 +11,7 @@ import lombok.Setter;
 /**
  * Rule单规则节点
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 

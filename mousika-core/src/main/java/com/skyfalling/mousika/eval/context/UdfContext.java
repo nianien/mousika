@@ -3,7 +3,7 @@ package com.skyfalling.mousika.eval.context;
 /**
  * 规则上下文接口定义
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface UdfContext {
 

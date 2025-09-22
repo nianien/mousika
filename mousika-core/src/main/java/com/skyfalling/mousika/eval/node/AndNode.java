@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * 条件与
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public class AndNode implements RuleNode {

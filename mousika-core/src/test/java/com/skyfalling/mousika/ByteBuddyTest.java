@@ -14,7 +14,7 @@ import java.util.Map;
 import static com.cudrania.core.utils.StringUtils.decapitalize;
 
 /**
- * @author : liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * @created : 2023/11/6, 星期一
  * Copyright (c) 2004-2029 All Rights Reserved.
  **/

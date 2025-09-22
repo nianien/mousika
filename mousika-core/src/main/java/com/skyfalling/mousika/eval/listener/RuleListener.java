@@ -3,7 +3,7 @@ package com.skyfalling.mousika.eval.listener;
 /**
  * Created on 2022/2/15
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface RuleListener {
 

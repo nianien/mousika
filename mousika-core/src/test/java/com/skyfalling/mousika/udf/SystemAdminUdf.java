@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-
+/**
+ * @author skyfalling {@literal <skyfalling@live.com>}
+ */
 @Udf(group = "policy")
 @NoArgsConstructor
 @AllArgsConstructor

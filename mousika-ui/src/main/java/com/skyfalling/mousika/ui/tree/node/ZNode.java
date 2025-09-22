@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 虚拟流程节点, 同时定义复杂流程, 用作{@link IPNode}节点和{@link IFNode}节点
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 @NoArgsConstructor

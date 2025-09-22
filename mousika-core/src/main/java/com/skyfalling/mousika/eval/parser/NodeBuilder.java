@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 构建决策节点
  * Created on 2022/2/18
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class NodeBuilder {
 

@@ -2,6 +2,9 @@ package com.skyfalling.mousika.bean;
 
 import lombok.*;
 
+/**
+ * @author skyfalling {@literal <skyfalling@live.com>}
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

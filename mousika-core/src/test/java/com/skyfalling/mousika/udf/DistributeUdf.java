@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.function.BiFunction;
 
+/**
+ * @author skyfalling {@literal <skyfalling@live.com>}
+ */
 @Udf
 @NoArgsConstructor
 public class DistributeUdf implements BiFunction<String, String, Boolean> {

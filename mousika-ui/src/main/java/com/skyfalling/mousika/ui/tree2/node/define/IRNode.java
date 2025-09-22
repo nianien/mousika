@@ -4,7 +4,7 @@ package com.skyfalling.mousika.ui.tree2.node.define;
  * 规则节点接口定义
  * Created on 2023/5/2
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface IRNode {
 

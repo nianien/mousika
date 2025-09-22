@@ -6,7 +6,7 @@ import com.skyfalling.mousika.udf.Functions.Function3;
 /**
  * Created on 2022/2/14
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class AdultValidateUdf implements Function3<String, Integer, UdfContext, Boolean> {
 

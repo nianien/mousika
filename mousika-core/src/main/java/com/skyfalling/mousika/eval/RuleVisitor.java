@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * 规则节点执行
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Slf4j
 @Getter

@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created on 2022-08-26
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Udf
 public class UdfGroupTest {
@@ -126,6 +128,8 @@ public class UdfGroupTest {
 
     /**
      * 测试嵌套udf
+ *
+ * @author skyfalling {@literal <skyfalling@live.com>}
      */
     @Test
     public void testNestedUdf() {

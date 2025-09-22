@@ -12,7 +12,7 @@ import java.util.function.Function;
  * 基于决策表的UDF定义
  * Created on 2022/6/30
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class RuleTableUdf implements Function<Object, Map<String, String>> {
     private String[] keys;

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 场景加载接口定义
  *
- * @author liujiakun03 <liujiakun03@kuaishou.com>
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-08-03
  */
 public interface SceneLoader {

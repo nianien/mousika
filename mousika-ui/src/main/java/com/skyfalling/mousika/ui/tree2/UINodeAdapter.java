@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Created on 2023/5/2
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class UINodeAdapter {
 

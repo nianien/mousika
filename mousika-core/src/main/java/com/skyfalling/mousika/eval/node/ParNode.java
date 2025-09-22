@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * 最后执行的节点结果作为并行结果; 如果存在节点结果为真，则并行结果作为判断条件为真,否则为假
  * Created on 2023/3/31
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Getter
 public class ParNode implements RuleNode {

@@ -5,7 +5,7 @@ import lombok.*;
 /**
  * UDF定义
  *
- * @author liyifei <liyifei@kuaishou.com>
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 @Data
 @AllArgsConstructor

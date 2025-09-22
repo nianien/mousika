@@ -12,14 +12,14 @@ import java.util.Map;
 /**
  * 场景评估函数，使用方式如下：<br>
  * <p>
- * <code>sys.scene.eval(<场景ID>,<执行参数>,[附加上下文])</code>
+ * <code>sys.scene.eval({@literal <场景ID>},{@literal <执行参数>},[附加上下文])</code>
  * </p>
  * 如果要使用当前规则的参数和上下文，可如下调用:<br>
  * <p>
- * <code>sys.scene.eval(<场景ID>,$,$$)</code>
+ * <code>sys.scene.eval({@literal <场景ID>},$,$$)</code>
  * </p>
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-08-26
  */
 @Udf(group = "sys.scene", value = "eval")

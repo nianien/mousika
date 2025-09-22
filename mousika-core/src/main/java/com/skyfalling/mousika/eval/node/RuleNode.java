@@ -6,7 +6,7 @@ import com.skyfalling.mousika.eval.result.EvalResult;
 /**
  * 规则节点定义
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface RuleNode {
 

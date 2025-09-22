@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 /**
  * 流程节点{@link IFNode}实现
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public class FNode implements IFNode, TypeNode {

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 分支节点{@link IPNode}实现
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * <p>
  * Created on 2022-07-19
  */

@@ -1,5 +1,6 @@
 package com.skyfalling.mousika;
 
+import com.cudrania.core.utils.TimeCounter;
 import com.skyfalling.mousika.engine.RuleEngine;
 import com.skyfalling.mousika.engine.UdfDefinition;
 import lombok.SneakyThrows;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created on 2023/3/31
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public class RuleEngineTest {
 
@@ -118,14 +119,17 @@ public class RuleEngineTest {
     @Test
     public void testNumberTypeEval() {
         RuleEngine ruleEngine = RuleEngine.builder().build();
-        Object res = ruleEngine.evalExpr("$.currentMonth*1.0", new HashMap<String, Object>() {
-            {
-                put("currentMonth", 5);
-            }
-        }, null);
-        System.out.println(res);
+        Map<String, Object> map = new HashMap<>();
+        map.put("currentMonth", 5);
+        Object res = ruleEngine.evalExpr("$.currentMonth*1.0", map, null);
+        TimeCounter tc=new TimeCounter();
+        int times=10000;
+        for (int i = 0; i < times; i++) {
+            ruleEngine.evalExpr("$.currentMonth*1.0", map, null);
+        }
+        System.out.println(tc.timePassed()*1.0/times);
 
-        assertEquals(5,res);
+        assertEquals(5, res);
 
         Object res2 = ruleEngine.evalExpr("""
                 ({"result":true, "count":42});

@@ -20,7 +20,9 @@ import java.util.List;
 import static com.skyfalling.mousika.eval.parser.NodeBuilder.build;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+/**
+ * @author skyfalling {@literal <skyfalling@live.com>}
+ */
 public class RuleEvaluatorTest {
 
 

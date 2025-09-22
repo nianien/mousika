@@ -14,7 +14,7 @@ import java.util.function.BiConsumer;
 /**
  * UI树的定义
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  * Created on 2022-07-19
  */
 public class TreeNode extends ANode<TreeNode> {
@@ -52,7 +52,6 @@ public class TreeNode extends ANode<TreeNode> {
     /**
      * 遍历树,获取使用的规则ID
      *
-     * @return
      */
     public void validate() {
         visit(TreeVisitor.NODE_VALIDATOR, null);

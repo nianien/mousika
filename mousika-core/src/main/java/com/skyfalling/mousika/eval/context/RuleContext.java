@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 规则执行上下文
  *
- * @author liyifei
+ * @author skyfalling {@literal <skyfalling@live.com>}
  */
 public interface RuleContext extends UdfContext {
 

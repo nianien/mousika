@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.function.BiFunction;
 
+/**
+ * @author skyfalling {@literal <skyfalling@live.com>}
+ */
 @Udf
 @NoArgsConstructor
 public class GetUserTypeUdf implements BiFunction<String, RuleContext, Integer> {
